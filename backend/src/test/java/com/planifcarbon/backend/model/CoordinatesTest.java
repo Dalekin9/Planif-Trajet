@@ -50,10 +50,10 @@ public class CoordinatesTest extends Assertions {
     }
 
     @ParameterizedTest
-    @CsvSource({"0,0,0,0.00000001", "-1,0,-1,1", "0,180,0,181", "0,-180,0,-179", "90,-180,90,-179", "80.1,-80.4567,80.1,-80.4568"})
-    public void testNotEquals() {
-        Coordinates c1 = new Coordinates(1, 2);
-        Coordinates c2 = new Coordinates(1, 3);
+    @CsvSource({"0,0,0,0.00000001", "-1,0,-1,1", "0,180,0,17", "0,-180,0,-179", "90,-180,90,-179", "80.1,-80.4567,80.1,-80.4568"})
+    public void testNotEquals(double la1, double lo1, double la2, double lo2) {
+        Coordinates c1 = new Coordinates(la1, lo1);
+        Coordinates c2 = new Coordinates(la2, lo2);
         assertNotEquals(c1, c2);
     }
 
@@ -73,5 +73,13 @@ public class CoordinatesTest extends Assertions {
     public void testNotEqualsString() {
         Coordinates c1 = new Coordinates(1, 2);
         assertNotEquals("1,2", c1);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0,0,0,0,0", "1,0,0,0,111", "1.34, 0, 0, 20, 2231"})
+    public void testDistanceTo(double la1, double lo1, double la2, double lo2, double distance) {
+        Coordinates c1 = new Coordinates(la1, lo1);
+        Coordinates c2 = new Coordinates(la2, lo2);
+        assertEquals(distance, (int) c1.distanceTo(c2));
     }
 }

@@ -6,6 +6,7 @@ package com.planifcarbon.backend.model;
 public class Coordinates {
     private final double latitude;
     private final double longitude;
+    private static final double EARTH_RADIUS = 6378.127;
 
     /**
      * {@summay Main constructor.}
@@ -46,8 +47,18 @@ public class Coordinates {
     @Override
     public String toString() { return latitude + ", " + longitude; }
 
+    /**
+     * @param co the other coordinate to reach
+     * @return distance in km
+     */
     public double distanceTo(Coordinates co) {
-        // TODO
-        throw new UnsupportedOperationException("TODO");
+        double radianLatitudeDistance = Math.toRadians(latitude - co.latitude);
+        double radianLongitudeDistance = Math.toRadians(longitude - co.longitude);
+
+        double a = Math.sin(radianLatitudeDistance / 2) * Math.sin(radianLatitudeDistance / 2) + Math.cos(Math.toRadians(co.latitude))
+                * Math.cos(Math.toRadians(latitude)) * Math.sin(radianLongitudeDistance / 2) * Math.sin(radianLongitudeDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS * c;
     }
 }
