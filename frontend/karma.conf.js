@@ -18,6 +18,8 @@ module.exports = function (config) {
         // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
         // for example, you can disable the random execution with `random: false`
         // or set a specific seed with `seed: 4321`
+        failSpecWithNoExpectations: true,
+        stopOnSpecFailure: true
       },
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
@@ -30,7 +32,15 @@ module.exports = function (config) {
       reporters: [
         { type: 'html' },
         { type: 'text-summary' }
-      ]
+      ],
+      check: {
+        global: {
+          statements: 75,
+          branches: 75,
+          functions: 75,
+          lines: 75
+        }
+      },
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
