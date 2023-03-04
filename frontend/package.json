@@ -7,7 +7,8 @@
     "build": "ng build",
     "build-prod": "ng build --base-href=.",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test --code-coverage",
+    "test-cicd": "ng test --no-watch --code-coverage --no-progress"
   },
   "private": true,
   "dependencies": {
