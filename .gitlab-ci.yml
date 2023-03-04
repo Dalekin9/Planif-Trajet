@@ -1,0 +1,80 @@
+stages:
+  - test-front
+  - test-back
+  - build-front
+  - build-back
+  - release
+
+test-front:
+  stage: test-front
+  image: nouredinelamamra/node-chrome:v1
+  before_script:
+    - cd frontend
+    - npm install
+  script:
+    - npm run test-cicd
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-cache
+    paths:
+      - frontend/node_modules/
+  only:
+    - develop
+    - master
+
+test-back:
+  stage: test-back
+  image: maven:3.8.4-openjdk-17
+  variables:
+    MAVEN_OPTS: -Dmaven.repo.local=/cache
+  cache:
+    key: maven-$CI_COMMIT_REF_SLUG
+    paths:
+      - .m2/repository/
+  script:
+    - cd backend
+    - mvn clean test
+  only:
+    - develop
+    - master
+
+build-front:
+  stage: build-front
+  image: nouredinelamamra/node-chrome:v1
+  before_script:
+    - cd frontend
+    - npm install
+  script:
+    - npm run build-prod
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-cache
+    paths:
+      - frontend/node_modules/
+  artifacts:
+    name: "front-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./frontend/dist/
+  only:
+    - master
+
+build-back:
+  stage: build-back
+  image: maven:3.8.4-openjdk-17
+  variables:
+    MAVEN_OPTS: -Dmaven.repo.local=/cache
+  cache:
+    key: maven-$CI_COMMIT_REF_SLUG
+    paths:
+      - .m2/repository/
+  before_script:
+    - mkdir ./backend/src/main/resources/static
+    - cp -r ./frontend/dist/frontend/* ./backend/src/main/resources/static/
+  script:
+    - cd backend
+    - mvn package
+  artifacts:
+    name: planifcarbon-artifact
+    paths:
+      - ./backend/target/*.jar
+  only:
+    - master
+
