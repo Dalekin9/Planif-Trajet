@@ -28,4 +28,6 @@ npm run-script start
 ```sh
 cd backend/
 ./mvnw compile test
+cd ../frontend/
+npm run-script test
 ```
