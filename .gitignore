@@ -1,0 +1,18 @@
+# Compiled class file
+*.class
+*.jar
+
+# Maven
+target/
+
+# IDE
+.classpath
+.project
+.settings/
+.idea/
+.vscode/
+
+#temp folder/
+ignore/
+.~lock.*
+build/
