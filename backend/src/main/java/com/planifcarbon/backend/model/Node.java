@@ -3,7 +3,7 @@ package com.planifcarbon.backend.model;
 /**
  * {@summary Represents a point on map.}
  */
-public class Node {
+public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode {
     private final String name;
     private final Coordinates coordinates;
     // private int type; // used by Dijkstra ?
@@ -27,17 +27,19 @@ public class Node {
 
     /**
      * {@summary Test if this is equals to o.}
+     * Each node is unique, so it is equals to itself only.
      * 
      * @param o object to test equals with
      */
     @Override
     public boolean equals(Object o) {
-        // @formatter:off
-        return o != null
-                && o instanceof Node
-                && ((Node) o).name.equals(name)
-                && ((Node) o).coordinates.equals(coordinates);
-        // @formatter:on
+        return this == o;
+        // // @formatter:off
+        // return o != null
+        //         && o instanceof Node
+        //         && ((Node) o).name.equals(name)
+        //         && ((Node) o).coordinates.equals(coordinates);
+        // // @formatter:on
     }
 
     /**
@@ -45,4 +47,13 @@ public class Node {
      */
     @Override
     public String toString() { return name + ": " + coordinates; }
+
+    public abstract boolean isInMetro();
+}
+
+// For test only
+final class NodeForTest extends Node {
+    public NodeForTest(String name, double la, double lo) { super(name, la, lo); }
+    @Override
+    public boolean isInMetro() { return false; }
 }
