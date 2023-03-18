@@ -1,7 +1,6 @@
 package com.planifcarbon.backend.model;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -57,22 +56,25 @@ public class CoordinatesTest extends Assertions {
         assertNotEquals(c1, c2);
     }
 
-    @Test
-    public void testNotEqualsNull() {
-        Coordinates c1 = new Coordinates(1, 2);
+    @ParameterizedTest
+    @CsvSource({"1,2", "0,0", "-1,0", "0,180", "0,-180", "90,-180", "80.1,-80.4567"})
+    public void testNotEqualsNull(double la, double lo) {
+        Coordinates c1 = new Coordinates(la, lo);
         assertNotEquals(null, c1);
     }
 
-    @Test
-    public void testNotEqualsOtherClass() {
-        Coordinates c1 = new Coordinates(1, 2);
+    @ParameterizedTest
+    @CsvSource({"1,2", "0,0", "-1,0", "0,180", "0,-180", "90,-180", "80.1,-80.4567"})
+    public void testNotEqualsOtherClass(double la, double lo) {
+        Coordinates c1 = new Coordinates(la, lo);
         assertNotEquals(new Object(), c1);
     }
 
-    @Test
-    public void testNotEqualsString() {
-        Coordinates c1 = new Coordinates(1, 2);
-        assertNotEquals("1,2", c1);
+    @ParameterizedTest
+    @CsvSource({"1,2,'1,2'", "0,0,", "-1,0,artzret", "0,180,MPO"})
+    public void testNotEqualsString(double la, double lo, String other) {
+        Coordinates c1 = new Coordinates(la, lo);
+        assertNotEquals(c1, other);
     }
 
     @ParameterizedTest
