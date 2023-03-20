@@ -1,8 +1,10 @@
 package com.planifcarbon.backend.parser;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import java.io.FileNotFoundException;
 
 public class ParserTest extends Assertions {
 
@@ -30,6 +32,26 @@ public class ParserTest extends Assertions {
     @CsvSource({"0, 0","1, 1000","2.5, 2500","42.195, 42195"})
     public void testDistance(String distance, int expected){
         assertEquals(expected, Parser.distanceStringToInt(distance));
+    }
+
+    @Test
+    public void testGetNodeException(){
+        assertThrows(FileNotFoundException.class, () -> Parser.getNodeList("notAFile"));
+    }
+
+    @Test
+    public void testGetSegmentException(){
+        assertThrows(FileNotFoundException.class, () -> Parser.getSegmentList("notAFile"));
+    }
+/*  getMetro not implemented
+    @Test
+    public void testGetMetroException(){
+        assertThrows(FileNotFoundException.class, () -> Parser.getMetroStations("notAFile"));
+    }
+*/
+    @Test
+    public void testGetScheduleException(){
+        assertThrows(FileNotFoundException.class, () -> Parser.getSchedule("notAFile"));
     }
 
 }
