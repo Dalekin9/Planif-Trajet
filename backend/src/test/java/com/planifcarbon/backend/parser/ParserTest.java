@@ -148,31 +148,19 @@ public class ParserTest extends Assertions {
 
         assertNotNull(schedule);
 
-        assertTrue(schedule.containsKey("line1"));
-        assertTrue(schedule.containsKey("line2"));
+        assertTrue(schedule.containsKey("1"));
+        assertTrue(schedule.containsKey("2"));
+        assertTrue(schedule.containsKey("3"));
+        assertTrue(schedule.containsKey("4"));
+        assertTrue(schedule.containsKey("5"));
+        assertTrue(schedule.containsKey("6"));
 
-        assertTrue(schedule.get("line1").containsKey("station1"));
-        assertTrue(schedule.get("line1").containsKey("station2"));
-        assertTrue(schedule.get("line2").containsKey("station1"));
-        assertTrue(schedule.get("line2").containsKey("station2"));
-
-        Collection<Integer> timesOfStation1Line1 = schedule.get("line1").get("station1");
-        assertEquals(2, timesOfStation1Line1.size());
-        assertTrue(timesOfStation1Line1.contains(100));
-        assertTrue(timesOfStation1Line1.contains(200));
-
-        Collection<Integer> timesOfStation2Line1 = schedule.get("line1").get("station2");
-        assertEquals(1, timesOfStation2Line1.size());
-        assertTrue(timesOfStation2Line1.contains(300));
-
-        Collection<Integer> timesOfStation1Line2 = schedule.get("line2").get("station1");
-        assertEquals(1, timesOfStation1Line2.size());
-        assertTrue(timesOfStation1Line2.contains(400));
-
-        Collection<Integer> timesOfStation2Line2 = schedule.get("line2").get("station2");
-        assertEquals(2, timesOfStation2Line2.size());
-        assertTrue(timesOfStation2Line2.contains(500));
-        assertTrue(timesOfStation2Line2.contains(600));
+        assertTrue(schedule.get("1").containsKey("La Défense"));
+        assertTrue(schedule.get("2").containsKey("Nation"));
+        assertTrue(schedule.get("3").containsKey("Galieni"));
+        assertTrue(schedule.get("4").containsKey("Bagneux"));
+        assertTrue(schedule.get("5").containsKey("Place d'Italie"));
+        assertTrue(schedule.get("6").containsKey("Nation"));
     }
 
 }
