@@ -2,11 +2,16 @@ package com.planifcarbon.backend.parser;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import java.io.FileNotFoundException;
+import java.util.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ParserTest extends Assertions {
+    String map_data = System.getProperty("user.dir")+"/src/test/java/com/planifcarbon/backend/parser/map_data.csv";
+    String test_schedule = System.getProperty("user.dir")+"/src/test/java/com/planifcarbon/backend/parser/test_schedule.csv";
 
     @ParameterizedTest
     @CsvSource({"';',abcdef,26443", "':',gyeuzgy$%,0ebuebz", "',',ijfioe098,3093:8", "' ',jpozejjfe,buzba(nzz)"})
@@ -17,13 +22,13 @@ public class ParserTest extends Assertions {
     }
 
     @ParameterizedTest
-    @CsvSource({"0:00, 0","0:01, 1000","1:30, 90000","12:34, 754000"})
+    @CsvSource({"0:00, 0","0:01, 1","1:30, 90","12:34, 754"})
     public void testDuration(String duration, int expected){
         assertEquals(expected, Parser.durationStringToInt(duration));
     }
 
     @ParameterizedTest
-    @CsvSource({"00:00, 0","00:01, 60000","01:30, 5400000","12:34, 45240000"})
+    @CsvSource({"00:00, 0","00:01, 60","01:30, 5400","12:34, 45240"})
     public void testTime(String time, int expected){
         assertEquals(expected, Parser.timeStringToInt(time));
     }
@@ -40,18 +45,134 @@ public class ParserTest extends Assertions {
     }
 
     @Test
+    public void testGetNodeList() throws FileNotFoundException {
+        Collection<Collection<Object>> nodes = Parser.getNodeList(map_data);
+        assertNotNull(nodes);
+        assertEquals(3540, nodes.size());
+
+        Collection<Object> node1 = nodes.iterator().next();
+        System.out.println("node1 : "+node1);
+        assertEquals(node1.size(), 3);
+        assertTrue(node1.contains("Lourmel"));
+        assertTrue(node1.contains(2.282242f));
+        assertTrue(node1.contains(48.83866f));
+
+        Collection<Object> lastNode = null;
+        for (Collection<Object> node : nodes) {
+            lastNode = node;
+        }
+        assert lastNode != null;
+        System.out.println("lastNode : "+lastNode);
+        assertEquals(lastNode.size(), 3);
+        assertTrue(lastNode.contains("Louis Blanc"));
+        assertTrue(lastNode.contains(2.364365f));
+        assertTrue(lastNode.contains(48.881184f));
+    }
+
+    @Test
     public void testGetSegmentException(){
         assertThrows(FileNotFoundException.class, () -> Parser.getSegmentList("notAFile"));
     }
-/*  getMetro not implemented
+
+    @Test
+    public void testGetSegmentList() throws FileNotFoundException {
+        Collection<Collection<Object>> segments = Parser.getSegmentList(map_data);
+        assertNotNull(segments);
+        assertEquals(1770, segments.size());
+
+        Collection<Object> segment1 = segments.iterator().next();
+        System.out.println("segment1 : "+segment1);
+        assertEquals(segment1.size(), 5);
+        assertTrue(segment1.contains("Lourmel"));
+        assertTrue(segment1.contains("Boucicaut"));
+        assertTrue(segment1.contains("8 variant 1"));
+
+        Collection<Object> lastSegment = null;
+        for (Collection<Object> segment : segments) {
+            lastSegment = segment;
+        }
+        assert lastSegment != null;
+        System.out.println("lastSegment : "+lastSegment);
+        assertEquals(lastSegment.size(), 5);
+        assertTrue(lastSegment.contains("Jaurès"));
+        assertTrue(lastSegment.contains("Louis Blanc"));
+        assertTrue(lastSegment.contains("7B variant 2"));
+    }
+
     @Test
     public void testGetMetroException(){
         assertThrows(FileNotFoundException.class, () -> Parser.getMetroStations("notAFile"));
     }
-*/
+
+    @Test
+    public void testGetMetroStations() throws FileNotFoundException {
+        Collection<Collection<Object>> stations = Parser.getMetroStations(map_data);
+        assertNotNull(stations);
+        assertEquals(1770, stations.size());
+
+        Collection<Object> station1 = stations.iterator().next();
+        System.out.println("station1 : "+station1);
+        assertEquals(station1.size(), 9);
+        assertTrue(station1.contains("Lourmel"));
+        assertTrue(station1.contains(2.282242f));
+        assertTrue(station1.contains(48.83866f));
+        assertTrue(station1.contains("Boucicaut"));
+        assertTrue(station1.contains(2.2879183f));
+        assertTrue(station1.contains(48.841022f));
+        assertTrue(station1.contains("8 variant 1"));
+
+        Collection<Object> lastStation = null;
+        for (Collection<Object> station : stations) {
+            lastStation = station;
+        }
+        assert lastStation != null;
+        System.out.println("lastStation : "+lastStation);
+        assertEquals(lastStation.size(), 9);
+        assertTrue(lastStation.contains("Jaurès"));
+        assertTrue(lastStation.contains(2.3704655f));
+        assertTrue(lastStation.contains(48.882328f));
+        assertTrue(lastStation.contains("Louis Blanc"));
+        assertTrue(lastStation.contains(2.364365f));
+        assertTrue(lastStation.contains(48.881184f));
+        assertTrue(lastStation.contains("7B variant 2"));
+    }
+
     @Test
     public void testGetScheduleException(){
         assertThrows(FileNotFoundException.class, () -> Parser.getSchedule("notAFile"));
+    }
+
+    @Test
+    public void testGetSchedule() throws FileNotFoundException {
+        Map<String, Map<String, Collection<Integer>>> schedule = Parser.getSchedule(test_schedule);
+
+        assertNotNull(schedule);
+
+        assertTrue(schedule.containsKey("line1"));
+        assertTrue(schedule.containsKey("line2"));
+
+        assertTrue(schedule.get("line1").containsKey("station1"));
+        assertTrue(schedule.get("line1").containsKey("station2"));
+        assertTrue(schedule.get("line2").containsKey("station1"));
+        assertTrue(schedule.get("line2").containsKey("station2"));
+
+        Collection<Integer> timesOfStation1Line1 = schedule.get("line1").get("station1");
+        assertEquals(2, timesOfStation1Line1.size());
+        assertTrue(timesOfStation1Line1.contains(100));
+        assertTrue(timesOfStation1Line1.contains(200));
+
+        Collection<Integer> timesOfStation2Line1 = schedule.get("line1").get("station2");
+        assertEquals(1, timesOfStation2Line1.size());
+        assertTrue(timesOfStation2Line1.contains(300));
+
+        Collection<Integer> timesOfStation1Line2 = schedule.get("line2").get("station1");
+        assertEquals(1, timesOfStation1Line2.size());
+        assertTrue(timesOfStation1Line2.contains(400));
+
+        Collection<Integer> timesOfStation2Line2 = schedule.get("line2").get("station2");
+        assertEquals(2, timesOfStation2Line2.size());
+        assertTrue(timesOfStation2Line2.contains(500));
+        assertTrue(timesOfStation2Line2.contains(600));
     }
 
 }
