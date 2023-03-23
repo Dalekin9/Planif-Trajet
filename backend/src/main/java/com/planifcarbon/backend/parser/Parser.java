@@ -1,10 +1,14 @@
-package main.java.com.planifcarbon.backend.parser;
+package com.planifcarbon.backend.parser;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * {@summary Its static methods are used to parse CSV files}
+ */
 public class Parser{
 
     public static String[] splitString(String reg, String line) {
@@ -26,7 +30,7 @@ public class Parser{
         int hours = Integer.parseInt(time[0]);
         int minutes = Integer.parseInt(time[1]);
 
-        hours = hours * 60 * 60 ;
+        hours = hours * 60 * 60 ;       //hours to seconds
         minutes = minutes * 60 ;
 
         return hours + minutes;
@@ -41,7 +45,7 @@ public class Parser{
 
     public static Collection<Collection<Object>> getNodeList(String filepath) throws FileNotFoundException {
         InputStream ins = new FileInputStream(filepath);
-        Scanner scan = new Scanner(ins);
+        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);
         String[] line;
 
         Collection<Collection<Object>> nodes = new ArrayList<>();
@@ -49,8 +53,6 @@ public class Parser{
         String[] coords;
 
         while(scan.hasNextLine()) {
-            //TODO: Check for duplicates
-
             line = splitString(";", scan.nextLine());
             //Each line contains 7 elements : name1, coords1, name2, coords2, line, time, dist
 
@@ -75,7 +77,7 @@ public class Parser{
 
     public static Collection<Collection<Object>> getSegmentList(String filepath) throws FileNotFoundException {
         InputStream ins = new FileInputStream(filepath);
-        Scanner scan = new Scanner(ins);
+        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);
         String[] line;
 
         Collection<Collection<Object>> segments = new ArrayList<>();
@@ -101,7 +103,7 @@ public class Parser{
 
     public static Collection<Collection<Object>> getMetroStations(String filepath) throws FileNotFoundException {
         InputStream ins = new FileInputStream(filepath);
-        Scanner scan = new Scanner(ins);
+        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);
         String[] line;
 
         Collection<Collection<Object>> segments = new ArrayList<>();
@@ -138,7 +140,7 @@ public class Parser{
 
     public static Map<String,Map<String,Collection<Integer>>> getSchedule(String filepath) throws FileNotFoundException {
         InputStream ins = new FileInputStream(filepath);
-        Scanner scan = new Scanner(ins);
+        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);
         String[] line;
 
         Map<String,Map<String, Collection<Integer>>> timeTable = new HashMap<>();
