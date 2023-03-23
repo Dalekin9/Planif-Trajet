@@ -3,7 +3,7 @@ package com.planifcarbon.backend.model;
 /**
  * {@summary Represens the segment between two nodes.}
  */
-public abstract class Segment {
+public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
     /** ID counter of class **/
     private static int segmentId = 0;
     /** ID of segment **/
@@ -15,7 +15,7 @@ public abstract class Segment {
     /** Travel time from the first point to the second **/
     protected double duration;
     /** Distance between two points **/
-    protected int distance;
+    protected double distance;
 
     /**
      * {@summay Main constructor.}
@@ -25,7 +25,14 @@ public abstract class Segment {
      * @param distance distance between two points
      * @param duration travel time from the first point to the second
      */
-    public Segment(final Node node1, final Node node2, int distance, double duration) {
+    public Segment(final Node node1, final Node node2, double distance, double duration) throws IllegalArgumentException {
+        if (distance <= 0) {
+            throw new IllegalArgumentException("distance must be greater than 0");
+        }
+        else if (duration <= 0) {
+            throw new IllegalArgumentException("duration must be greater than 0");
+        }
+        
         this.startPoint = node1;
         this.endPoint = node2;
         this.distance = distance;
@@ -37,18 +44,16 @@ public abstract class Segment {
     public Node getStartPoint() { return startPoint; }
     public Node getEndPoint() { return endPoint; }
     public double getDuration() { return duration; }
-    public int getDistabce() { return distance; }
+    public double getDistance() { return distance; }
 
     /**
      * {@summary Test if this is equals to anotherSegment.}
      * @param anotherSegment segment to test equals with
      */
     public boolean equals(Segment anotherSegment) {
-        // TODO for the future: make sure we really need a deep comparison here
-        return (this.id == anotherSegment.id)
-                && this.startPoint.equals(anotherSegment.startPoint)
-                && this.endPoint.equals(anotherSegment.endPoint)
-                && (this.duration == anotherSegment.duration)
-                && (this.distance == anotherSegment.distance);
+        // TODO for the future: make sure if we don't need a deep comparison here
+        return (this.id == anotherSegment.id);
     }
+
+    public abstract String toString();
 }

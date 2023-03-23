@@ -3,7 +3,7 @@ package com.planifcarbon.backend.model;
 /**
  * {@summary Represents a segment walked by a pedestrian with average walking speed between two points.}
  */
-public class SegmentWalk extends Segment {
+public final class SegmentWalk extends Segment {
 
     /* Reference Information: Average walking speed by age:
     20-29 years: 3.00 mph (4.83 km/h)
@@ -25,15 +25,20 @@ public class SegmentWalk extends Segment {
      * @param distance distance between two points
      * Duration will be calculated based on distance and the average walking speed.
      */
-    public SegmentWalk(Node node1, Node node2, int distance) {
+    public SegmentWalk(Node node1, Node node2, double distance) {
         super(node1, node2, distance, distance * SPEED);
     }
 
     /**
      * {@return A string representation of SegmentWalk.}
      */
-    @Override
     public String toString() {
         return String.format("walkSegm %d: %ds, %dm\n", id, duration, distance);
     }
+
+    /**
+     * Function for tests only
+     * {@return SPEED constant wich represent sverage walking speed (km/h).}
+     */
+    public static double getSpeed() {  return SPEED;  }
 }
