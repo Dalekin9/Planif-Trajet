@@ -24,6 +24,7 @@ public final class MetroMap {
         lines = new HashSet<MetroLine>();
     }
 
+
     /**
      * Return the first node with that name.
      * It can be null if no node with that name is found.
@@ -36,14 +37,25 @@ public final class MetroMap {
      * {@summary Return the list of nodes.}
      */
     public Set<Node> getNodes() { return graph.keySet(); }
+    /**
+     * {@summary Return the list of segments.}
+     * 
+     * @param nodeName name of the node to get the segments from
+     * @return the list of segments
+     */
+    public Set<Segment> getSegments(String nodeName) { return graph.get(getNode(nodeName)); }
+
 
     // Build functions --------------------------------------------------------------------------------------------------------------------
     /**
      * {@summary Add a new node to the graph.}
      */
     public void addNode(String name, double latitude, double longitude, Class<? extends Node> nodeClass) {
+        if (nodeClass == null) {
+            throw new IllegalArgumentException("nodeClass must not be null");
+        }
         try {
-            Node node = nodeClass.getDeclaredConstructor().newInstance(name, latitude, longitude);
+            Node node = nodeClass.getDeclaredConstructor(String.class, double.class, double.class).newInstance(name, latitude, longitude);
             graph.put(node, new HashSet<Segment>());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
@@ -58,17 +70,35 @@ public final class MetroMap {
      * 
      * @param segment segment to add
      */
-    public void addSegment(String startNodeName, String endNodeName, double distance, double duration,
-            Class<? extends Segment> segmentClass) {
-        try {
-            Segment segment = segmentClass.getDeclaredConstructor().newInstance(getNode(startNodeName), getNode(endNodeName), distance,
-                    duration);
-            graph.get(segment.getStartPoint()).add(segment);
-            graph.get(segment.getEndPoint()).add(segment);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
-            System.out.println("Error while creating a new Segment " + e);
-        }
+    private void addSegment(Segment segment) {
+        graph.get(segment.getStartPoint()).add(segment);
+        graph.get(segment.getEndPoint()).add(segment);
+    }
+    /**
+     * {@summary Add a new segment to the graph.}
+     * It need both nodes to be in the graph.
+     * It will add the segment to both nodes connections lists.
+     * 
+     * @param startNodeName name of the start node
+     * @param endNodeName   name of the end node
+     * @param distance      distance between the 2 nodes
+     */
+    public void addSegmentWalk(String startNodeName, String endNodeName, double distance) {
+        addSegment(new SegmentWalk(getNode(startNodeName), getNode(endNodeName), distance));
+    }
+    /**
+     * {@summary Add a new segment to the graph.}
+     * It need both nodes to be in the graph.
+     * It will add the segment to both nodes connections lists.
+     * 
+     * @param startNodeName name of the start node
+     * @param endNodeName   name of the end node
+     * @param distance      distance between the 2 nodes
+     * @param duration      duration between the 2 nodes
+     * @param line          name of the line of the metro
+     */
+    public void addSegmentMetro(String startNodeName, String endNodeName, double distance, double duration, String line) {
+        addSegment(new SegmentMetro(getNode(startNodeName), getNode(endNodeName), distance, duration, line));
     }
 
     /**
