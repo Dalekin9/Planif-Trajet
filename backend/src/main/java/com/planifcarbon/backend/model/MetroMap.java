@@ -32,6 +32,11 @@ public final class MetroMap {
      */
     public Node getNode(String nodeName) { return graph.keySet().stream().filter(n -> n.getName().equals(nodeName)).findFirst().get(); }
 
+    /**
+     * {@summary Return the list of nodes.}
+     */
+    public Set<Node> getNodes() { return graph.keySet(); }
+
     // Build functions --------------------------------------------------------------------------------------------------------------------
     /**
      * {@summary Add a new node to the graph.}
@@ -42,7 +47,8 @@ public final class MetroMap {
             graph.put(node, new HashSet<Segment>());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
-            System.out.println("Error while creating a new node " + e);
+            // System.out.println("Error while creating a new node " + e);
+            throw new IllegalArgumentException("Error while creating a new node " + e);
         }
     }
     /**
