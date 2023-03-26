@@ -1,0 +1,75 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 16px;
+  align-items: center;
+  height: 50vh;
+
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    flex: 1.2;
+
+    .images {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 32px;
+
+      > img {
+        width: 64px;
+        aspect-ratio: 1;
+      }
+    }
+  }
+
+  .metro-stations-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+
+    .end-station {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .stations {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+
+  .metro-schedule-section {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+
+    > img {
+      width: 64px;
+    }
+
+    .metro-schedule-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 32px;
+
+      .info-column {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .title {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

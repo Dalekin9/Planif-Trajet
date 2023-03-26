@@ -1,0 +1,35 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  align-items: center;
+  height: 100%;
+
+  > img {
+    height: 40vh;
+    width: 70%;
+  }
+
+  .home-texts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    max-width: 70%;
+
+    > h1 {
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    > h4 {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    > p {
+      font-size: 16px;
+      text-align: center;
+    }
+  }
+}
