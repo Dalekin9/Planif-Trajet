@@ -19,11 +19,14 @@ public final class SegmentMetro extends Segment {
      */
     public SegmentMetro(Node node1, Node node2, double distance, double duration, String line) {
         super(node1, node2, distance, duration);
+        if (line == null || line.isBlank())
+            throw new IllegalArgumentException("line must not be null or blank");
         this.line = line;
     }
 
     /**
      * {@summary Gets name of metro line.}
+     * 
      * @return the line
      */
     public String getLine() { return line; }
@@ -31,7 +34,5 @@ public final class SegmentMetro extends Segment {
     /**
      * {@return A string representation of SegmentMetro.}
      */
-    public String toString() {
-        return String.format("metroSegm %d: line %s, %d s, %d m\n", id, line, duration, distance);
-    }
+    public String toString() { return String.format("metroSegm %d: line %s, %d s, %d m\n", id, line, duration, distance); }
 }
