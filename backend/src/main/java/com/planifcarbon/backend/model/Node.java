@@ -1,5 +1,7 @@
 package com.planifcarbon.backend.model;
 
+import java.util.Objects;
+
 /**
  * {@summary Represents a point on map.}
  */
@@ -33,13 +35,15 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
      */
     @Override
     public boolean equals(Object o) {
-        return this == o;
-        // // @formatter:off
-        // return o != null
-        //         && o instanceof Node
-        //         && ((Node) o).name.equals(name)
-        //         && ((Node) o).coordinates.equals(coordinates);
-        // // @formatter:on
+        if (this == o) return true;
+        if (o == null) return false;
+        Node node = (Node) o;
+        return Objects.equals(name, node.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     /**

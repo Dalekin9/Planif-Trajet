@@ -1,20 +1,18 @@
 package com.planifcarbon.backend.model;
 
+import java.util.Objects;
+
 /**
  * {@summary Represens the segment between two nodes.}
  */
 public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
-    /** ID counter of class **/
-    private static int segmentId = 0;
-    /** ID of segment **/
-    protected int id = 0;
     /** First point of segment **/
     protected final Node startPoint;
     /** Second point of segment **/
     protected final Node endPoint;
     /** Travel time from the first point to the second **/
     protected double duration;
-    /** Distance between two points **/
+    /** Distance between two points in KM **/
     protected double distance;
 
     /**
@@ -37,23 +35,28 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
         this.endPoint = node2;
         this.distance = distance;
         this.duration = duration;
-        this.id = segmentId++;
     }
 
-    public int getId() { return id; }
     public Node getStartPoint() { return startPoint; }
     public Node getEndPoint() { return endPoint; }
     public double getDuration() { return duration; }
     public double getDistance() { return distance; }
 
+
     /**
      * {@summary Test if this is equals to anotherSegment.}
      * @param anotherSegment segment to test equals with
      */
-    public boolean equals(Segment anotherSegment) {
-        // TODO for the future: make sure if we don't need a deep comparison here
-        return (this.id == anotherSegment.id);
+    @Override
+    public boolean equals(Object anotherSegment) {
+        if (this == anotherSegment) return true;
+        if (anotherSegment == null || getClass() != anotherSegment.getClass()) return false;
+        Segment segment = (Segment) anotherSegment;
+        return Objects.equals(startPoint, segment.startPoint) && Objects.equals(endPoint, segment.endPoint);
     }
 
-    public abstract String toString();
+    @Override
+    public int hashCode() {
+        return Objects.hash(startPoint, endPoint);
+    }
 }

@@ -26,14 +26,7 @@ public final class SegmentWalk extends Segment {
      * Duration will be calculated based on distance and the average walking speed.
      */
     public SegmentWalk(Node node1, Node node2, double distance) {
-        super(node1, node2, distance, distance * SPEED);
-    }
-
-    /**
-     * {@return A string representation of SegmentWalk.}
-     */
-    public String toString() {
-        return String.format("walkSegm %d: %ds, %dm\n", id, duration, distance);
+        super(node1, node2, distance, distance / SPEED);
     }
 
     /**
@@ -41,4 +34,14 @@ public final class SegmentWalk extends Segment {
      * {@return SPEED constant wich represent sverage walking speed (km/h).}
      */
     public static double getSpeed() {  return SPEED;  }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

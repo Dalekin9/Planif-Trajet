@@ -72,7 +72,8 @@ public class SegmentMetroTest {
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentMetro t1 = new SegmentMetro(node1, node2, distance, duration, line);
         SegmentMetro t2 = new SegmentMetro(node1, node2, distance, duration, line);
-        assertTrue(t1.equals(t1));
-        assertFalse(t1.equals(t2));
+        SegmentMetro t3 = new SegmentMetro(node2, node1, distance, duration, line);
+        assertEquals(t1, t2);
+        assertNotEquals(t1, t3);
     }
 }

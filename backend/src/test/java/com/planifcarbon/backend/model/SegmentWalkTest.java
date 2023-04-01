@@ -33,7 +33,7 @@ public class SegmentWalkTest {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentWalk t = new SegmentWalk(node1, node2, distance);
-        assertEquals(distance * SegmentWalk.getSpeed(), t.getDuration());
+        assertEquals(distance / SegmentWalk.getSpeed(), t.getDuration());
     }
 
     @ParameterizedTest
@@ -63,7 +63,8 @@ public class SegmentWalkTest {
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentWalk t1 = new SegmentWalk(node1, node2, distance);
         SegmentWalk t2 = new SegmentWalk(node1, node2, distance);
-        assertTrue(t1.equals(t1));
-        assertFalse(t1.equals(t2));
+        SegmentWalk t3 = new SegmentWalk(node2, node1, distance);
+        assertEquals(t1, t2);
+        assertNotEquals(t1, t3);
     }
 }

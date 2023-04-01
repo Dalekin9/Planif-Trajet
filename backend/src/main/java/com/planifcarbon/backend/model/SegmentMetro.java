@@ -1,5 +1,7 @@
 package com.planifcarbon.backend.model;
 
+import java.util.Objects;
+
 /**
  * {@summary Represens the segment between two stations of metro.}
  */
@@ -31,8 +33,33 @@ public final class SegmentMetro extends Segment {
      */
     public String getLine() { return line; }
 
+
     /**
      * {@return A string representation of SegmentMetro.}
      */
-    public String toString() { return String.format("metroSegm %d: line %s, %d s, %d m\n", id, line, duration, distance); }
+    @Override
+    public String toString() {
+        return "SegmentMetro{" +
+                ", startPoint=" + startPoint +
+                ", endPoint=" + endPoint +
+                ", duration=" + duration +
+                ", distance=" + distance +
+                ", line=" + line +
+                '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        SegmentMetro that = (SegmentMetro) o;
+        return super.equals(that) && Objects.equals(line, that.line);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), line);
+    }
 }
