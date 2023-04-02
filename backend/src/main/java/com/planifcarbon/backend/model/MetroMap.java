@@ -1,6 +1,7 @@
 package com.planifcarbon.backend.model;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,10 +31,16 @@ public final class MetroMap {
 
     // TODO split in small functions.
     @PostConstruct
-    public void initializeFields() throws FileNotFoundException {
+    public void initializeFields() {
         String metroFile = "src/main/resources/data/map_data.csv";
         String scheduleFile = "src/main/resources/data/timetables.csv";
-        Parser.parse(metroFile, scheduleFile);
+        try {
+            Parser.parse(metroFile, scheduleFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found when parsing files "+e);
+        } catch (IOException e) {
+            System.out.println("IO error when parsing files "+e);
+        }
         Set<StationDTO> stations = Parser.getStations(); // To be used for walk segments.
         Map<String, String> metroLinesTerminus = Parser.getMetroLines();
         stations.forEach(stationDTO -> {

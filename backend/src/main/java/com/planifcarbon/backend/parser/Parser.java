@@ -1,12 +1,19 @@
 package com.planifcarbon.backend.parser;
 
-import org.springframework.stereotype.Component;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.Set;
+import org.springframework.stereotype.Component;
 
 /**
  * {@summary Its static methods are used to parse CSV files}
@@ -49,51 +56,55 @@ public class Parser {
         return hours + minutes;
     }
 
-    public static void parse(String metroFile, String scheduleFile) throws FileNotFoundException {
+    public static void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
         Parser.calculateStationsAndSegments(metroFile);
         Parser.calculateSchedules(scheduleFile);
     }
 
-    static void calculateStationsAndSegments(String filePath) throws FileNotFoundException {
-        InputStream ins = new FileInputStream(filePath);
-        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);
-        String[] currentLine;
-        String[] coords;
-        StationDTO start;
-        StationDTO end;
-        while (scan.hasNextLine()) {
-            currentLine = splitString(";", scan.nextLine());
-            //Each line contains 7 elements : name1, coords1, name2, coords2, line, time, dist
-            coords = splitString(",", currentLine[1]);
-            start = new StationDTO(currentLine[0], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
-            coords = splitString(",", currentLine[3]);
-            end = new StationDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
-            stations.add(start);
-            stations.add(end);
-            segmentMetro.add(new SegmentMetroDTO(start,
-                    end,
-                    durationStringToInt(currentLine[5]),
-                    Double.parseDouble(currentLine[6]),
-                    currentLine[4]));
-            metroLines.putIfAbsent(currentLine[4], currentLine[0]);
+    static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
+        // try with safe close.
+        try(InputStream ins = new FileInputStream(filePath);
+        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);){
+            String[] currentLine;
+            String[] coords;
+            StationDTO start;
+            StationDTO end;
+            while (scan.hasNextLine()) {
+                currentLine = splitString(";", scan.nextLine());
+                //Each line contains 7 elements : name1, coords1, name2, coords2, line, time, dist
+                coords = splitString(",", currentLine[1]);
+                start = new StationDTO(currentLine[0], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                coords = splitString(",", currentLine[3]);
+                end = new StationDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                stations.add(start);
+                stations.add(end);
+                segmentMetro.add(new SegmentMetroDTO(start,
+                        end,
+                        durationStringToInt(currentLine[5]),
+                        Double.parseDouble(currentLine[6]),
+                        currentLine[4]));
+                metroLines.putIfAbsent(currentLine[4], currentLine[0]);
+            }
         }
     }
 
-    static void calculateSchedules(String scheduleFile) throws FileNotFoundException {
-        InputStream ins = new FileInputStream(scheduleFile);
-        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);
-        String[] currentLine;
-        VariantKey variantKey;
-        while (scan.hasNextLine()) {
-            currentLine = splitString(";", scan.nextLine());
-            //Each line contains 3 elements : line, terminusStation, time
-            variantKey = new Parser.VariantKey(currentLine[1], currentLine[0]);
-            if (metroLineSchedules.containsKey(variantKey)) {
-                metroLineSchedules.get(variantKey).add(timeStringToInt(currentLine[2]));
-            } else {
-                List<Integer> list = new ArrayList<>();
-                list.add(timeStringToInt(currentLine[2]));
-                metroLineSchedules.put(variantKey, list);
+    static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
+        // try with safe close.
+        try (InputStream ins = new FileInputStream(scheduleFile);
+        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
+            String[] currentLine;
+            VariantKey variantKey;
+            while (scan.hasNextLine()) {
+                currentLine = splitString(";", scan.nextLine());
+                //Each line contains 3 elements : line, terminusStation, time
+                variantKey = new Parser.VariantKey(currentLine[1], currentLine[0]);
+                if (metroLineSchedules.containsKey(variantKey)) {
+                    metroLineSchedules.get(variantKey).add(timeStringToInt(currentLine[2]));
+                } else {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(timeStringToInt(currentLine[2]));
+                    metroLineSchedules.put(variantKey, list);
+                }
             }
         }
     }
