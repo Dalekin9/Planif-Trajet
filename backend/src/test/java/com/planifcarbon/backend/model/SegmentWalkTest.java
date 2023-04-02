@@ -3,9 +3,8 @@ package com.planifcarbon.backend.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class SegmentWalkTest {
@@ -28,12 +27,12 @@ public class SegmentWalkTest {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = { 1.23, 4.56789, 1.022, 20 })
-    public void testGetDurationMethode(double distance) {
+    @CsvSource({ "1.23, 1006363", "4.56789, 3737364", "1.022, 836181", "20, 16363636" })
+    public void testGetDurationMethode(double distance, int time) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentWalk t = new SegmentWalk(node1, node2, distance);
-        assertEquals(distance / SegmentWalk.getSpeed(), t.getDuration());
+        assertEquals(time, t.getDuration());
     }
 
     @ParameterizedTest

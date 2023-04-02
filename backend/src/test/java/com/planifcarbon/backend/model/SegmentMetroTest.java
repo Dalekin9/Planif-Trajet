@@ -3,8 +3,6 @@ package com.planifcarbon.backend.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -12,7 +10,7 @@ public class SegmentMetroTest {
 
     @ParameterizedTest
     @CsvSource({"0, 0, doesntmatter", "-2, 0, doesntmatter", "2, -1, doesntmatter", "-2, -4, doesntmatter",})
-    public void checkDistanceDurationMustBeGreatherThen0(double distance, double duration, String line) {
+    public void checkDistanceDurationMustBeGreatherThen0(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         assertThrows(IllegalArgumentException.class, () -> new SegmentMetro(node1, node2, distance, duration, line));
@@ -20,7 +18,7 @@ public class SegmentMetroTest {
 
     @ParameterizedTest
     @CsvSource({"1.022, 10, sdkfjhsdf", "20, 10, Begge45tger"})
-    public void testGetLineMethode(double distance, double duration, String line) {
+    public void testGetLineMethode(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentMetro t = new SegmentMetro(node1, node2, distance, duration, line);
@@ -29,7 +27,7 @@ public class SegmentMetroTest {
 
     @ParameterizedTest
     @CsvSource({"1.022, 10, doesntmatter", "20, 10, doesntmatter"})
-    public void testGetDistanceMethode(double distance, double duration, String line) {
+    public void testGetDistanceMethode(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentMetro t = new SegmentMetro(node1, node2, distance, duration, line);
@@ -38,7 +36,7 @@ public class SegmentMetroTest {
 
     @ParameterizedTest
     @CsvSource({"1.022, 10, doesntmatter", "2.034, 10, doesntmatter"})
-    public void testGetDurationMethode(double distance, double duration, String line) {
+    public void testGetDurationMethode(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentMetro t = new SegmentMetro(node1, node2, distance, duration, line);
@@ -47,7 +45,7 @@ public class SegmentMetroTest {
 
     @ParameterizedTest
     @CsvSource({"1.32, 10, doesntmatter", "1.034, 10, doesntmatter"})
-    public void testGetStartPointMethode(double distance, double duration, String line) {
+    public void testGetStartPointMethode(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentMetro t = new SegmentMetro(node1, node2, distance, duration, line);
@@ -57,7 +55,7 @@ public class SegmentMetroTest {
 
     @ParameterizedTest
     @CsvSource({"0.92, 10, doesntmatter", "2.034, 10, doesntmatter"})
-    public void testGetEndPointMethode(double distance, double duration, String line) {
+    public void testGetEndPointMethode(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentMetro t = new SegmentMetro(node1, node2, distance, duration, line);
@@ -67,7 +65,7 @@ public class SegmentMetroTest {
 
     @ParameterizedTest
     @CsvSource({"1.022, 10, doesntmatter", "2.034, 10, doesntmatter"})
-    public void testIsEqualsMethode(double distance, double duration, String line) {
+    public void testIsEqualsMethode(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);
         SegmentMetro t1 = new SegmentMetro(node1, node2, distance, duration, line);

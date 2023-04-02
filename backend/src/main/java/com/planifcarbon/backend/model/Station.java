@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public final class Station extends Node {
 
-    private final Map<ScheduleKey, Double> schedules;
+    private final Map<ScheduleKey, Integer> schedules;
 
     /**
      * {@summary Main constructor.}
@@ -19,20 +19,20 @@ public final class Station extends Node {
      */
     public Station(final String name, final double latitude, final double longitude) {
         super(name, latitude, longitude);
-        this.schedules = new HashMap<ScheduleKey, Double>();
+        this.schedules = new HashMap<ScheduleKey, Integer>();
     }
     @Override
     public boolean isInMetro() { return true; }
 
-    public void addSchedule(ScheduleKey key, double duration) {
+    public void addSchedule(ScheduleKey key, int duration) {
         this.schedules.putIfAbsent(key, duration);
     }
 
-    public double getScheduleForKey(ScheduleKey key) {
-        return this.schedules.getOrDefault(key, 0.0);
+    public int getScheduleForKey(ScheduleKey key) {
+        return this.schedules.getOrDefault(key, 0);
     }
 
-    public Map<ScheduleKey, Double> getSchedules() {
+    public Map<ScheduleKey, Integer> getSchedules() {
         return schedules;
     }
 }

@@ -19,7 +19,7 @@ public final class SegmentMetro extends Segment {
      * @param duration travel time from the first point to the second
      * @param line     name of the line to which the segment belongs
      */
-    public SegmentMetro(Node node1, Node node2, double distance, double duration, String line) {
+    public SegmentMetro(Node node1, Node node2, double distance, int duration, String line) {
         super(node1, node2, distance, duration);
         if (line == null || line.isBlank())
             throw new IllegalArgumentException("line must not be null or blank");

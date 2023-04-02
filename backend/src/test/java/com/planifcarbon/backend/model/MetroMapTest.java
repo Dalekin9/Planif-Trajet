@@ -1,9 +1,14 @@
 package com.planifcarbon.backend.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,8 +17,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(
@@ -47,7 +50,7 @@ public class MetroMapTest {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
         map.addNode("B", -1.0, 10.0, Station.class);
-        map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 4.0, "1");
+        map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, "1");
         assertEquals(1, map.getSegments(new NodeForTest("A", 0.0, 0.0)).size());
     }
 
@@ -55,7 +58,7 @@ public class MetroMapTest {
     public void testAddSegmentThrow() {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
-        assertDoesNotThrow(() -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 4.0, "1"));
+        assertDoesNotThrow(() -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, "1"));
     }
 
     @Test
@@ -63,7 +66,7 @@ public class MetroMapTest {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
         map.addNode("B", -1.0, 10.0, Station.class);
-        assertThrows(IllegalArgumentException.class, () -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 4.0, null));
+        assertThrows(IllegalArgumentException.class, () -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, null));
     }
 
     @Test

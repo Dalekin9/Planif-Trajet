@@ -81,7 +81,7 @@ public final class MetroMap {
                             .findFirst().orElse(null);
                     if (segment != null) {
                         terminusStation = (Station) segment.getEndPoint();
-                        double schedule = ((Station) segment.getStartPoint()).getScheduleForKey(scheduleKey) + segment.getDuration();
+                        int schedule = ((Station) segment.getStartPoint()).getScheduleForKey(scheduleKey) + segment.getDuration();
                         terminusStation.addSchedule(scheduleKey, schedule);
                         node = segment.getEndPoint();
                     }
@@ -135,7 +135,6 @@ public final class MetroMap {
     /**
      * {@summary Add a new segment to the graph.}
      * It need both nodes to be in the graph.
-     * It will add the segment to both nodes connections lists.
      *
      * @param segment segment to add
      */
@@ -152,7 +151,6 @@ public final class MetroMap {
     /**
      * {@summary Add a new segment to the graph.}
      * It need both nodes to be in the graph.
-     * It will add the segment to both nodes connections lists.
      *
      * @param startNode the start node
      * @param endNode   the end node
@@ -165,7 +163,6 @@ public final class MetroMap {
     /**
      * {@summary Add a new segment to the graph.}
      * It need both nodes to be in the graph.
-     * It will add the segment to both nodes connections lists.
      *
      * @param startNode the start node
      * @param endNode   the end node
@@ -173,7 +170,7 @@ public final class MetroMap {
      * @param duration  duration between the 2 nodes
      * @param line      name of the line of the metro
      */
-    public void addSegmentMetro(Node startNode, Node endNode, double distance, double duration, String line) {
+    public void addSegmentMetro(Node startNode, Node endNode, double distance, int duration, String line) {
         addSegment(new SegmentMetro(startNode, endNode, distance, duration, line));
     }
 

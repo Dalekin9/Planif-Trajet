@@ -1,18 +1,17 @@
 package com.planifcarbon.backend.parser;
 
-import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
-
 import java.util.Objects;
+import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 
 @ExcludeFromJacocoGeneratedReport
 public class SegmentMetroDTO {
     private final StationDTO start;
     private final StationDTO end;
-    private final double duration;
+    private final int duration;
     private final double distance;
     private final String line;
 
-    public SegmentMetroDTO(StationDTO start, StationDTO end, double duration, double distance, String line) {
+    public SegmentMetroDTO(StationDTO start, StationDTO end, int duration, double distance, String line) {
         this.start = start;
         this.end = end;
         this.duration = duration;
@@ -41,7 +40,7 @@ public class SegmentMetroDTO {
         return start;
     }
 
-    public double getDuration() {
+    public int getDuration() {
         return duration;
     }
 

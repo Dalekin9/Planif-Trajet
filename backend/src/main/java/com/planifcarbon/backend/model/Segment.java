@@ -11,7 +11,7 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
     /** Second point of segment **/
     protected final Node endPoint;
     /** Travel time from the first point to the second **/
-    protected double duration;
+    protected int duration;
     /** Distance between two points in KM **/
     protected double distance;
 
@@ -23,7 +23,7 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
      * @param distance distance between two points
      * @param duration travel time from the first point to the second
      */
-    public Segment(final Node node1, final Node node2, double distance, double duration) throws IllegalArgumentException {
+    public Segment(final Node node1, final Node node2, double distance, int duration) throws IllegalArgumentException {
         if (distance <= 0) {
             throw new IllegalArgumentException("distance must be greater than 0");
         }
@@ -39,7 +39,7 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
 
     public Node getStartPoint() { return startPoint; }
     public Node getEndPoint() { return endPoint; }
-    public double getDuration() { return duration; }
+    public int getDuration() { return duration; }
     public double getDistance() { return distance; }
 
 
