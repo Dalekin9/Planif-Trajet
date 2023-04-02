@@ -29,76 +29,8 @@ public final class MetroMap {
         stations = new HashMap<String, Station>();
     }
 
-    // TODO split in small functions.
-    @PostConstruct
-    public void initializeFields() {
-        String metroFile = "src/main/resources/data/map_data.csv";
-        String scheduleFile = "src/main/resources/data/timetables.csv";
-        try {
-            Parser.parse(metroFile, scheduleFile);
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found when parsing files "+e);
-        } catch (IOException e) {
-            System.out.println("IO error when parsing files "+e);
-        }
-        Set<StationDTO> stations = Parser.getStations(); // To be used for walk segments.
-        Map<String, String> metroLinesTerminus = Parser.getMetroLines();
-        stations.forEach(stationDTO -> {
-            Station station = this.stationDTOtoStation(stationDTO);
-            this.stations.put(station.getName(), station);
-        });
-        Set<SegmentMetroDTO> segmentMetroDTOS = Parser.getSegmentMetro();
-        Map<Parser.VariantKey, List<Integer>> schedules = Parser.getMetroLineSchedules();
-        Map<String, Set<Station>> metroLines = new HashMap<String, Set<Station>>();
-        // Calculates metroLines and graph with metro segments.
-        segmentMetroDTOS.forEach(segment -> {
-            Station start = this.stations.get(segment.getStart().getName());
-            Station end = this.stations.get(segment.getEnd().getName());
-            if (metroLines.containsKey(segment.getLine())) {
-                metroLines.get(segment.getLine()).add(start);
-                metroLines.get(segment.getLine()).add(end);
-            } else {
-                Set<Station> set = new HashSet<Station>();
-                set.add(start);
-                set.add(end);
-                metroLines.put(segment.getLine(), set);
-            }
-            this.addSegmentMetro(start, end, segment.getDistance(), segment.getDuration(), segment.getLine());
-        });
-        // Set metro line schedules.
-        metroLines.forEach((key, value) -> {
-            String id = key.split(" ")[0]; // We don't have variant in timetable file.
-            Parser.VariantKey keySchedule = new Parser.VariantKey(metroLinesTerminus.get(key), id);
-            List<Integer> schedule = schedules.get(keySchedule);
-            this.lines.put(key, new MetroLine(key, value, schedule));
-        });
-        // Calculate time in each station
-        metroLinesTerminus.forEach((key, value) -> {
-            Node node;
-            Segment segment;
-            node = new Station(value, 0, 0);
-            Station terminusStation = this.stations.get(value);
-            MetroLine metroLine = this.lines.get(key);
-            if (terminusStation != null && metroLine != null) {
-                ScheduleKey scheduleKey = new ScheduleKey(terminusStation, metroLine);
-                terminusStation.addSchedule(scheduleKey, 0);
-                do {
-                    segment = this.getSegments(node).stream()
-                            .filter((sgt) -> sgt.getClass().equals(SegmentMetro.class) && ((SegmentMetro) sgt).getLine().equals(key))
-                            .findFirst().orElse(null);
-                    if (segment != null) {
-                        terminusStation = (Station) segment.getEndPoint();
-                        int schedule = ((Station) segment.getStartPoint()).getScheduleForKey(scheduleKey) + segment.getDuration();
-                        terminusStation.addSchedule(scheduleKey, schedule);
-                        node = segment.getEndPoint();
-                    }
-                } while (segment != null);
-            }
-        });
-        // Calculate graph with walk segments
-    }
-
     public Map<String, Station> getStations() { return stations; }
+    public Set<Station> getAllStations() { return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll); }
 
     public Map<String, MetroLine> getLines() { return lines; }
 
@@ -121,6 +53,116 @@ public final class MetroMap {
 
     // Build functions
     // --------------------------------------------------------------------------------------------------------------------
+    /**
+     * {@summary Build this.}
+     * It initializes all the fields.
+     * "@PostConstruct" is used to make sure that this method is called after the constructor.
+     */
+    @PostConstruct
+    public void initializeFields() {
+        // get values from parser
+        String metroFile = "src/main/resources/data/map_data.csv";
+        String scheduleFile = "src/main/resources/data/timetables.csv";
+        try {
+            Parser.parse(metroFile, scheduleFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found when parsing files " + e);
+            return;
+        } catch (IOException e) {
+            System.out.println("IO error when parsing files " + e);
+            return;
+        }
+        Set<StationDTO> stations = Parser.getStations(); // To be used for walk segments.
+        Map<String, String> metroLinesTerminus = Parser.getMetroLines();
+        stations.forEach(stationDTO -> {
+            Station station = this.stationDTOtoStation(stationDTO);
+            this.stations.put(station.getName(), station);
+        });
+        Set<SegmentMetroDTO> segmentMetroDTOS = Parser.getSegmentMetro();
+        Map<Parser.VariantKey, List<Integer>> schedules = Parser.getMetroLineSchedules();
+        Map<String, Set<Station>> metroLines = new HashMap<String, Set<Station>>();
+
+        // use values from parser to build this
+        addSegmentMetroToLinesAndGraph(segmentMetroDTOS, metroLines);
+        setMetroLineSchedules(metroLines, metroLinesTerminus, schedules);
+        diffuseTrainTimeFromTerminus(metroLinesTerminus);
+        // addAllWalkSegments(getAllStations());
+    }
+
+    /**
+     * Calculates metroLines and graph with metro segments.
+     */
+    public void addSegmentMetroToLinesAndGraph(Set<SegmentMetroDTO> segmentMetroDTOS, Map<String, Set<Station>> metroLines) {
+        segmentMetroDTOS.forEach(segment -> {
+            Station start = this.stations.get(segment.getStart().getName());
+            Station end = this.stations.get(segment.getEnd().getName());
+            if (metroLines.containsKey(segment.getLine())) {
+                metroLines.get(segment.getLine()).add(start);
+                metroLines.get(segment.getLine()).add(end);
+            } else {
+                Set<Station> set = new HashSet<Station>();
+                set.add(start);
+                set.add(end);
+                metroLines.put(segment.getLine(), set);
+            }
+            this.addSegmentMetro(start, end, segment.getDistance(), segment.getDuration(), segment.getLine());
+        });
+    }
+
+    /**
+     * Set metro line schedules.
+     */
+    public void setMetroLineSchedules(Map<String, Set<Station>> metroLines, Map<String, String> metroLinesTerminus,
+            Map<Parser.VariantKey, List<Integer>> schedules) {
+        metroLines.forEach((key, value) -> {
+            String id = key.split(" ")[0]; // We don't have variant in timetable file.
+            Parser.VariantKey keySchedule = new Parser.VariantKey(metroLinesTerminus.get(key), id);
+            List<Integer> schedule = schedules.get(keySchedule);
+            this.lines.put(key, new MetroLine(key, value, schedule));
+        });
+    }
+
+    /**
+     * Calculate time for train to get to the station from terminus in each station.
+     */
+    public void diffuseTrainTimeFromTerminus(Map<String, String> metroLinesTerminus) {
+        metroLinesTerminus.forEach((key, value) -> {
+            Node node;
+            Segment segment;
+            node = new Station(value, 0, 0);
+            Station terminusStation = this.stations.get(value);
+            MetroLine metroLine = this.lines.get(key);
+            if (terminusStation != null && metroLine != null) {
+                ScheduleKey scheduleKey = new ScheduleKey(terminusStation, metroLine);
+                terminusStation.addSchedule(scheduleKey, 0);
+                do {
+                    segment = this.getSegments(node).stream()
+                            .filter((sgt) -> sgt.getClass().equals(SegmentMetro.class) && ((SegmentMetro) sgt).getLine().equals(key))
+                            .findFirst().orElse(null);
+                    if (segment != null) {
+                        terminusStation = (Station) segment.getEndPoint();
+                        int schedule = ((Station) segment.getStartPoint()).getScheduleForKey(scheduleKey) + segment.getDuration();
+                        terminusStation.addSchedule(scheduleKey, schedule);
+                        node = segment.getEndPoint();
+                    }
+                } while (segment != null);
+            }
+        });
+    }
+    /**
+     * Calculate graph with walk segments
+     */
+    public void addAllWalkSegments(Set<Station> stations) {
+        stations.forEach(station -> {
+            Station start = this.stations.get(station.getName());
+            stations.forEach(station2 -> {
+                Station end = this.stations.get(station2.getName());
+                if (start != end) {
+                    this.addSegmentWalk(start, end, start.distanceTo(end));
+                }
+            });
+        });
+    }
 
     /**
      * {@summary Add a new node to the graph.}
