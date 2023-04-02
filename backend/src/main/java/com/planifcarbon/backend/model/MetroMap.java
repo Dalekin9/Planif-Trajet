@@ -49,6 +49,10 @@ public final class MetroMap {
      * @return the list of segments
      */
     public Set<Segment> getSegments(Node node) { return graph.get(node); }
+    public Set<Segment> getSegmentsMetro(Node node) {
+        return graph.get(node).stream().filter(segment -> segment instanceof SegmentMetro).collect(HashSet::new, HashSet::add,
+                HashSet::addAll);
+    }
 
 
     // Build functions
@@ -86,13 +90,13 @@ public final class MetroMap {
         addSegmentMetroToLinesAndGraph(segmentMetroDTOS, metroLines);
         setMetroLineSchedules(metroLines, metroLinesTerminus, schedules);
         diffuseTrainTimeFromTerminus(metroLinesTerminus);
-        // addAllWalkSegments(getAllStations());
+        addAllWalkSegments(getAllStations());
     }
 
     /**
      * Calculates metroLines and graph with metro segments.
      */
-    public void addSegmentMetroToLinesAndGraph(Set<SegmentMetroDTO> segmentMetroDTOS, Map<String, Set<Station>> metroLines) {
+    private void addSegmentMetroToLinesAndGraph(Set<SegmentMetroDTO> segmentMetroDTOS, Map<String, Set<Station>> metroLines) {
         segmentMetroDTOS.forEach(segment -> {
             Station start = this.stations.get(segment.getStart().getName());
             Station end = this.stations.get(segment.getEnd().getName());
@@ -112,7 +116,7 @@ public final class MetroMap {
     /**
      * Set metro line schedules.
      */
-    public void setMetroLineSchedules(Map<String, Set<Station>> metroLines, Map<String, String> metroLinesTerminus,
+    private void setMetroLineSchedules(Map<String, Set<Station>> metroLines, Map<String, String> metroLinesTerminus,
             Map<Parser.VariantKey, List<Integer>> schedules) {
         metroLines.forEach((key, value) -> {
             String id = key.split(" ")[0]; // We don't have variant in timetable file.
@@ -125,7 +129,7 @@ public final class MetroMap {
     /**
      * Calculate time for train to get to the station from terminus in each station.
      */
-    public void diffuseTrainTimeFromTerminus(Map<String, String> metroLinesTerminus) {
+    private void diffuseTrainTimeFromTerminus(Map<String, String> metroLinesTerminus) {
         metroLinesTerminus.forEach((key, value) -> {
             Node node;
             Segment segment;
@@ -152,7 +156,7 @@ public final class MetroMap {
     /**
      * Calculate graph with walk segments
      */
-    public void addAllWalkSegments(Set<Station> stations) {
+    private void addAllWalkSegments(Set<Station> stations) {
         stations.forEach(station -> {
             Station start = this.stations.get(station.getName());
             stations.forEach(station2 -> {

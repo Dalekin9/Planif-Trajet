@@ -19,11 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.MOCK,
-        classes = MetroMap.class)
-@TestPropertySource(
-        locations = "classpath:application-tests.properties")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = MetroMap.class)
+@TestPropertySource(locations = "classpath:application-tests.properties")
 public class MetroMapTest {
 
     static Stream<Arguments> generateDataNode() {
@@ -66,7 +63,8 @@ public class MetroMapTest {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
         map.addNode("B", -1.0, 10.0, Station.class);
-        assertThrows(IllegalArgumentException.class, () -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, null));
     }
 
     @Test
@@ -78,8 +76,8 @@ public class MetroMapTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"Argentine, 4"})
-    public void testMetroMapDataCreation(String stationName, int nbSegments) {
+    @CsvSource({"Argentine, 4, 311"})
+    public void testMetroMapDataCreation(String stationName, int nbSegmentsMetro, int nbSegments) {
         MetroMap map = new MetroMap();
         assertDoesNotThrow(map::initializeFields);
         assertNotNull(map.getLines());
@@ -103,6 +101,7 @@ public class MetroMapTest {
             assertFalse(line.getSchedules().isEmpty());
             metroLines.add(line);
         });
+        assertEquals(nbSegmentsMetro, map.getSegmentsMetro(new NodeForTest(stationName, 0.0, 0.0)).size());
         assertEquals(nbSegments, map.getSegments(new NodeForTest(stationName, 0.0, 0.0)).size());
     }
 
