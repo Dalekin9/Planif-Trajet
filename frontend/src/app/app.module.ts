@@ -21,6 +21,8 @@ import {MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
 import {MatButtonModule} from "@angular/material/button";
 import { InfoComponent } from './info/info.component';
+import {GoogleMapsModule} from "@angular/google-maps";
+import { WiseMapComponent } from './shared/wise-map/wise-map.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,8 @@ import { InfoComponent } from './info/info.component';
     NavbarComponent,
     HomeComponent,
     GetmesomewhereComponent,
-    InfoComponent
+    InfoComponent,
+    WiseMapComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +51,8 @@ import { InfoComponent } from './info/info.component';
     NgxMatNativeDateModule,
     MatSelectModule,
     MatOptionModule,
-    MatButtonModule
+    MatButtonModule,
+    GoogleMapsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

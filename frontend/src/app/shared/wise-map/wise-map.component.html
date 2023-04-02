@@ -1,0 +1,10 @@
+<google-map height="400px"
+            width="750px"
+            [center]="center"
+            [zoom]="zoom"
+            (mapClick)="addMarker($event)">
+  <map-marker *ngFor="let markerPosition of markerPositions"
+              [position]="markerPosition"
+              [options]="markerOptions"></map-marker>
+  <map-info-window>Info Window content</map-info-window>
+</google-map>
