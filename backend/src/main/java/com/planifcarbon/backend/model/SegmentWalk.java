@@ -16,6 +16,7 @@ public final class SegmentWalk extends Segment {
 
     /** Average walking speed (km/h) **/
     private static final double SPEED = 4.4;
+    private static final int HTOMS = 3600000; // 60 * 60 * 1000
 
     /**
      * {@summay Main constructor.}
@@ -26,14 +27,7 @@ public final class SegmentWalk extends Segment {
      * Duration will be calculated based on distance and the average walking speed.
      */
     public SegmentWalk(Node node1, Node node2, double distance) {
-        super(node1, node2, distance, distance * SPEED);
-    }
-
-    /**
-     * {@return A string representation of SegmentWalk.}
-     */
-    public String toString() {
-        return String.format("walkSegm %d: %ds, %dm\n", id, duration, distance);
+        super(node1, node2, distance, (int)(distance * HTOMS / SPEED));
     }
 
     /**
@@ -41,4 +35,16 @@ public final class SegmentWalk extends Segment {
      * {@return SPEED constant wich represent sverage walking speed (km/h).}
      */
     public static double getSpeed() {  return SPEED;  }
+
+    // Not needed.
+    // @Override
+    // public boolean equals(Object o) {
+    //     return super.equals(o);
+    // }
+
+    // Not needed.
+    // @Override
+    // public String toString() {
+    //     return super.toString();
+    // }
 }

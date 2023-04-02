@@ -1,5 +1,7 @@
 package com.planifcarbon.backend.model;
 
+import java.util.Objects;
+
 /**
  * {@summary Represents a point on map.}
  */
@@ -7,6 +9,7 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
     private final String name;
     private final Coordinates coordinates;
     // private int type; // used by Dijkstra ?
+    // TODO store current used name for created node to avoid duplicate name
 
     /**
      * {@summay Main constructor.}
@@ -24,23 +27,26 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
 
     public String getName() { return name; }
     public Coordinates getCoordinates() { return coordinates; }
+    public double distanceTo(Node node) { return coordinates.distanceTo(node.coordinates); }
 
     /**
      * {@summary Test if this is equals to o.}
-     * Each node is unique, so it is equals to itself only.
+     * Each Node have a unique name, so two nodes are equals if they have the same name.
      * 
      * @param o object to test equals with
      */
     @Override
     public boolean equals(Object o) {
-        return this == o;
-        // // @formatter:off
-        // return o != null
-        //         && o instanceof Node
-        //         && ((Node) o).name.equals(name)
-        //         && ((Node) o).coordinates.equals(coordinates);
-        // // @formatter:on
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        Node node = (Node) o;
+        return Objects.equals(name, node.name);
     }
+
+    @Override
+    public int hashCode() { return Objects.hash(name); }
 
     /**
      * {@return A simple string representation of this.}

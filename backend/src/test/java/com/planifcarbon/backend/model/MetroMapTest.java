@@ -1,14 +1,28 @@
 package com.planifcarbon.backend.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
-public class MetroMapTest extends Assertions {
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = MetroMap.class)
+@TestPropertySource(locations = "classpath:application-tests.properties")
+public class MetroMapTest {
+
     static Stream<Arguments> generateDataNode() {
         return Stream.of(Arguments.of("A", 1.0, 2.0, Station.class), Arguments.of("Maison", 1.0, 2.0, PersonalizedNode.class));
     }
@@ -19,7 +33,6 @@ public class MetroMapTest extends Assertions {
         MetroMap map = new MetroMap();
         map.addNode(name, la, lo, cl);
         assertEquals(1, map.getNodes().size());
-        assertTrue(map.getNode(name) != null);
     }
 
     @ParameterizedTest
@@ -34,15 +47,15 @@ public class MetroMapTest extends Assertions {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
         map.addNode("B", -1.0, 10.0, Station.class);
-        map.addSegmentMetro("A", "B", 10.0, 4.0, "1");
-        assertEquals(1, map.getSegments("A").size());
+        map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, "1");
+        assertEquals(1, map.getSegments(new NodeForTest("A", 0.0, 0.0)).size());
     }
 
     @Test
     public void testAddSegmentThrow() {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
-        assertThrows(Exception.class, () -> map.addSegmentMetro("A", "B", 10.0, 4.0, "1"));
+        assertDoesNotThrow(() -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, "1"));
     }
 
     @Test
@@ -50,7 +63,8 @@ public class MetroMapTest extends Assertions {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
         map.addNode("B", -1.0, 10.0, Station.class);
-        assertThrows(IllegalArgumentException.class, () -> map.addSegmentMetro("A", "B", 10.0, 4.0, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, null));
     }
 
     @Test
@@ -58,9 +72,48 @@ public class MetroMapTest extends Assertions {
         MetroMap map = new MetroMap();
         map.addNode("A", 1.0, 2.0, Station.class);
         map.addNode("B", -1.0, 10.0, Station.class);
-        map.addSegmentWalk("A", "B", 10.0);
+        map.addSegmentWalk(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0);
     }
 
-    // TODO test createLine
+    @ParameterizedTest
+    @CsvSource({"Argentine, 4, 311"})
+    public void testMetroMapDataCreation(String stationName, int nbSegmentsMetro, int nbSegments) {
+        MetroMap map = new MetroMap();
+        assertDoesNotThrow(map::initializeFields);
+        assertNotNull(map.getLines());
+        assertNotNull(map.getStations());
+        assertNotNull(map.getGraph());
+        assertNotEquals(0, map.getLines().size());
+        assertNotEquals(0, map.getStations().size());
+        assertNotEquals(0, map.getNodes().size());
+        assertEquals(93, map.getLines().size());
+        assertEquals(308, map.getStations().size());
+        assertEquals(308, map.getNodes().size());
+        List<Station> stations = new ArrayList<>();
+        map.getStations().values().forEach(station -> {
+            assertFalse(stations.contains(station));
+            stations.add(station);
+        });
+        List<MetroLine> metroLines = new ArrayList<>();
+        map.getLines().values().forEach(line -> {
+            assertFalse(metroLines.contains(line));
+            assertNotNull(line.getSchedules());
+            assertFalse(line.getSchedules().isEmpty());
+            metroLines.add(line);
+        });
+        assertEquals(nbSegmentsMetro, map.getSegmentsMetro(new NodeForTest(stationName, 0.0, 0.0)).size());
+        assertEquals(nbSegments, map.getSegments(new NodeForTest(stationName, 0.0, 0.0)).size());
+    }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"Argentine"})
+    public void testGetStationByName(String stationName) {
+        MetroMap map = new MetroMap();
+        assertDoesNotThrow(map::initializeFields);
+        Station station = map.getStationByName(stationName);
+        assertNotNull(map.getStationByName(stationName));
+        assertNotEquals(0, station.getSchedules().size());
+        assertEquals(4, station.getSchedules().size());
+        System.out.println(station.getSchedules());
+    }
 }
