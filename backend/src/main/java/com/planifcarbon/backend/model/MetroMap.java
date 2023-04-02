@@ -1,19 +1,20 @@
 package com.planifcarbon.backend.model;
 
+import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.springframework.stereotype.Component;
 import com.planifcarbon.backend.parser.Parser;
 import com.planifcarbon.backend.parser.SegmentMetroDTO;
 import com.planifcarbon.backend.parser.StationDTO;
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Component;
-
-import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 @Component
 public final class MetroMap {
-    // I think graph needs to have all nodes & segments not only walk one.
-    // Then to "remove" a segment for Dijkstra, we just give it Integer.MAX_VALUE as weight.
     private final Map<Node, Set<Segment>> graph;
     private final Map<String, MetroLine> lines;
     private final Map<String, Station> stations;
@@ -22,11 +23,12 @@ public final class MetroMap {
      * {@summary Main constructor.}
      */
     public MetroMap() {
-        graph = new HashMap<>();
-        lines = new HashMap<>();
-        stations = new HashMap<>();
+        graph = new HashMap<Node, Set<Segment>>();
+        lines = new HashMap<String, MetroLine>();
+        stations = new HashMap<String, Station>();
     }
 
+    // TODO split in small functions.
     @PostConstruct
     public void initializeFields() throws FileNotFoundException {
         String metroFile = "src/main/resources/data/map_data.csv";
@@ -40,7 +42,7 @@ public final class MetroMap {
         });
         Set<SegmentMetroDTO> segmentMetroDTOS = Parser.getSegmentMetro();
         Map<Parser.VariantKey, List<Integer>> schedules = Parser.getMetroLineSchedules();
-        Map<String, Set<Station>> metroLines = new HashMap<>();
+        Map<String, Set<Station>> metroLines = new HashMap<String, Set<Station>>();
         // Calculates metroLines and graph with metro segments.
         segmentMetroDTOS.forEach(segment -> {
             Station start = this.stations.get(segment.getStart().getName());
@@ -49,7 +51,7 @@ public final class MetroMap {
                 metroLines.get(segment.getLine()).add(start);
                 metroLines.get(segment.getLine()).add(end);
             } else {
-                Set<Station> set = new HashSet<>();
+                Set<Station> set = new HashSet<Station>();
                 set.add(start);
                 set.add(end);
                 metroLines.put(segment.getLine(), set);
@@ -74,13 +76,9 @@ public final class MetroMap {
                 ScheduleKey scheduleKey = new ScheduleKey(terminusStation, metroLine);
                 terminusStation.addSchedule(scheduleKey, 0);
                 do {
-                    segment = this.getSegments(node)
-                            .stream()
-                            .filter((sgt) -> sgt.getClass().equals(SegmentMetro.class) &&
-                                    ((SegmentMetro) sgt).getLine().equals(key)
-                            )
-                            .findFirst()
-                            .orElse(null);
+                    segment = this.getSegments(node).stream()
+                            .filter((sgt) -> sgt.getClass().equals(SegmentMetro.class) && ((SegmentMetro) sgt).getLine().equals(key))
+                            .findFirst().orElse(null);
                     if (segment != null) {
                         terminusStation = (Station) segment.getEndPoint();
                         double schedule = ((Station) segment.getStartPoint()).getScheduleForKey(scheduleKey) + segment.getDuration();
@@ -93,37 +91,25 @@ public final class MetroMap {
         // Calculate graph with walk segments
     }
 
-    public Map<String, Station> getStations() {
-        return stations;
-    }
+    public Map<String, Station> getStations() { return stations; }
 
-    public Map<String,MetroLine> getLines() {
-        return lines;
-    }
+    public Map<String, MetroLine> getLines() { return lines; }
 
-    public Map<Node, Set<Segment>> getGraph() {
-        return graph;
-    }
+    public Map<Node, Set<Segment>> getGraph() { return graph; }
 
-    public Station getStationByName(String stationName) {
-        return this.stations.getOrDefault(stationName, null);
-    }
+    public Station getStationByName(String stationName) { return this.stations.getOrDefault(stationName, null); }
 
     /**
      * {@summary Return the list of nodes.}
      */
-    public Set<Node> getNodes() {
-        return graph.keySet();
-    }
+    public Set<Node> getNodes() { return graph.keySet(); }
 
     /**
      * {@summary Return the list of segments.}
      *
      * @return the list of segments
      */
-    public Set<Segment> getSegments(Node node) {
-        return graph.get(node);
-    }
+    public Set<Segment> getSegments(Node node) { return graph.get(node); }
 
 
     // Build functions
@@ -137,9 +123,8 @@ public final class MetroMap {
             throw new IllegalArgumentException("nodeClass must not be null");
         }
         try {
-            Node node = nodeClass.getDeclaredConstructor(String.class, double.class, double.class).newInstance(name,
-                    latitude, longitude);
-            graph.put(node, new HashSet<>());
+            Node node = nodeClass.getDeclaredConstructor(String.class, double.class, double.class).newInstance(name, latitude, longitude);
+            graph.put(node, new HashSet<Segment>());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
             // System.out.println("Error while creating a new node " + e);
@@ -158,7 +143,7 @@ public final class MetroMap {
         if (graph.containsKey(segment.getStartPoint())) {
             graph.get(segment.getStartPoint()).add(segment);
         } else {
-            Set<Segment> set = new HashSet<>();
+            Set<Segment> set = new HashSet<Segment>();
             set.add(segment);
             graph.put(segment.getStartPoint(), set);
         }
@@ -203,7 +188,5 @@ public final class MetroMap {
 
     // Adapters functions
     // -----------------------------------------------------------------------------------------------------------------
-    Station stationDTOtoStation(StationDTO dto) {
-        return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude());
-    }
+    Station stationDTOtoStation(StationDTO dto) { return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude()); }
 }

@@ -9,6 +9,7 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
     private final String name;
     private final Coordinates coordinates;
     // private int type; // used by Dijkstra ?
+    // TODO store current used name for created node to avoid duplicate name
 
     /**
      * {@summay Main constructor.}
@@ -29,7 +30,7 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
 
     /**
      * {@summary Test if this is equals to o.}
-     * Each node is unique, so it is equals to itself only.
+     * Each Node have a unique name, so two nodes are equals if they have the same name.
      * 
      * @param o object to test equals with
      */

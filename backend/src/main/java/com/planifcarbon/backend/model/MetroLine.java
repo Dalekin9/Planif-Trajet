@@ -1,6 +1,8 @@
 package com.planifcarbon.backend.model;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public final class MetroLine {
     /** List of metro stations **/

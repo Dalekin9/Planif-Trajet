@@ -19,7 +19,7 @@ public final class Station extends Node {
      */
     public Station(final String name, final double latitude, final double longitude) {
         super(name, latitude, longitude);
-        this.schedules = new HashMap<>();
+        this.schedules = new HashMap<ScheduleKey, Double>();
     }
     @Override
     public boolean isInMetro() { return true; }

@@ -35,13 +35,15 @@ public final class SegmentWalk extends Segment {
      */
     public static double getSpeed() {  return SPEED;  }
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
+    // Not needed.
+    // @Override
+    // public boolean equals(Object o) {
+    //     return super.equals(o);
+    // }
+    
+    // Not needed.
+    // @Override
+    // public String toString() {
+    //     return super.toString();
+    // }
 }
