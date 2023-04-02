@@ -36,6 +36,8 @@ test-back:
   only:
     - develop
     - master
+  tags:
+    - cicd
 
 build-front:
   stage: build-front
@@ -77,4 +79,28 @@ build-back:
       - ./backend/target/*.jar
   only:
     - master
+  tags:
+    - cicd
 
+create-release:
+  stage: release
+  image: curlimages/curl
+  script:
+    - |
+        curl --request POST "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases" \
+          --header "Content-Type: application/json" \
+          --header "PRIVATE-TOKEN: ${GITLAB_ACCESS_TOKEN}" \
+          --data "{
+          \"tag_name\": \"${CI_COMMIT_TAG}\",
+          \"name\": \"${RELEASE_NAME}\",
+          \"ref\": \"${CI_COMMIT_TAG}\",
+          \"description\":
+            \"## Release: ${CI_COMMIT_TAG}\"
+        }"
+  variables:
+    GITLAB_ACCESS_TOKEN: "XPy1QcXqXC7sKPBJn5Ye"
+    RELEASE_NAME: "New release"
+  only:
+    - tags
+  tags:
+    - cicd
