@@ -1,4 +1,4 @@
-package com.planifcarbon.backend.parser;
+package com.planifcarbon.backend.dtos;
 
 import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 
@@ -10,7 +10,7 @@ public class StationDTO {
     private final double latitude;
     private final double longitude;
 
-    StationDTO(String name, double latitude, double longitude) {
+    public StationDTO(String name, double latitude, double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;

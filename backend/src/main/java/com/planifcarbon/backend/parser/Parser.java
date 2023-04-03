@@ -13,12 +13,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
-import org.springframework.stereotype.Component;
+
+import com.planifcarbon.backend.dtos.SegmentMetroDTO;
+import com.planifcarbon.backend.dtos.StationDTO;
+import org.springframework.util.ResourceUtils;
 
 /**
  * {@summary Its static methods are used to parse CSV files}
  */
-@Component
 public class Parser {
 
     private static final Set<StationDTO> stations = new HashSet<>();
@@ -63,8 +65,8 @@ public class Parser {
 
     static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
         // try with safe close.
-        try(InputStream ins = new FileInputStream(filePath);
-        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8);){
+        try(InputStream ins = new FileInputStream(ResourceUtils.getFile(filePath));
+            Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)){
             String[] currentLine;
             String[] coords;
             StationDTO start;
@@ -90,7 +92,7 @@ public class Parser {
 
     static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
         // try with safe close.
-        try (InputStream ins = new FileInputStream(scheduleFile);
+        try (InputStream ins = new FileInputStream(ResourceUtils.getFile(scheduleFile));
         Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             VariantKey variantKey;

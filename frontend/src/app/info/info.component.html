@@ -1,44 +1,45 @@
-<div class="form-section">
-  <div class="images">
-    <img src="assets/images/metro.png" alt="metro"/>
-    <img src="assets/images/tram.png" alt="tram"/>
-    <img src="assets/images/rer.png" alt="rer"/>
+<div class="metro-header-section">
+  <div class="form-section">
+    <div class="images">
+      <img src="assets/images/metro.png" alt="metro"/>
+      <img src="assets/images/tram.png" alt="tram"/>
+      <img src="assets/images/rer.png" alt="rer"/>
+    </div>
+    <form class="form" [formGroup]="metroForm" (ngSubmit)="onSubmit()">
+      <div class="field-wrapper">
+        <mat-form-field appearance="fill">
+          <mat-label>Metro Line</mat-label>
+          <mat-select [formControl]="line" required>
+            <mat-option *ngFor="let metro of metros" [value]="metro.name">{{metro.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form-actions">
+        <button mat-flat-button color="primary" type="submit">CHECK</button>
+      </div>
+    </form>
   </div>
-  <form class="form" [formGroup]="metroForm" (ngSubmit)="onSubmit()">
-    <div class="field-wrapper">
-      <mat-form-field appearance="fill">
-        <mat-label>From</mat-label>
-        <input matInput [formControl]="from" required>
-      </mat-form-field>
+  <div class="metro-schedule-section" *ngIf="!!metro">
+    <img src="assets/images/metro/14.png" alt="Metro line"/>
+    <div class="metro-schedule-info">
+      <div class="info-row">
+        <h4 class="title">Stations</h4>
+        <h4 class="title">First metro</h4>
+        <h4 class="title">Last metro</h4>
+      </div>
+      <div class="info-row" *ngFor="let schedule of metro.schedules">
+        <h4 class="title">{{schedule.terminus}}</h4>
+        <h4 class="title">{{numberToSchedule(schedule.schedules[0])}}</h4>
+        <h4 class="title">{{numberToSchedule(schedule.schedules[schedule.schedules.length - 1])}}</h4>
+      </div>
     </div>
-    <div class="form-actions">
-      <button mat-flat-button color="primary" type="submit">CHECK</button>
-    </div>
-  </form>
+  </div>
 </div>
-<div class="metro-stations-section">
-  <h4 class="end-station">Metro 14 - Olympiades</h4>
-  <ul class="stations">
-    <li *ngFor="let station of stationsForTest">{{station}}</li>
-  </ul>
-  <h4 class="end-station">Metro 14 - Mairie de Saint-Ouen</h4>
-</div>
-<div class="metro-schedule-section">
-  <img src="assets/images/metro/14.png" alt="Metro line"/>
-  <div class="metro-schedule-info">
-    <div class="info-column">
-      <h4 class="title">Olympides</h4>
-      <h4 class="title">Mairie de St Ouen</h4>
-    </div>
-    <div class="info-column">
-      <h4 class="title">First metro</h4>
-      <h4>05:00 AM</h4>
-      <h4>22:00 AM</h4>
-    </div>
-    <div class="info-column">
-      <h4 class="title">Last metro</h4>
-      <h4>05:00 AM</h4>
-      <h4>22:00 AM</h4>
-    </div>
+<div *ngIf="!!metro" class="metro-info">
+  <div class="metro-stations-section">
+    <h1>Stations</h1>
+    <ul class="stations">
+      <li *ngFor="let station of metro.stations">{{station.name}}</li>
+    </ul>
   </div>
 </div>

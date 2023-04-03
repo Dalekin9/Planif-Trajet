@@ -1,4 +1,4 @@
-package com.planifcarbon.backend.parser;
+package com.planifcarbon.backend.dtos;
 
 import java.util.Objects;
 import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
