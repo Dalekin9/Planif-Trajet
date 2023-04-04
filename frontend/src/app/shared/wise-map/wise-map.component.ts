@@ -1,5 +1,9 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {MapInfoWindow, MapMarker} from '@angular/google-maps';
+import Animation = google.maps.Animation;
+import {RequestsService} from "../../requests.service";
+import {takeUntil} from "rxjs/operators";
+import {Subject} from "rxjs";
 
 
 @Component({
@@ -7,15 +11,24 @@ import {MapInfoWindow, MapMarker} from '@angular/google-maps';
   templateUrl: './wise-map.component.html',
   styleUrls: ['./wise-map.component.scss']
 })
-export class WiseMapComponent  {
-  @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
+export class WiseMapComponent implements OnInit {
+  private unsubscribe: Subject<void> = new Subject();
+  @ViewChild(MapInfoWindow) public infoWindow: MapInfoWindow;
+  public center: google.maps.LatLngLiteral = {lat: 48.8566, lng: 2.3522};
+  public zoom : number = 11;
+  public markerOptions: google.maps.MarkerOptions = {draggable: true, animation: Animation.DROP, title:'test'};
+  public selectedMarker: MapMarker = null;
 
+  constructor(
+    private service: RequestsService,
+  ) { }
 
-  constructor() { }
+  ngOnInit(): void {
+    this.service.getBestStations()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe()
+  }
 
-  center: google.maps.LatLngLiteral = {lat: 48.8566, lng: 2.3522};
-  zoom = 11;
-  markerOptions: google.maps.MarkerOptions = {draggable: false};
   markerPositions: google.maps.LatLngLiteral[] = [
     {lat: 48.85955653272677, lng: 2.346411849769497},       //Chatelet
     {lat: 48.84371878914501, lng: 2.3639145948709084},      //Gare d'Austerlitz
@@ -45,12 +58,16 @@ export class WiseMapComponent  {
     {lat: 48.84014763512746, lng: 2.3791909087742877}       //Bercy
   ];
 
-  addMarker(event: google.maps.MapMouseEvent) {
+  public addMarker(event: google.maps.MapMouseEvent): void {
     this.markerPositions.push(event.latLng.toJSON());
   }
 
-  openInfoWindow(marker: MapMarker) {
+  public openInfoWindow(marker: MapMarker): void {
+    this.selectedMarker = marker;
     this.infoWindow.open(marker);
   }
 
+  public deleteMarker(marker: MapMarker): void {
+    marker.marker.setMap(null);
+  }
 }

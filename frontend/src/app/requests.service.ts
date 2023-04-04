@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IDummyData} from "./types/dtos";
+import {IDummyData, IMetroStationCorrespondence} from "./types/dtos";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,10 @@ export class RequestsService {
 
   public getMetroInfo(metroId: string): Observable<IDummyData> {
     return this.httpClient.get(this.basicUrl + `/metro/${metroId}`, {observe: 'body'});
+  }
+
+  public getBestStations(): Observable<IMetroStationCorrespondence> {
+    return this.httpClient.get<IMetroStationCorrespondence>(this.basicUrl + `/metro/best-stations`, {observe: 'body'});
   }
 
   public getBestTimePath(start: string, end: string): Observable<IDummyData> {

@@ -3,8 +3,10 @@
             [center]="center"
             [zoom]="zoom"
             (mapClick)="addMarker($event)">
-  <map-marker *ngFor="let markerPosition of markerPositions"
+  <map-marker #marker="mapMarker" *ngFor="let markerPosition of markerPositions"
               [position]="markerPosition"
+              (mapRightclick)="deleteMarker(marker)"
+              (mapClick)="openInfoWindow(marker)"
               [options]="markerOptions"></map-marker>
-  <map-info-window>Info Window content</map-info-window>
+  <map-info-window>{{selectedMarker?.getTitle()}}</map-info-window>
 </google-map>
