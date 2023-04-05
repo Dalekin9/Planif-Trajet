@@ -1,6 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WiseMapComponent } from './wise-map.component';
-import { MapInfoWindow, MapMarker } from '@angular/google-maps';
+import {GoogleMapsModule, MapInfoWindow, MapMarker} from '@angular/google-maps';
+import {BrowserModule} from "@angular/platform-browser";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {HttpClientModule} from "@angular/common/http";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {MatDividerModule} from "@angular/material/divider";
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatNativeDateModule,
+  NgxMatTimepickerModule
+} from "@angular-material-components/datetime-picker";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatSelectModule} from "@angular/material/select";
+import {MatOptionModule} from "@angular/material/core";
+import {MatButtonModule} from "@angular/material/button";
 
 describe('WiseMapComponent', () => {
   let component: WiseMapComponent;
@@ -8,6 +25,27 @@ describe('WiseMapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatDividerModule,
+        MatTabsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        MatDatepickerModule,
+        NgxMatNativeDateModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatButtonModule,
+        GoogleMapsModule
+      ],
       declarations: [ WiseMapComponent ],
       providers: [ MapInfoWindow ]
     })
