@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {BrowserModule, By} from '@angular/platform-browser';
-import { NavbarComponent } from './navbar.component';
+import { WiseMapComponent } from './wise-map.component';
+import {GoogleMapsModule, MapInfoWindow, MapMarker} from '@angular/google-maps';
+import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -17,11 +18,10 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSelectModule} from "@angular/material/select";
 import {MatOptionModule} from "@angular/material/core";
 import {MatButtonModule} from "@angular/material/button";
-import {GoogleMapsModule} from "@angular/google-maps";
 
-describe('NavbarComponent', () => {
-  let component: NavbarComponent;
-  let fixture: ComponentFixture<NavbarComponent>;
+describe('WiseMapComponent', () => {
+  let component: WiseMapComponent;
+  let fixture: ComponentFixture<WiseMapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -46,13 +46,14 @@ describe('NavbarComponent', () => {
         MatButtonModule,
         GoogleMapsModule
       ],
-      declarations: [ NavbarComponent ]
+      declarations: [ WiseMapComponent ],
+      providers: [ MapInfoWindow ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NavbarComponent);
+    fixture = TestBed.createComponent(WiseMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -61,15 +62,23 @@ describe('NavbarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have a title', () => {
-    const title = fixture.debugElement.query(By.css('.navbar > h2')).nativeElement;
-    expect(title.textContent.trim()).toBe('STREETWISE');
+  it('should add a marker when addMarker is called', () => {
+    const event = {
+      latLng: {
+        toJSON: () => ({ lat: 48.8566, lng: 2.3522 })
+      }
+    } as google.maps.MapMouseEvent;
+    const lengthBefore = component.markerPositions.length;
+    component.addMarker(event);
+    expect(component.markerPositions.length).toBe(lengthBefore + 1);
   });
 
-  it('should have links to About and Contact', () => {
-    const links = fixture.debugElement.queryAll(By.css('.navbar-actions > h4'));
-    expect(links.length).toBe(2);
-    expect(links[0].nativeElement.textContent.trim()).toBe('About');
-    expect(links[1].nativeElement.textContent.trim()).toBe('Contact');
+  it('should have a default center position', () => {
+    expect(component.center).toEqual({lat: 48.8566, lng: 2.3522});
   });
+
+  it('should have a default zoom level', () => {
+    expect(component.zoom).toEqual(11);
+  });
+
 });

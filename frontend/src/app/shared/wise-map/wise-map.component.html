@@ -1,0 +1,12 @@
+<google-map height="400px"
+            width="750px"
+            [center]="center"
+            [zoom]="zoom"
+            (mapClick)="addMarker($event)">
+  <map-marker #marker="mapMarker" *ngFor="let markerPosition of markerPositions"
+              [position]="markerPosition"
+              (mapRightclick)="deleteMarker(marker)"
+              (mapClick)="openInfoWindow(marker)"
+              [options]="markerOptions"></map-marker>
+  <map-info-window>{{selectedMarker?.getTitle()}}</map-info-window>
+</google-map>
