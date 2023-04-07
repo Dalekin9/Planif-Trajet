@@ -62,9 +62,9 @@ describe('InfoComponent', () => {
 
   it('should initialize the form with a "from" field', () => {
     expect(component.metroForm).toBeDefined();
-    expect(component.from).toBeDefined();
-    expect(component.from instanceof FormControl).toBeTrue();
-    expect(component.from.errors?.required).toBeTrue();
+    expect(component.line).toBeDefined();
+    expect(component.line instanceof FormControl).toBeTrue();
+    expect(component.line.errors?.required).toBeTrue();
   });
 
   describe('onSubmit', () => {
@@ -77,7 +77,7 @@ describe('InfoComponent', () => {
     let control: FormControl;
 
     beforeEach(() => {
-      control = component.from;
+      control = component.line;
     });
 
     it('should be invalid when empty', () => {
@@ -87,7 +87,7 @@ describe('InfoComponent', () => {
     });
 
     it('should be valid when a station is selected', () => {
-      control.setValue(component.stationsForTest[0]);
+      control.setValue("station");
       expect(control.valid).toBeTrue();
       expect(control.errors?.required).toBeFalsy();
     });
