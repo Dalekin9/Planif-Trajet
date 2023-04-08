@@ -71,6 +71,7 @@ describe('GetmesomewhereComponent', () => {
     expect(component.metroForm.controls.to).toBeDefined();
     expect(component.metroForm.controls.timeToLeave).toBeDefined();
     expect(component.metroForm.controls.options).toBeDefined();
+    expect(component.metroForm.controls.transportation).toBeDefined();
   });
 
   it('should set "from" field as required', () => {
@@ -101,7 +102,15 @@ describe('GetmesomewhereComponent', () => {
     const control = component.metroForm.controls.options as FormControl;
     control.setValue(null);
     expect(control.valid).toBeFalsy();
-    control.setValue(['fastest']);
+    control.setValue(['best time path']);
+    expect(control.valid).toBeTruthy();
+  });
+
+  it('should set "transportation" field as required', () => {
+    const control = component.metroForm.controls.transportation as FormControl;
+    control.setValue(null);
+    expect(control.valid).toBeFalsy();
+    control.setValue(['metro']);
     expect(control.valid).toBeTruthy();
   });
 

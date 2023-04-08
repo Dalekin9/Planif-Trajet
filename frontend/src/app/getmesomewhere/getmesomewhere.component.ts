@@ -22,7 +22,8 @@ export class GetmesomewhereComponent implements OnInit {
         from: new FormControl('', [Validators.required]),
         to: new FormControl('', [Validators.required]),
         timeToLeave: new FormControl(null, [Validators.required]),
-        options: new FormControl(null, [Validators.required])
+        options: new FormControl(null, [Validators.required]),
+        transportation: new FormControl(null, [Validators.required])
       }
     );
   }
@@ -41,6 +42,10 @@ export class GetmesomewhereComponent implements OnInit {
 
   public get options(): FormControl {
     return this.metroForm.controls?.options as FormControl;
+  }
+
+  public get transportation(): FormControl {
+    return this.metroForm.controls?.transportation as FormControl;
   }
 
   public onSubmit() {

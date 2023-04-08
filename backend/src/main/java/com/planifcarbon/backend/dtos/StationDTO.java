@@ -7,13 +7,13 @@ import java.util.Objects;
 @ExcludeFromJacocoGeneratedReport
 public class StationDTO {
     private final String name;
-    private final double latitude;
     private final double longitude;
+    private final double latitude;
 
-    public StationDTO(String name, double latitude, double longitude) {
+    public StationDTO(String name, double longitude, double latitude) {
         this.name = name;
-        this.latitude = latitude;
         this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public String getName() {

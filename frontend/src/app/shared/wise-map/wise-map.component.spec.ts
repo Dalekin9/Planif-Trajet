@@ -68,9 +68,9 @@ describe('WiseMapComponent', () => {
         toJSON: () => ({ lat: 48.8566, lng: 2.3522 })
       }
     } as google.maps.MapMouseEvent;
-    const lengthBefore = component.markerPositions.length;
+    const lengthBefore = component.stationsMarkers.length;
     component.addMarker(event);
-    expect(component.markerPositions.length).toBe(lengthBefore + 1);
+    expect(component.stationsMarkers.length).toBe(lengthBefore + 1);
   });
 
   it('should have a default center position', () => {
@@ -89,4 +89,26 @@ describe('WiseMapComponent', () => {
     expect(component.infoWindow.open).toHaveBeenCalledWith(marker);
   });
 
+  it('should delete a marker', () => {
+    const toBeDeletedMarker = new google.maps.Marker({title: "Custom Marker"});
+    const notToBeDeletedMarker = new google.maps.Marker({title: "Custom Marker"});
+    component.deleteMarker(toBeDeletedMarker);
+    let map = toBeDeletedMarker.getMap();
+    expect(map).toBeNull();
+    map = notToBeDeletedMarker.getMap()
+    expect(map).not.toBeNull();
+  });
+
+  it('should open info window', () => {
+    const marker1 = new MapMarker(null, null);
+    marker1.marker = new google.maps.Marker({title: 'Marker 1'});
+    const marker2 = new MapMarker(null, null);
+    marker2.marker = new google.maps.Marker({title: 'Marker 2'})
+    component.stationsMarkers = [marker1, marker2];
+
+    spyOn(component.infoWindow, 'open');
+    component.openInfoWindow(marker2);
+    expect(component.selectedMarker).toBeDefined();
+    expect(component.infoWindow.open).toHaveBeenCalled();
+  })
 });

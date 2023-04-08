@@ -14,15 +14,11 @@ export interface IMetroSchedule {
 
 export interface IMetroStation {
   name: string,
-  coords?: ICoordinates
-}
-
-export interface ICoordinates {
-  lon: number,
-  lat: number
+  longitude: number,
+  latitude: number
 }
 
 export interface IMetroStationCorrespondence {
   station: IMetroStation,
-  correspondence: string[]
+  metroLines: string[]
 }
