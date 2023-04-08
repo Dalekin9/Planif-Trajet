@@ -20,7 +20,7 @@
     </form>
   </div>
   <div class="metro-schedule-section" *ngIf="!!metro">
-    <img src="assets/images/metro/14.png" alt="Metro line"/>
+    <img [src]="'assets/images/metro/' + metro.name +'.png'" alt="Metro line"/>
     <div class="metro-schedule-info">
       <div class="info-row">
         <h4 class="title">Stations</h4>
