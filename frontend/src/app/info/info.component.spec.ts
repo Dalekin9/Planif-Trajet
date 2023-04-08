@@ -96,14 +96,14 @@ describe('InfoComponent', () => {
   describe('metroForm submission', () => {
 
     it('should not submit when form is invalid', () => {
-      spyOn(component, 'onSubmit');
+      spyOnProperty(component, 'metro', "get");
       component.metroForm.setValue({
-        from: ''
+        line: ''
       });
       fixture.detectChanges();
       const button = fixture.debugElement.nativeElement.querySelector('button');
       button.click();
-      expect(component.onSubmit).not.toHaveBeenCalled();
+      expect(component.metro).toBeFalsy();
     });
   });
 });

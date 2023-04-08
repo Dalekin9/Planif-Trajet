@@ -12,8 +12,8 @@ import {takeUntil} from "rxjs/operators";
 })
 export class InfoComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject()
+  private _metro: IMetro;
   public metroForm: FormGroup;
-  public metro: IMetro;
   public metros: IMetro[];
 
   constructor(
@@ -50,8 +50,7 @@ export class InfoComponent implements OnInit, OnDestroy {
       this.service.getMetroInfo(metroName)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((metro: IMetro) => {
-          this.metro = metro;
-          console.log(this.metro);
+          this._metro = metro;
         });
     }
   }
@@ -60,5 +59,9 @@ export class InfoComponent implements OnInit, OnDestroy {
     const hours = Math.floor(schedule / 3600);
     const minutes = Math.round(((schedule / 3600) - hours) * 60);
     return `${hours}:${minutes.toString().padStart(2, '0')}`;
+  }
+
+  public get metro(): IMetro {
+    return this._metro;
   }
 }

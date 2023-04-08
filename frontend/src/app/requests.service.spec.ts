@@ -23,6 +23,7 @@ describe('RequestsService', () => {
 
   it('should get the list of metro stations', () => {
     service.getMetroList().subscribe(data => {
+      console.log('here');
       expect(data.length).toBeGreaterThan(0)
     });
     const req = httpMock.expectOne(`${basicUrl}/metro/list`);
