@@ -81,4 +81,12 @@ describe('WiseMapComponent', () => {
     expect(component.zoom).toEqual(11);
   });
 
+  it('should set the selected marker and open the info window on openInfoWindow', () => {
+    const marker = {} as MapMarker;
+    spyOn(component.infoWindow, 'open');
+    component.openInfoWindow(marker);
+    expect(component.selectedMarker).toBe(marker);
+    expect(component.infoWindow.open).toHaveBeenCalledWith(marker);
+  });
+
 });

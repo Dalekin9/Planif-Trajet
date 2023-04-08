@@ -1,23 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { InfoComponent } from './info.component';
-import {BrowserModule} from "@angular/platform-browser";
-import {HttpClientModule} from "@angular/common/http";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {MatDividerModule} from "@angular/material/divider";
-import {MatTabsModule} from "@angular/material/tabs";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import {
   NgxMatDatetimePickerModule,
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
-} from "@angular-material-components/datetime-picker";
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatSelectModule} from "@angular/material/select";
-import {MatOptionModule} from "@angular/material/core";
-import {MatButtonModule} from "@angular/material/button";
-import {GoogleMapsModule} from "@angular/google-maps";
+} from '@angular-material-components/datetime-picker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { of, throwError } from 'rxjs';
+import {RequestsService} from "../requests.service";
+
 describe('InfoComponent', () => {
   let component: InfoComponent;
   let fixture: ComponentFixture<InfoComponent>;
@@ -45,9 +48,8 @@ describe('InfoComponent', () => {
         MatButtonModule,
         GoogleMapsModule
       ],
-      declarations: [ InfoComponent ]
-    })
-    .compileComponents();
+      declarations: [InfoComponent]
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -56,9 +58,13 @@ describe('InfoComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
-  })
+  });
 
   it('should initialize the form with a "from" field', () => {
     expect(component.metroForm).toBeDefined();
@@ -68,11 +74,27 @@ describe('InfoComponent', () => {
   });
 
   describe('onSubmit', () => {
+    it('should call the service method to get metro info if the form is valid', () => {
+      spyOn(component.service, 'getMetroInfo').and.callThrough();
+      component.line.setValue('1');
+      component.onSubmit();
+      expect(component.service.getMetroInfo).toHaveBeenCalled();
+    });
+
     it('should do nothing if the form is valid ', () => {
       component.onSubmit();
       expect(true).toBeTruthy();
     });
+
+    it('should not call the service method to get metro info if the form is invalid', () => {
+      spyOn(component.service, 'getMetroInfo').and.callThrough();
+      component.line.setValue('');
+      component.onSubmit();
+      expect(component.service.getMetroInfo).not.toHaveBeenCalled();
+    });
+
   });
+
   describe('from field validation', () => {
     let control: FormControl;
 
@@ -87,7 +109,7 @@ describe('InfoComponent', () => {
     });
 
     it('should be valid when a station is selected', () => {
-      control.setValue("station");
+      control.setValue('station');
       expect(control.valid).toBeTrue();
       expect(control.errors?.required).toBeFalsy();
     });
@@ -106,4 +128,30 @@ describe('InfoComponent', () => {
       expect(component.metro).toBeFalsy();
     });
   });
+
+  it('should return a formatted string when calling numberToSchedule', () => {
+    expect(component.numberToSchedule(3600)).toEqual('1:00');
+    expect(component.numberToSchedule(7200)).toEqual('2:00');
+    expect(component.numberToSchedule(3660)).toEqual('1:01');
+  });
+
+  it('should set "line" field as required', () => {
+    const control = component.metroForm.controls.line as FormControl;
+    control.setValue('');
+    expect(control.valid).toBeFalsy();
+    control.setValue('6');
+    expect(control.valid).toBeTruthy();
+  });
+
+  it('should return a FormControl when controls exist', () => {
+    const control = new FormControl('', Validators.required);
+    component.metroForm.controls = { line: control };
+    expect(component.line).toBe(control);
+  });
+
+  it('should return undefined when controls are undefined', () => {
+    component.metroForm.controls = undefined;
+    expect(component.line).toBeUndefined();
+  })
+
 });

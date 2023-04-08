@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { GetmesomewhereComponent } from './getmesomewhere.component';
 import {BrowserModule} from "@angular/platform-browser";
 import {HttpClientModule} from "@angular/common/http";
@@ -111,4 +111,80 @@ describe('GetmesomewhereComponent', () => {
       expect(true).toBeTruthy();
     });
   });
+
+  describe('get from', () => {
+    it('should return the "from" FormControl when it exists', () => {
+      // Arrange
+      const mockFormControl = new FormControl();
+      component.metroForm = new FormGroup({ from: mockFormControl });
+
+      // Act
+      const result = component.from;
+
+      // Assert
+      expect(result).toEqual(mockFormControl);
+    });
+
+    it('should return undefined when "from" FormControl does not exist', () => {
+      // Arrange
+      component.metroForm = new FormGroup({});
+
+      // Act
+      const result = component.from;
+
+      // Assert
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('options', () => {
+    it('should return a FormControl when options control exists', () => {
+      const control = new FormControl('', Validators.required);
+      component.metroForm.controls = { options: control };
+      expect(component.options).toBe(control);
+    });
+
+    it('should return undefined when options control is undefined', () => {
+      component.metroForm.controls = undefined;
+      expect(component.options).toBeUndefined();
+    });
+  });
+
+  describe('timeToLeave', () => {
+    it('should return a FormControl when controls exist', () => {
+      const control = new FormControl('', Validators.required);
+      component.metroForm.controls = { timeToLeave: control };
+      expect(component.timeToLeave).toBe(control);
+    });
+
+    it('should return undefined when controls are undefined', () => {
+      component.metroForm.controls = undefined;
+      expect(component.timeToLeave).toBeUndefined();
+    });
+  });
+
+  it('should return a FormControl when controls exist', () => {
+    const control = new FormControl('', Validators.required);
+    component.metroForm.controls = { from: control };
+    expect(component.from).toBe(control);
+  });
+
+  it('should return undefined when controls are undefined', () => {
+    component.metroForm.controls = undefined;
+    expect(component.from).toBeUndefined();
+  });
+
+  it('should return a FormControl when controls exist', () => {
+    const control = new FormControl('', Validators.required);
+    component.metroForm.controls = { to: control };
+    expect(component.to).toBe(control);
+  });
+
+  it('should return undefined when controls are undefined', () => {
+    component.metroForm.controls = undefined;
+    expect(component.to).toBeUndefined();
+  });
+
+
 });
+
