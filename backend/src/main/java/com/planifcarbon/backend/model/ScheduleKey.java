@@ -32,5 +32,10 @@ public class ScheduleKey {
     public int hashCode() { return Objects.hash(terminusStation, metroLine); }
 
     @Override
-    public String toString() { return "ScheduleKey{" + "terminusStation=" + terminusStation + ", metroLine=" + metroLine + '}'; }
+    public String toString() {
+        return "ScheduleKey{" +
+                "terminusStation = " + terminusStation +
+                ", metroLine = " + metroLine +
+                '}';
+    }
 }

@@ -35,4 +35,5 @@ public final class Station extends Node {
     public Map<ScheduleKey, Integer> getSchedules() {
         return schedules;
     }
+
 }
