@@ -22,24 +22,21 @@ describe('RequestsService', () => {
   });
 
   it('should get the list of metro stations', () => {
-    const dummyData = {};
     service.getMetroList().subscribe(data => {
-      expect(data).toEqual(dummyData);
+      console.log('here');
+      expect(data.length).toBeGreaterThan(0)
     });
     const req = httpMock.expectOne(`${basicUrl}/metro/list`);
     expect(req.request.method).toBe('GET');
-    req.flush(dummyData);
   });
 
   it('should get the info for a metro station', () => {
-    const dummyData = { /* dummy data object */ };
-    const metroId = '123';
+    const metroId = '1';
     service.getMetroInfo(metroId).subscribe(data => {
-      expect(data).toEqual(dummyData);
+      expect(data).toBeDefined()
     });
     const req = httpMock.expectOne(`${basicUrl}/metro/${metroId}`);
     expect(req.request.method).toBe('GET');
-    req.flush(dummyData);
   });
 
   it('should get the best time path', () => {

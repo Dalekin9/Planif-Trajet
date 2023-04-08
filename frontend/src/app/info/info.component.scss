@@ -1,75 +1,92 @@
 :host {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   gap: 16px;
   padding: 0 16px;
   align-items: center;
-  height: 50vh;
 
-  .form-section {
+  .metro-header-section {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     gap: 32px;
-    flex: 1.2;
 
-    .images {
+    .form-section {
       display: flex;
-      flex-direction: row;
-      justify-content: center;
+      flex-direction: column;
+      gap: 32px;
+      flex: 1.2;
+
+      .images {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 32px;
+
+        > img {
+          width: 64px;
+          aspect-ratio: 1;
+        }
+      }
+    }
+
+    .metro-schedule-section {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       gap: 32px;
 
       > img {
         width: 64px;
-        aspect-ratio: 1;
       }
-    }
-  }
 
-  .metro-stations-section {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
-
-    .end-station {
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .stations {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-  }
-
-  .metro-schedule-section {
-    flex: 1.2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 32px;
-
-    > img {
-      width: 64px;
-    }
-
-    .metro-schedule-info {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 32px;
-
-      .info-column {
+      .metro-schedule-info {
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
         gap: 8px;
 
-        .title {
-          font-weight: bold;
+        .info-row {
+          display: flex;
+          flex-direction: row;
+          gap: 32px;
+
+          .title {
+            font-weight: bold;
+            width: 128px;
+          }
         }
       }
+    }
+  }
+
+  .metro-info {
+    display: flex;
+    flex-direction: column;
+
+    .metro-stations-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+
+      .stations {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 32px;
+        max-width: 70%;
+      }
+    }
+  }
+  @media screen and (max-width: 1024px) {
+    .metro-header-section {
+      flex-direction: column;
     }
   }
 }

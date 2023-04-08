@@ -3,15 +3,12 @@ package com.planifcarbon.backend.model;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import org.springframework.stereotype.Component;
 import com.planifcarbon.backend.parser.Parser;
-import com.planifcarbon.backend.parser.SegmentMetroDTO;
-import com.planifcarbon.backend.parser.StationDTO;
+import com.planifcarbon.backend.dtos.SegmentMetroDTO;
+import com.planifcarbon.backend.dtos.StationDTO;
 import jakarta.annotation.PostConstruct;
 
 @Component
@@ -65,8 +62,8 @@ public final class MetroMap {
     @PostConstruct
     public void initializeFields() {
         // get values from parser
-        String metroFile = "src/main/resources/data/map_data.csv";
-        String scheduleFile = "src/main/resources/data/timetables.csv";
+        String metroFile = "classpath:data/map_data.csv";
+        String scheduleFile = "classpath:data/timetables.csv";
         try {
             Parser.parse(metroFile, scheduleFile);
         } catch (FileNotFoundException e) {
@@ -122,7 +119,7 @@ public final class MetroMap {
             String id = key.split(" ")[0]; // We don't have variant in timetable file.
             Parser.VariantKey keySchedule = new Parser.VariantKey(metroLinesTerminus.get(key), id);
             List<Integer> schedule = schedules.get(keySchedule);
-            this.lines.put(key, new MetroLine(key, value, schedule));
+            this.lines.put(key, new MetroLine(key, value, schedule, this.stations.get(metroLinesTerminus.get(key))));
         });
     }
 

@@ -32,15 +32,15 @@ export class GetmesomewhereComponent implements OnInit {
   }
 
   public get to(): FormControl {
-    return this.metroForm.controls?.from as FormControl;
+    return this.metroForm.controls?.to as FormControl;
   }
 
   public get timeToLeave(): FormControl {
-    return this.metroForm.controls?.from as FormControl;
+    return this.metroForm.controls?.timeToLeave as FormControl;
   }
 
   public get options(): FormControl {
-    return this.metroForm.controls?.from as FormControl;
+    return this.metroForm.controls?.options as FormControl;
   }
 
   public onSubmit() {

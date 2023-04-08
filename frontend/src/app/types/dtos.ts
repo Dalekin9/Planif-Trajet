@@ -1,8 +1,15 @@
 export interface IDummyData {}
 
-export interface IMetroStationCorrespondence {
-  station: IMetroStation,
-  correspondence: string[]
+export interface IMetro {
+  name: string,
+  stations?: IMetroStation[],
+  schedules?: IMetroSchedule[]
+}
+
+export interface IMetroSchedule {
+  line: string,
+  terminus: string,
+  schedules: number[]
 }
 
 export interface IMetroStation {
@@ -13,4 +20,9 @@ export interface IMetroStation {
 export interface ICoordinates {
   lon: number,
   lat: number
+}
+
+export interface IMetroStationCorrespondence {
+  station: IMetroStation,
+  correspondence: string[]
 }
