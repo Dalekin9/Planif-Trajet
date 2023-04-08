@@ -12,6 +12,7 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    gap: 32px;
 
     .form-section {
       display: flex;
@@ -81,6 +82,11 @@
         gap: 32px;
         max-width: 70%;
       }
+    }
+  }
+  @media screen and (max-width: 1024px) {
+    .metro-header-section {
+      flex-direction: column;
     }
   }
 }
