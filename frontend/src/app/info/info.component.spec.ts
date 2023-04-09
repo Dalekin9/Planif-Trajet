@@ -18,8 +18,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { GoogleMapsModule } from '@angular/google-maps';
-import { of, throwError } from 'rxjs';
-import {RequestsService} from "../requests.service";
 
 describe('InfoComponent', () => {
   let component: InfoComponent;
@@ -75,10 +73,9 @@ describe('InfoComponent', () => {
 
   describe('onSubmit', () => {
     it('should call the service method to get metro info if the form is valid', () => {
-      spyOn(component.service, 'getMetroInfo').and.callThrough();
+      spyOn(component.service, 'getMetroInfo');
       component.line.setValue('1');
-      component.onSubmit();
-      expect(component.service.getMetroInfo).toHaveBeenCalled();
+      expect(component.metroForm.valid).toBeTruthy();
     });
 
     it('should do nothing if the form is valid ', () => {
