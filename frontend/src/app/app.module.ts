@@ -23,6 +23,7 @@ import {MatButtonModule} from "@angular/material/button";
 import { InfoComponent } from './info/info.component';
 import {GoogleMapsModule} from "@angular/google-maps";
 import { WiseMapComponent } from './shared/wise-map/wise-map.component';
+import { CorrespondenceComponent } from './correspondence/correspondence.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { WiseMapComponent } from './shared/wise-map/wise-map.component';
     HomeComponent,
     GetmesomewhereComponent,
     InfoComponent,
-    WiseMapComponent
+    WiseMapComponent,
+    CorrespondenceComponent
   ],
   imports: [
     BrowserModule,

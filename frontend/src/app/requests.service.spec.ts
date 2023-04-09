@@ -73,4 +73,21 @@ describe('RequestsService', () => {
     expect(req.request.method).toBe('GET');
     req.flush(dummyData);
   });
+
+  it('should get the best 5 stations in the network', () => {
+    service.getBestStations().subscribe(data => {
+      expect(data).toBeTruthy();
+      expect(data.length).toEqual(5);
+    });
+    const req = httpMock.expectOne(`${basicUrl}/metro/best-stations`);
+    expect(req.request.method).toBe('GET');
+  });
+
+  it('should get all stations correspondences in the network', () => {
+    service.getStationsCorrespondence().subscribe(data => {
+      expect(data).toBeTruthy();
+    });
+    const req = httpMock.expectOne(`${basicUrl}/metro/stations-correspondence`);
+    expect(req.request.method).toBe('GET');
+  });
 });
