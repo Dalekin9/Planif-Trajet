@@ -17,7 +17,7 @@ export class InfoComponent implements OnInit, OnDestroy {
   public metros: IMetro[];
 
   constructor(
-    private service: RequestsService
+    public service: RequestsService
   ) {
   }
 

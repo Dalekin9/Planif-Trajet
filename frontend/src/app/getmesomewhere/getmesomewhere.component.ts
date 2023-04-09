@@ -16,7 +16,7 @@ export class GetmesomewhereComponent implements OnInit {
     this.initMetroForm();
   }
 
-  private initMetroForm(): void {
+  public initMetroForm(): void {
     this.metroForm = new FormGroup(
       {
         from: new FormControl('', [Validators.required]),
