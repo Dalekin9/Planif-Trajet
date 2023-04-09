@@ -1,0 +1,6 @@
+<div class="station-correspondences" *ngFor="let station of stationsCorrespondences">
+  <h4>{{station.station.name}}</h4>
+  <div class="metro-lines">
+    <img [src]="'assets/images/metro/' + line + '.png'" *ngFor="let line of station.metroLines" alt="Metro Image"/>
+  </div>
+</div>

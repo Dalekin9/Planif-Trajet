@@ -61,4 +61,14 @@ public class MetroController {
         logger.info("Request to get best stations in the network ");
         return ResponseEntity.ok(metroService.getBestStations());
     }
+
+    /**
+     * Get all stations correspondences
+     * @return the list of stations with correspondences.
+     */
+    @GetMapping("/stations-correspondence")
+    public ResponseEntity<List<StationCorrespondence>> getAllStationsCorrespondences() {
+        logger.info("Request to get best stations in the network ");
+        return ResponseEntity.ok(metroService.getAllStationsCorrespondence());
+    }
 }

@@ -26,6 +26,10 @@ export class RequestsService {
     return this.httpClient.get<IMetroStationCorrespondence[]>(this.basicUrl + `/metro/best-stations`, {observe: 'body'});
   }
 
+  public getStationsCorrespondence(): Observable<IMetroStationCorrespondence[]> {
+    return this.httpClient.get<IMetroStationCorrespondence[]>(this.basicUrl + `/metro/stations-correspondence`, {observe: 'body'});
+  }
+
   public getBestTimePath(start: string, end: string): Observable<IDummyData> {
     let params = new HttpParams();
     params = params.append('start', start);
