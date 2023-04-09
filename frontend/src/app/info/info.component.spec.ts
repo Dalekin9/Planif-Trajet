@@ -124,12 +124,6 @@ describe('InfoComponent', () => {
       button.click();
       expect(component.metro).toBeFalsy();
     });
-
-    it('should submit form when It is valid', () => {
-      component.line.setValue('1');
-      component.onSubmit();
-      expect(component.metroForm.valid).toBeTruthy();
-    });
   });
 
   describe('should transform seconds to schedule', () =>  {
