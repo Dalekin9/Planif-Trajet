@@ -22,8 +22,8 @@ export class RequestsService {
     return this.httpClient.get<IMetro>(this.basicUrl + `/metro/${metroId}`, {observe: 'body'});
   }
 
-  public getBestStations(): Observable<IMetroStationCorrespondence> {
-    return this.httpClient.get<IMetroStationCorrespondence>(this.basicUrl + `/metro/best-stations`, {observe: 'body'});
+  public getBestStations(): Observable<IMetroStationCorrespondence[]> {
+    return this.httpClient.get<IMetroStationCorrespondence[]>(this.basicUrl + `/metro/best-stations`, {observe: 'body'});
   }
 
   public getBestTimePath(start: string, end: string): Observable<IDummyData> {

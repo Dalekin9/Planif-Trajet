@@ -124,6 +124,19 @@ describe('InfoComponent', () => {
       button.click();
       expect(component.metro).toBeFalsy();
     });
+
+    it('should submit form when It is valid', () => {
+      component.line.setValue('1');
+      component.onSubmit();
+      expect(component.metroForm.valid).toBeTruthy();
+    });
+  });
+
+  describe('should transform seconds to schedule', () =>  {
+    it ('should transform seconds to schedule', () => {
+      const value = component.numberToSchedule(36000);
+      expect(value).toBe('10:00');
+    });
   });
 
   it('should return a formatted string when calling numberToSchedule', () => {

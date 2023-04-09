@@ -1,6 +1,8 @@
 package com.planifcarbon.backend.controllers;
 
 import com.planifcarbon.backend.dtos.MetroDTO;
+import com.planifcarbon.backend.dtos.StationCorrespondence;
+import com.planifcarbon.backend.model.Station;
 import com.planifcarbon.backend.services.MetroService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,5 +50,15 @@ public class MetroController {
     ) {
         logger.info("Request to get metro information by id : {}", metroId);
         return ResponseEntity.ok(metroService.getMetroByName(metroId));
+    }
+
+    /**
+     * Get the stations with the higher number of metro lines
+     * @return the list of best stations.
+     */
+    @GetMapping("/best-stations")
+    public ResponseEntity<List<StationCorrespondence>> getBestStations() {
+        logger.info("Request to get best stations in the network ");
+        return ResponseEntity.ok(metroService.getBestStations());
     }
 }

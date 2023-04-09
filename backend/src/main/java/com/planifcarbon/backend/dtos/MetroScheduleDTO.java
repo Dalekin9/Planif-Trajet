@@ -1,8 +1,11 @@
 package com.planifcarbon.backend.dtos;
 
+import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
+
 import java.util.Collections;
 import java.util.List;
 
+@ExcludeFromJacocoGeneratedReport
 public class MetroScheduleDTO {
     private final String line;
     private final String station;

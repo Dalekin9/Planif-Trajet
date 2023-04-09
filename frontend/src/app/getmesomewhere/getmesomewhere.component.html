@@ -21,11 +21,21 @@
       </ngx-mat-datetime-picker>
     </mat-form-field>
     <mat-form-field class="options">
-      <mat-label>Select</mat-label>
+      <mat-label>Method</mat-label>
       <mat-select [formControl]="options" required>
         <mat-option value="time">Best time path</mat-option>
         <mat-option value="distance">Best distance path</mat-option>
         <mat-option value="time-and-distance">Best time and distance path</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="field-wrapper">
+    <mat-form-field>
+      <mat-label>Transportation</mat-label>
+      <mat-select [formControl]="transportation" required>
+        <mat-option value="metro">By metro</mat-option>
+        <mat-option value="metro-foot">By metro and foot</mat-option>
+        <mat-option value="walk">By foot</mat-option>
       </mat-select>
     </mat-form-field>
   </div>

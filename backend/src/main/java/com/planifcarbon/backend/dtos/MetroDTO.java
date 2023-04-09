@@ -1,7 +1,10 @@
 package com.planifcarbon.backend.dtos;
 
+import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
+
 import java.util.*;
 
+@ExcludeFromJacocoGeneratedReport
 public class MetroDTO {
     private final String name;
     private final Set<StationDTO> stations;

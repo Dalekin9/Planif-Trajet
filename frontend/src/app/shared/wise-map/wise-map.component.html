@@ -3,10 +3,16 @@
             [center]="center"
             [zoom]="zoom"
             (mapClick)="addMarker($event)">
-  <map-marker #marker="mapMarker" *ngFor="let markerPosition of markerPositions"
-              [position]="markerPosition"
-              (mapRightclick)="deleteMarker(marker)"
-              (mapClick)="openInfoWindow(marker)"
-              [options]="markerOptions"></map-marker>
-  <map-info-window>{{selectedMarker?.getTitle()}}</map-info-window>
+  <map-marker #marker="mapMarker" *ngFor="let stationMarker of stationsMarkers"
+              [icon]="stationMarker.marker.getIcon()"
+              [title]="stationMarker.marker.getTitle()"
+              [position]="stationMarker.marker.getPosition()"
+              (mapRightclick)="deleteMarker(marker.marker)"
+              (mapClick)="openInfoWindow(marker)"></map-marker>
+  <map-info-window class="marker-info">
+    <h4>{{selectedMarker?.marker.getTitle()}}</h4>
+    <div class="metro-lines" *ngIf="!!selectedMarker?.station">
+      <img [src]="'assets/images/metro/' + line + '.png'" *ngFor="let line of selectedMarker.station.metroLines" alt="Metro Image"/>
+    </div>
+  </map-info-window>
 </google-map>
