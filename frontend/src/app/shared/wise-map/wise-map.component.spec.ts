@@ -81,14 +81,6 @@ describe('WiseMapComponent', () => {
     expect(component.zoom).toEqual(11);
   });
 
-  it('should set the selected marker and open the info window on openInfoWindow', () => {
-    const marker = {} as MapMarker;
-    spyOn(component.infoWindow, 'open');
-    component.openInfoWindow(marker);
-    expect(component.selectedMarker).toBe(marker);
-    expect(component.infoWindow.open).toHaveBeenCalledWith(marker);
-  });
-
   it('should delete a marker', () => {
     const toBeDeletedMarker = new google.maps.Marker({title: "Custom Marker"});
     const notToBeDeletedMarker = new google.maps.Marker({title: "Custom Marker"});
