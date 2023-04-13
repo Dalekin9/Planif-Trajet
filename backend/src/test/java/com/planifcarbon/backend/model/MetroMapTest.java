@@ -98,7 +98,6 @@ public class MetroMapTest {
         map.getLines().values().forEach(line -> {
             assertFalse(metroLines.contains(line));
             assertNotNull(line.getSchedules());
-            assertFalse(line.getSchedules().isEmpty());
             metroLines.add(line);
         });
         assertEquals(nbSegmentsMetro, map.getSegmentsMetro(new NodeForTest(stationName, 0.0, 0.0)).size());

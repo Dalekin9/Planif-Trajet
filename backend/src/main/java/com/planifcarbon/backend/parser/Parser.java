@@ -26,7 +26,7 @@ public class Parser {
     private static final Set<StationDTO> stations = new HashSet<>();
     private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<>();
     private static final Map<String, String> metroLines = new HashMap<>();
-    private static final Map<VariantKey, List<Integer>> metroLineSchedules = new HashMap<>();
+    private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<>();
 
     static String[] splitString(String reg, String line) {
         return line.split(reg);
@@ -95,11 +95,11 @@ public class Parser {
         try (InputStream ins = new FileInputStream(ResourceUtils.getFile(scheduleFile));
         Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
-            VariantKey variantKey;
+            String variantKey;
             while (scan.hasNextLine()) {
                 currentLine = splitString(";", scan.nextLine());
                 //Each line contains 3 elements : line, terminusStation, time
-                variantKey = new Parser.VariantKey(currentLine[1], currentLine[0]);
+                variantKey = currentLine[0] + " variant " + currentLine[3];
                 if (metroLineSchedules.containsKey(variantKey)) {
                     metroLineSchedules.get(variantKey).add(timeStringToInt(currentLine[2]));
                 } else {
@@ -115,7 +115,7 @@ public class Parser {
         return metroLines;
     }
 
-    public static Map<VariantKey, List<Integer>> getMetroLineSchedules() {
+    public static Map<String, List<Integer>> getMetroLineSchedules() {
         return metroLineSchedules;
     }
 
@@ -125,36 +125,5 @@ public class Parser {
 
     public static Set<StationDTO> getStations() {
         return stations;
-    }
-
-    public static class VariantKey {
-        private final String station;
-        private final String line;
-
-        public VariantKey(String station, String line) {
-            this.station = station;
-            this.line = line;
-        }
-
-        public String getLine() {
-            return line;
-        }
-
-        public String getStation() {
-            return station;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            VariantKey that = (VariantKey) o;
-            return Objects.equals(this.station, that.station) && Objects.equals(this.line, that.line);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.station, this.line);
-        }
     }
 }
