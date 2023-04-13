@@ -80,7 +80,7 @@ public final class MetroMap {
             this.stations.put(station.getName(), station);
         });
         Set<SegmentMetroDTO> segmentMetroDTOS = Parser.getSegmentMetro();
-        Map<Parser.VariantKey, List<Integer>> schedules = Parser.getMetroLineSchedules();
+        Map<String, List<Integer>> schedules = Parser.getMetroLineSchedules();
         Map<String, Set<Station>> metroLines = new HashMap<String, Set<Station>>();
 
         // use values from parser to build this
@@ -114,11 +114,9 @@ public final class MetroMap {
      * Set metro line schedules.
      */
     private void setMetroLineSchedules(Map<String, Set<Station>> metroLines, Map<String, String> metroLinesTerminus,
-            Map<Parser.VariantKey, List<Integer>> schedules) {
+            Map<String, List<Integer>> schedules) {
         metroLines.forEach((key, value) -> {
-            String id = key.split(" ")[0]; // We don't have variant in timetable file.
-            Parser.VariantKey keySchedule = new Parser.VariantKey(metroLinesTerminus.get(key), id);
-            List<Integer> schedule = schedules.get(keySchedule);
+            List<Integer> schedule = schedules.getOrDefault(key, new ArrayList<>());
             this.lines.put(key, new MetroLine(key, value, schedule, this.stations.get(metroLinesTerminus.get(key))));
         });
     }
