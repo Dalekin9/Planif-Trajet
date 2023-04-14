@@ -10,29 +10,41 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
-
+import org.springframework.util.ResourceUtils;
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.StationDTO;
-import org.springframework.util.ResourceUtils;
 
 /**
  * {@summary Its static methods are used to parse CSV files}
  */
 public class Parser {
 
-    private static final Set<StationDTO> stations = new HashSet<>();
-    private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<>();
-    private static final Map<String, String> metroLines = new HashMap<>();
-    private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<>();
+    private static final Set<StationDTO> stations = new HashSet<StationDTO>();
+    private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<SegmentMetroDTO>();
+    private static final Map<String, String> metroLines = new HashMap<String, String>();
+    private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<String, List<Integer>>();
 
-    static String[] splitString(String reg, String line) {
-        return line.split(reg);
+    /**
+     * {@summary Parse all CSV file.}
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
+        Parser.calculateStationsAndSegments(metroFile);
+        Parser.calculateSchedules(scheduleFile);
     }
 
-    static int durationStringToInt(String str) {
+    // private ----------------------------------------------------------------
+
+    /** Tool function to split a String */
+    private static String[] splitString(String reg, String line) { return line.split(reg); }
+
+    /** Tool function used to parse time from hh:mm:ss.ms to ms */
+    // TODO rename to make it more different from timeStringToInt
+    private static int durationStringToInt(String str) {
         String[] duration = splitString(":", str);
         int hours, minutes, seconds;
         if (duration.length == 3) {
@@ -44,61 +56,68 @@ public class Parser {
             minutes = Integer.parseInt(duration[0]);
             seconds = Integer.parseInt(duration[1]);
         }
-        return hours * 60 * 60 + minutes * 60 + seconds;
+        return hours * 60 * 60 + minutes * 60 + seconds; // TODO s -> ms ?
     }
-
-    static int timeStringToInt(String str) {
+    /** Tool function used to parse time from hh:mm to ms */
+    // TODO rename to make it more different from durationStringToInt
+    private static int timeStringToInt(String str) {
         String[] time = splitString(":", str);
         int hours = Integer.parseInt(time[0]);
         int minutes = Integer.parseInt(time[1]);
 
-        hours = hours * 60 * 60;       //hours to seconds
+        hours = hours * 60 * 60; // hours to seconds
         minutes = minutes * 60;
 
-        return hours + minutes;
+        return hours + minutes; // TODO s -> ms ?
     }
 
-    public static void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
-        Parser.calculateStationsAndSegments(metroFile);
-        Parser.calculateSchedules(scheduleFile);
-    }
-
-    static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
+    /**
+     * {@summary Parse station &#38; segment data from a CSV file.}
+     * 
+     * @param filePath the path of the CSV file
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    private static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
         // try with safe close.
-        try(InputStream ins = new FileInputStream(ResourceUtils.getFile(filePath));
-            Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)){
+        try (InputStream ins = new FileInputStream(ResourceUtils.getFile(filePath));
+                Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             String[] coords;
             StationDTO start;
             StationDTO end;
             while (scan.hasNextLine()) {
                 currentLine = splitString(";", scan.nextLine());
-                //Each line contains 7 elements : name1, coords1, name2, coords2, line, time, dist
+                // Each line contains 7 elements : name1, coords1, name2, coords2, line, time, dist
                 coords = splitString(",", currentLine[1]);
                 start = new StationDTO(currentLine[0], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 coords = splitString(",", currentLine[3]);
                 end = new StationDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 stations.add(start);
                 stations.add(end);
-                segmentMetro.add(new SegmentMetroDTO(start,
-                        end,
-                        durationStringToInt(currentLine[5]),
-                        Double.parseDouble(currentLine[6]),
+                segmentMetro.add(new SegmentMetroDTO(start, end, durationStringToInt(currentLine[5]), Double.parseDouble(currentLine[6]),
                         currentLine[4]));
                 metroLines.putIfAbsent(currentLine[4], currentLine[0]);
             }
         }
     }
 
-    static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
+    /**
+     * {@summary Parse station &#38; segment data from a CSV file.}
+     * 
+     * @param filePath the path of the CSV file
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    private static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
         // try with safe close.
         try (InputStream ins = new FileInputStream(ResourceUtils.getFile(scheduleFile));
-        Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
+                Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             String variantKey;
             while (scan.hasNextLine()) {
                 currentLine = splitString(";", scan.nextLine());
-                //Each line contains 3 elements : line, terminusStation, time
+                // Each line contains 3 elements : line, terminusStation, time
                 variantKey = currentLine[0] + " variant " + currentLine[3];
                 if (metroLineSchedules.containsKey(variantKey)) {
                     metroLineSchedules.get(variantKey).add(timeStringToInt(currentLine[2]));
@@ -111,19 +130,11 @@ public class Parser {
         }
     }
 
-    public static Map<String, String> getMetroLines() {
-        return metroLines;
-    }
+    public static Map<String, String> getMetroLines() { return metroLines; }
 
-    public static Map<String, List<Integer>> getMetroLineSchedules() {
-        return metroLineSchedules;
-    }
+    public static Map<String, List<Integer>> getMetroLineSchedules() { return metroLineSchedules; }
 
-    public static Set<SegmentMetroDTO> getSegmentMetro() {
-        return segmentMetro;
-    }
+    public static Set<SegmentMetroDTO> getSegmentMetro() { return segmentMetro; }
 
-    public static Set<StationDTO> getStations() {
-        return stations;
-    }
+    public static Set<StationDTO> getStations() { return stations; }
 }

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * {@summary Represents a metro line.}
+ */
 public final class MetroLine {
     /** List of metro stations **/
     private final Set<Station> stations;
@@ -29,37 +32,27 @@ public final class MetroLine {
 
     public String getName() { return name; }
 
-    public String getNonVariantName() {
-        return this.name.split(" ")[0];
-    }
+    public String getNonVariantName() { return this.name.split(" ")[0]; }
 
     public Set<Station> getStations() { return stations; }
 
-    public List<Integer> getSchedules() {
-        return schedules;
-    }
+    public List<Integer> getSchedules() { return schedules; }
 
-    public Station getTerminusStation() {
-        return terminusStation;
-    }
+    public Station getTerminusStation() { return terminusStation; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         MetroLine metroLine = (MetroLine) o;
         return Objects.equals(name, metroLine.name);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
+    public int hashCode() { return Objects.hash(name); }
 
     @Override
-    public String toString() {
-        return "MetroLine{" +
-                "id='" + name + '\'' +
-                '}';
-    }
+    public String toString() { return "MetroLine{" + "id='" + name + "'" + "}"; }
 }

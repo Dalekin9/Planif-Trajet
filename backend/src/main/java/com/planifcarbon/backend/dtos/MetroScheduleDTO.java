@@ -1,10 +1,12 @@
 package com.planifcarbon.backend.dtos;
 
-import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
-
 import java.util.Collections;
 import java.util.List;
+import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 
+/**
+ * Temporary Data Transfer Object for the MetroSchedule class.
+ */
 @ExcludeFromJacocoGeneratedReport
 public class MetroScheduleDTO {
     private final String line;
@@ -18,15 +20,9 @@ public class MetroScheduleDTO {
         Collections.sort(this.schedules);
     }
 
-    public List<Integer> getSchedules() {
-        return schedules;
-    }
+    public List<Integer> getSchedules() { return schedules; }
 
-    public String getLine() {
-        return line;
-    }
+    public String getLine() { return line; }
 
-    public String getTerminus() {
-        return station;
-    }
+    public String getTerminus() { return station; }
 }

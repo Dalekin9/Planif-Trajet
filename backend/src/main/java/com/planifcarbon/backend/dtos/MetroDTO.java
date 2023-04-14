@@ -1,9 +1,14 @@
 package com.planifcarbon.backend.dtos;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 
-import java.util.*;
-
+/**
+ * Temporary Data Transfer Object for the Metro class.
+ */
 @ExcludeFromJacocoGeneratedReport
 public class MetroDTO {
     private final String name;
@@ -12,8 +17,8 @@ public class MetroDTO {
 
     public MetroDTO(String name) {
         this.name = name;
-        this.stations = new HashSet<>();
-        this.schedules = new ArrayList<>();
+        this.stations = new HashSet<StationDTO>();
+        this.schedules = new ArrayList<MetroScheduleDTO>();
     }
 
     public MetroDTO(String name, Set<StationDTO> stations, List<MetroScheduleDTO> schedules) {
@@ -22,15 +27,9 @@ public class MetroDTO {
         this.schedules = schedules;
     }
 
-    public Set<StationDTO> getStations() {
-        return stations;
-    }
+    public Set<StationDTO> getStations() { return stations; }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public List<MetroScheduleDTO> getSchedules() {
-        return schedules;
-    }
+    public List<MetroScheduleDTO> getSchedules() { return schedules; }
 }
