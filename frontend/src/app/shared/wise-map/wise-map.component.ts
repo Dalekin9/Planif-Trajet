@@ -90,12 +90,20 @@ export class WiseMapComponent implements OnInit {
   }
 
   public comeFrom(): void{
-    this.onComeFrom.emit(this.selectedMarker.marker.getPosition())
+    if(this.selectedMarker.marker.getTitle() == CUSTOM_MARKER){
+      this.onComeFrom.emit(this.selectedMarker.marker.getPosition())
+    }else{
+      this.onComeFrom.emit(this.selectedMarker.marker.getTitle())
+    }
     this.infoWindow.close()
   }
 
   public goTo(): void{
-    this.onGoTo.emit(this.selectedMarker.marker.getPosition())
+    if(this.selectedMarker.marker.getTitle() == CUSTOM_MARKER){
+      this.onGoTo.emit(this.selectedMarker.marker.getPosition())
+    }else{
+      this.onGoTo.emit(this.selectedMarker.marker.getTitle())
+    }
     this.infoWindow.close()
   }
 }
