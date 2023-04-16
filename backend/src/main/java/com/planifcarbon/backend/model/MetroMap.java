@@ -69,8 +69,8 @@ public final class MetroMap {
     @PostConstruct
     public void initializeFields() {
         // get values from parser
-        String metroFile = "classpath:data/map_data.csv";
-        String scheduleFile = "classpath:data/timetables.csv";
+        String metroFile = "data/map_data.csv";
+        String scheduleFile = "data/timetables.csv";
         try {
             Parser.parse(metroFile, scheduleFile);
         } catch (FileNotFoundException e) {

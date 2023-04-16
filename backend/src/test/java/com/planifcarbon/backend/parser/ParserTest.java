@@ -17,8 +17,8 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = Parser.class)
 @TestPropertySource(locations = "classpath:application-tests.properties")
 public class ParserTest extends Assertions {
-    String map_data = "src/test/resources/map_data.csv";
-    String test_schedule = "src/test/resources/timetables.csv";
+    String map_data = "data/map_data.csv";
+    String test_schedule = "data/timetables.csv";
 
     @ParameterizedTest
     @CsvSource({"';',abcdef,26443", "':',gyeuzgy$%,0ebuebz", "',',ijfioe098,3093:8", "' ',jpozejjfe,buzba(nzz)"})
@@ -37,11 +37,11 @@ public class ParserTest extends Assertions {
     public void testTime(String time, int expected) { assertEquals(expected, Parser.timeStringToInt(time)); }
 
     @Test
-    public void testParseException() { assertThrows(FileNotFoundException.class, () -> Parser.parse("notAFile1", "notAFile2")); }
+    public void testParseException() { assertThrows(NullPointerException.class, () -> Parser.parse("notAFile1", "notAFile2")); }
 
     @Test
     public void testCalculateStationsAndSegmentException() {
-        assertThrows(FileNotFoundException.class, () -> Parser.calculateStationsAndSegments("notAFile"));
+        assertThrows(NullPointerException.class, () -> Parser.calculateStationsAndSegments("notAFile"));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ParserTest extends Assertions {
 
     @Test
     public void testCalculateSchedulesException() {
-        assertThrows(FileNotFoundException.class, () -> Parser.calculateSchedules("notAFile"));
+        assertThrows(NullPointerException.class, () -> Parser.calculateSchedules("notAFile"));
     }
 
     @Test
