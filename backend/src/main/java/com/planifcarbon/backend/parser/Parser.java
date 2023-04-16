@@ -80,7 +80,7 @@ public class Parser {
      */
     static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
         // try with safe close.
-        try (InputStream ins = new FileInputStream(ResourceUtils.getFile(filePath));
+        try (InputStream ins = Parser.class.getClassLoader().getResourceAsStream(filePath);
                 Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             String[] coords;
@@ -111,7 +111,7 @@ public class Parser {
      */
     static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
         // try with safe close.
-        try (InputStream ins = new FileInputStream(ResourceUtils.getFile(scheduleFile));
+        try (InputStream ins = Parser.class.getClassLoader().getResourceAsStream(scheduleFile);
                 Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             String variantKey;
