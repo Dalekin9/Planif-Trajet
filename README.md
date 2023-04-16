@@ -31,3 +31,9 @@ cd backend/
 cd ../frontend/
 npm run-script test
 ```
+
+# Generate javadoc
+cd backend/
+```sh
+mvn javadoc:javadoc # Generate the javadoc using maven (the output is in target/site/apidocs).
+```
