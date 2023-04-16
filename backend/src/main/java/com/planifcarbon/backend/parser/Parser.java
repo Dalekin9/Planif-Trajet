@@ -40,11 +40,11 @@ public class Parser {
     // private ----------------------------------------------------------------
 
     /** Tool function to split a String */
-    private static String[] splitString(String reg, String line) { return line.split(reg); }
+    static String[] splitString(String reg, String line) { return line.split(reg); }
 
     /** Tool function used to parse time from hh:mm:ss.ms to ms */
     // TODO rename to make it more different from timeStringToInt
-    private static int durationStringToInt(String str) {
+    static int durationStringToInt(String str) {
         String[] duration = splitString(":", str);
         int hours, minutes, seconds;
         if (duration.length == 3) {
@@ -60,7 +60,7 @@ public class Parser {
     }
     /** Tool function used to parse time from hh:mm to ms */
     // TODO rename to make it more different from durationStringToInt
-    private static int timeStringToInt(String str) {
+    static int timeStringToInt(String str) {
         String[] time = splitString(":", str);
         int hours = Integer.parseInt(time[0]);
         int minutes = Integer.parseInt(time[1]);
@@ -78,7 +78,7 @@ public class Parser {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    private static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
+    static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
         // try with safe close.
         try (InputStream ins = new FileInputStream(ResourceUtils.getFile(filePath));
                 Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
@@ -105,11 +105,11 @@ public class Parser {
     /**
      * {@summary Parse station &#38; segment data from a CSV file.}
      * 
-     * @param filePath the path of the CSV file
+     * @param scheduleFile the path of the CSV file
      * @throws FileNotFoundException
      * @throws IOException
      */
-    private static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
+    static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
         // try with safe close.
         try (InputStream ins = new FileInputStream(ResourceUtils.getFile(scheduleFile));
                 Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
