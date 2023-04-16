@@ -4,6 +4,7 @@ import java.util.Objects;
 
 /**
  * {@summary Represents a point on map.}
+ * It have a name and coordinates.
  */
 public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode {
     private final String name;

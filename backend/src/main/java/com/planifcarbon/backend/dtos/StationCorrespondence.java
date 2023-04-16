@@ -1,10 +1,12 @@
 package com.planifcarbon.backend.dtos;
 
-import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
-
 import java.util.Objects;
 import java.util.Set;
+import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 
+/**
+ * Temporary Data Transfer Object for the Stationclass.
+ */
 @ExcludeFromJacocoGeneratedReport
 public class StationCorrespondence {
     private final StationDTO station;
@@ -15,36 +17,25 @@ public class StationCorrespondence {
         this.metroLines = metroLines;
     }
 
-    public Set<String> getMetroLines() {
-        return metroLines;
-    }
+    public Set<String> getMetroLines() { return metroLines; }
 
-    public StationDTO getStation() {
-        return station;
-    }
+    public StationDTO getStation() { return station; }
 
-    public int getNbStations() {
-        return this.metroLines.size();
-    }
+    public int getNbStations() { return this.metroLines.size(); }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         StationCorrespondence that = (StationCorrespondence) o;
         return Objects.equals(station, that.station);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(station);
-    }
+    public int hashCode() { return Objects.hash(station); }
 
     @Override
-    public String toString() {
-        return "StationCorrespondence{" +
-                "station=" + station +
-                ", metroLines=" + metroLines +
-                '}';
-    }
+    public String toString() { return "StationCorrespondence{" + "station=" + station + ", metroLines=" + metroLines + '}'; }
 }

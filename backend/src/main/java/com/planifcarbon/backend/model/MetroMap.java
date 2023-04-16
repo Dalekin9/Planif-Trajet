@@ -3,14 +3,21 @@ package com.planifcarbon.backend.model;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.springframework.stereotype.Component;
-import com.planifcarbon.backend.parser.Parser;
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.StationDTO;
+import com.planifcarbon.backend.parser.Parser;
 import jakarta.annotation.PostConstruct;
 
+/**
+ * {@summary Represents the metro map.}
+ */
 @Component
 public final class MetroMap {
     private final Map<Node, Set<Segment>> graph;

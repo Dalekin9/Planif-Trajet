@@ -1,9 +1,11 @@
 package com.planifcarbon.backend.dtos;
 
+import java.util.Objects;
 import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 
-import java.util.Objects;
-
+/**
+ * Temporary Data Transfer Object for the Stationclass.
+ */
 @ExcludeFromJacocoGeneratedReport
 public class StationDTO {
     private final String name;
@@ -16,37 +18,27 @@ public class StationDTO {
         this.latitude = latitude;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public double getLatitude() {
-        return latitude;
-    }
+    public double getLatitude() { return latitude; }
 
-    public double getLongitude() {
-        return longitude;
-    }
+    public double getLongitude() { return longitude; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         StationDTO that = (StationDTO) o;
         return Objects.equals(name, that.name);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
+    public int hashCode() { return Objects.hash(name); }
 
     @Override
     public String toString() {
-        return "StationDTO{" +
-                "name='" + name + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                '}';
+        return "StationDTO{" + "name='" + name + '\'' + ", latitude=" + latitude + ", longitude=" + longitude + '}';
     }
 }
