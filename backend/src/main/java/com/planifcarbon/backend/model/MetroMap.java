@@ -60,8 +60,35 @@ public final class MetroMap {
                 HashSet::addAll);
     }
 
-    // Dikjstra and it's auxiliary functions
-    // --------------------------------------------------------------------------------------------------------------------
+    // ==================================  Dikjstra and it's auxiliary functions =======================================
+    /**
+     * {@summary Calculates time tables for all stations of each metro line.
+     */
+    private void calculateTimeTableForStations()
+    {
+        lines.forEach((name, metroLine) ->          // for each line
+        {
+            Set<Station> tmpStations = metroLine.getStations();         // all stations of line
+            List<Integer> lineSchedules = metroLine.getSchedules();     // scheduls of line
+
+            tmpStations.forEach(currStation ->          // for each station ...
+            {
+                Map<ScheduleKey, Integer> stationSchedules = currStation.getSchedules();   // time of trip from terminus to currStation
+
+                stationSchedules.forEach((scheduleKey, value) ->          // ... from each terminus
+                {
+                    List<Integer> listSched = new LinkedList<Integer>();
+                    for (int i = 0; i < lineSchedules.size(); i++)
+                    {
+                        listSched.add(value.intValue() + lineSchedules.get(i).intValue());      // create time table
+                    }
+                    listSched = listSched.stream().sorted().collect(Collectors.toList());       // sort
+                    currStation.addTimeToTimeTable(scheduleKey, listSched);                     // add to class
+                });
+            });
+        });
+    }
+
 
     /**
      * {@summary Tool for stream usage. Helps to find unique values from stream. That migth be necessary if
@@ -103,6 +130,21 @@ public final class MetroMap {
         return neighbDurations;
     }
 
+    private boolean notAllVisited(Map<Node, Boolean> visited)
+    {
+        return visited.values().stream().anyMatch(Boolean.FALSE::equals);
+    }
+
+    private List<Station> getNeighbours (Node currentStation) {
+        List<Station> neighbs = graph.get(currentStation)   // Set
+                .stream()
+                .map(segment -> segment.getEndPoint())
+                .map(node -> getStationByName(node.getName()))
+                //.filter(segment -> segment.getEndPoint())
+                .collect(Collectors.toList());
+        return neighbs;
+    }
+
     /**
      * {@summary Implementation of Dikjstra algorithm.}
      * @param
@@ -118,19 +160,103 @@ public final class MetroMap {
 
         // =========== 2. Create structure of vertex (let’s call it ‘parens’), which size = nb of vertex ==============
         allNodes.forEach(node -> {
-            this.parents.put(node, startNode);                                  // TODO TEST: final size of parents has to be = nb of vertex
+            this.parents.put(node, startNode);                           // TODO TEST: final size of parents has to be = nb of vertex
+        });
+
+        // =========== 3. Create and init structure of visited vertex =================================================
+        Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
+        allNodes.forEach(node -> {
+            visited.put(node, new Boolean(false));                       // TODO TEST: final size of visitev has to be = nb of vertex
         });
 
         // =========== 3. For each destination vertex we are setting weight as: Tw + Tt, where ========================
         // Tw – wait time for next train starting for current time at station, Tt – travel time in train to next station
-        // find Tt - weights for continue the trip
-        Map<Node, Integer> currNeibDurations = getNeighboursDurations(startNode);
-        // find Tw - arrival time of nearest train
-        Station scheduleKey;
-        int nearestTrainTime = 0;
 
-        Station currentStation = getStationByName(startNode.getName());             // obtain station correspond node
-        Map<ScheduleKey, Integer> nearestTrainAndTime = getNearestDepartureTime(startTime, currentStation);
+        Station startStation = getStationByName(startNode.getName());
+
+        // departure time from start station
+        Map.Entry<ScheduleKey, Integer> nearestTrain = getNearestDepartureTime(startTime, startStation);
+        Integer departureTime = nearestTrain.getValue();
+
+        // put start node
+        weightNodes.replace(startNode, departureTime);
+
+        System.out.println("Departure from start = " + departureTime);
+
+        // create priorityQueue where will be stocked pairs (Station, time)
+        PriorityQueue<Map.Entry<Station, Integer>> priorityQueue = new PriorityQueue<>(
+                Comparator.<Map.Entry<Station, Integer>>comparingInt(Map.Entry::getValue));
+
+        // add here start station
+        priorityQueue.add(new AbstractMap.SimpleEntry(startStation, departureTime));
+
+        int count = 1;
+        while( priorityQueue.size() != 0 )
+        {
+            // get minimal
+            Map.Entry<Station, Integer> current = priorityQueue.poll();
+            Station currentStation = current.getKey();
+            Integer currentTime = current.getValue();
+
+            if (visited.get(currentStation) == true)
+            {
+                continue;
+            }
+
+            List<Station> getNeibs = getNeighbours(currentStation);        // neib stations of current station
+
+            int nextMin = Integer.MAX_VALUE;
+            int k = 1;
+
+            visited.replace(currentStation, true);
+
+            for (Station neib: getNeibs) {
+            {
+                // obtain nearest train time
+                nearestTrain = getNearestDepartureTime(currentTime, neib);
+                int nearestTime = nearestTrain.getValue().intValue();
+                System.out.println("nearestTime : " + nearestTime);
+
+                // obtain time of movement from currentStation to neib
+                Set<Segment> tmpSegmSet = getSegments(neib);
+                Integer[] cout = tmpSegmSet.stream()
+                        .filter((s) -> (s.getStartPoint().equals(currentStation) && (s.getEndPoint().equals(neib))))
+                        .map(Segment::getDuration)
+                        .toArray(Integer[]::new);
+
+                System.out.println("cout" + cout[0]);
+
+
+                // check if need to change weight, parent etc
+                Integer weightNeib = weightNodes.get(neib);
+                Integer weightCurr = weightNodes.get(currentStation);
+
+                if (weightNeib > (weightCurr + cout[0].intValue()))
+                {
+                    weightNeib = weightCurr + cout[0].intValue();
+                    parents.replace(neib, currentStation);
+                    priorityQueue.add(new AbstractMap.SimpleEntry(neib, weightNeib));
+                }
+
+            }
+
+            }
+
+
+         //   for (Edge e  (v)) {
+         //       int w = e.to();
+         //       if (dist[w]> dist[v] + e.weight()) {
+         //           dist[w] = dist[v] + e.weight();
+         //           pred[w] = e;
+         //           pq.insert(dist[w], w);
+         //       }
+         //   }
+
+            visited.replace(currentStation, true);
+
+            System.out.println("NextMin :" + nextMin);
+            count --;
+        }
 
     }
 
@@ -141,11 +267,12 @@ public final class MetroMap {
      * @param currentStation station for wich need to find nearest trains.
      * @return map contains ending stations (key) and arrival time on given station (value).
      */
-    private Map<ScheduleKey, Integer> getNearestDepartureTime(int arrivalTime, Station currentStation) {
+    private Map.Entry<ScheduleKey, Integer> getNearestDepartureTime(int arrivalTime, Station currentStation) {
         // find all ScheduleKey for currentStation
         Map<ScheduleKey, Integer> sh = currentStation.getSchedules();                   // vse konechie
 
         Map<ScheduleKey, Integer> bestOpportunities = new HashMap<ScheduleKey, Integer>();
+
         // for ScheduleKey find the first time schedule witch will be > that arrivalTime (i.e. nearest train for each ScheduleKey)
         sh.forEach((scheduleKey, value) ->  {
             List<Integer> times = scheduleKey.getMetroLine().getSchedules();            // raspisanie konechnoy
@@ -155,7 +282,19 @@ public final class MetroMap {
             }
             bestOpportunities.put(scheduleKey, times.get(i) + value);
         });
-        return bestOpportunities;
+
+        // between them chose the min one
+        int[] min = {Integer.MAX_VALUE};
+
+        for (Map.Entry<ScheduleKey, Integer> entry : bestOpportunities.entrySet()) {
+            if (entry.getValue() < min[0])
+            {
+                min[0] = entry.getValue();
+                return entry;
+            }
+        }
+        System.out.println("Nearest Departure Time not found");
+        return null;
     }
 
 
@@ -196,67 +335,62 @@ public final class MetroMap {
         diffuseTrainTimeFromTerminus(metroLinesTerminus);
         addAllWalkSegments(getAllStations());
 
-      //  System.out.println("============= schedules results observation ================");
-      //  int[] count1 = {0};
-      //  stations.forEach((key, value) ->  {
-      //      // System.out.println(value.toString());
-      //      count1[0]++;
-      //      value.getSchedules();
-      //  });
-      //  System.out.println("nb stations = " + count1[0]);
+        calculateTimeTableForStations();
 
-      //  System.out.println("============= stations and distances results observation ================");
-      //  int[] count = {0};
-      //  graph.forEach((key, value) ->  {
-      //      if (key.getName().equals("Cité"))
-      //      {
-      //          value.forEach((segm) -> {
-      //              System.out.println(segm.getEndPoint().getName() + " - " + segm.getDistance());
-      //              count[0]++;
-      //          });
-      //      }
-      //  });
-      //  System.out.println("nb stations connected with Cité = " + count[0]);
-      //  System.out.println("========= getNearestDepartureTime results observation (old, it was with prints) ===============");
+        //  System.out.println("============= schedules results observation ================");
+        //  int[] count1 = {0};
+        //  stations.forEach((key, value) ->  {
+        //      // System.out.println(value.toString());
+        //      count1[0]++;
+        //      value.getSchedules();
+        //  });
+        //  System.out.println("nb stations = " + count1[0]);
 
-      //  Node testing = getStationByName("Cité");
-      //  getNeighboursDurations (testing);
-      //  System.out.println("==============================");
+     //   System.out.println("============= stations and distances results observation ================");
+     //   int[] count = {0};
+     //   graph.forEach((key, value) ->  {
+     //       if (key.getName().equals("Jussieu"))
+     //       {
+     //           value.forEach((segm) -> {
+     //               System.out.println(segm.getEndPoint().getName() + " - " + segm.getDistance());
+     //               count[0]++;
+     //           });
+     //       }
+     //   });
+     //   System.out.println("nb stations connected with Jussieu = " + count[0]);
+     //   System.out.println("========= getNearestDepartureTime results observation (old, it was with prints) ===============");
+//
+     //   Node testing = getStationByName("Jussieu");
+     //   getNeighboursDurations (testing);
+     //   System.out.println("==============================");
 
-        System.out.println("============= cummulative getSchedules results observation ================");
-        int[] count2 = {0};
-        Station testingStation = getStationByName("Cité");
-        Map<ScheduleKey, Integer> sh = testingStation.getSchedules();
+        //   System.out.println("============= cummulative getSchedules results observation ================");
+        //   int[] count2 = {0};
+           Station testingStation = getStationByName("Cité");
+        //   Map<ScheduleKey, Integer> sh = testingStation.getSchedules();
+////
+        //   sh.forEach((scheduleKey, value) ->  {
+        //       System.out.println(scheduleKey.toString() + " : " + value);
+        //       List<Integer> times = scheduleKey.getMetroLine().getSchedules();
+        //       for (int i = 0; i < times.size(); i++) {
+        //           System.out.println("departure time of " + scheduleKey.toString() + " = " + times.get(i));
+        //       }
+        //       count2[0]++;
+        //   });
+        //   System.out.println("nb schedules = " + count2[0] + "\n");
 
-        sh.forEach((scheduleKey, value) ->  {
-            System.out.println(scheduleKey.toString() + " : " + value);
-            List<Integer> times = scheduleKey.getMetroLine().getSchedules();
-            for (int i = 0; i < times.size(); i++) {
-                System.out.println("departure time of " + scheduleKey.toString() + " = " + times.get(i));
-            }
-            count2[0]++;
-        });
-        System.out.println("nb schedules = " + count2[0] + "\n");
 
-        System.out.println("================ getNearestDepartureTime results observation ===================");
-        Node testingNode = (Node)getStationByName("Cité");
-        Map<ScheduleKey, Integer> bestOpportun = getNearestDepartureTime(58500, testingStation);
+        System.out.println("\n================ Best opportunity observation ========================================");
+        Map.Entry<ScheduleKey, Integer> best = getNearestDepartureTime(58500, testingStation);
+        System.out.println(" !!!!!   the nearest departure time = " + best.getKey() + " ? " + best.getValue());
 
-        bestOpportun.forEach((scheduleKey, value) ->  {
-                System.out.println(scheduleKey.toString() + " = " + value);
-        });
-        System.out.println("================ Better opportunity observation ========================================");
-        int[] min = {Integer.MAX_VALUE};
-        ScheduleKey[] bestDepartStation = {null};
+        System.out.println("================ End results observation ========================================\n");
 
-        bestOpportun.forEach((scheduleKey, value) ->  {
-            if (value < min[0]) {
-                min[0] = value;
-                bestDepartStation[0] = scheduleKey;
-            }
-        });
-        System.out.println(" !!!!!   For time " + 58500 + " the nearest departure time = " + min[0] + ", train from " + bestDepartStation[0].toString());
-        System.out.println("================ End results observation ========================================");
+        System.out.println("================ Dikjstra observation ========================================\n");
+
+        Dikjstra(testingStation, 58500);
+
+        System.out.println("================ End results observation ========================================\n");
 
     }
 

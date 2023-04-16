@@ -53,8 +53,8 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
      * {@return A simple string representation of this.}
      */
     @Override
-   // public String toString() { return name + ": " + coordinates; }
-    public String toString() { return name; }          // TODO temporary simplification, to simplify testing
+    public String toString() { return name + ": " + coordinates; }
+    //public String toString() { return name; }          // TODO temporary simplification, to simplify testing
 
     public abstract boolean isInMetro();
 }

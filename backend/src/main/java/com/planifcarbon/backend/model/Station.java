@@ -2,13 +2,17 @@ package com.planifcarbon.backend.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.LinkedList;
 
 /**
  * {@summary Represents a metro station.}
  */
 public final class Station extends Node {
-
+    /** Time to train movement from the each terminal station and this one. */
     private final Map<ScheduleKey, Integer> schedules;
+    /** Time table of all arrivings trains to this station. */
+    private Map<ScheduleKey, List<Integer>> timeTable;
 
     /**
      * {@summary Main constructor.}
@@ -20,6 +24,7 @@ public final class Station extends Node {
     public Station(final String name, final double latitude, final double longitude) {
         super(name, latitude, longitude);
         this.schedules = new HashMap<ScheduleKey, Integer>();
+        this.timeTable = new HashMap<ScheduleKey, List<Integer>>();
     }
     @Override
     public boolean isInMetro() { return true; }
@@ -35,5 +40,9 @@ public final class Station extends Node {
     public Map<ScheduleKey, Integer> getSchedules() {
         return schedules;
     }
+
+    public Map<ScheduleKey, List<Integer>> getTimeTable() { return timeTable;}
+
+    public void addTimeToTimeTable(ScheduleKey key,  List<Integer> times) { this.timeTable.put(key, times); }
 
 }

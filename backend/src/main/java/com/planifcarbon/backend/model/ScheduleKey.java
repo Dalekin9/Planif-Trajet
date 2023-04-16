@@ -33,9 +33,7 @@ public class ScheduleKey {
 
     @Override
     public String toString() {
-        return "ScheduleKey{" +
-                "terminusStation = " + terminusStation +
-                ", metroLine = " + metroLine +
-                '}';
+        return "terminusStation = " + terminusStation +
+                ", metroLine = " + metroLine;
     }
 }
