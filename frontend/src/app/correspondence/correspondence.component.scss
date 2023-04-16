@@ -1,0 +1,41 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  gap: 3%;
+
+  .station-correspondences {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    width: 30%;
+    margin: 8px 0;
+
+    .metro-lines {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+
+      > img {
+        height: 32px;
+        width: 32px;
+        aspect-ratio: 1;
+      }
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .station-correspondences {
+      width: 45%;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .station-correspondences {
+      width: 90%;
+      justify-content: center;
+    }
+  }
+}

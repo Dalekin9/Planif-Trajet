@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+
+  .marker-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .metro-lines {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+
+      > img {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
+}
