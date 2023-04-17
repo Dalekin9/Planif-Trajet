@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -128,83 +129,138 @@ public class MetroMapTest {
         assertNotNull(station.getMetroLine());
     }
 
+    //       AZH  Utils for debugging and observation of results of functions' calls
 
-    @Test
-    public void simplePrintSchedules() {
-        System.out.println("============================ Print schedules  =====================================");
-        MetroMap map = new MetroMap();
-        assertDoesNotThrow(map::initializeFields);
-        int[] count1 = {0};
-        Map<String, Station> stations = map.getStations();
-        stations.forEach((key, value) -> {
-            // System.out.println(value.toString());
-            count1[0]++;
-            value.getSchedules();
-        });
-        System.out.println("nb stations = " + count1[0]);
-        System.out.println("============================ End print schedules  ===================================");
-    }
+    /**
+     * {@summary Print to explore all schedules.}
+     */
+   // @Test
+   // public void simplePrintSchedules() {
+   //     System.out.println("============================ Print schedules  =====================================");
+   //     MetroMap map = new MetroMap();
+   //     assertDoesNotThrow(map::initializeFields);
+   //     int[] count1 = {0};
+   //     Map<String, Station> stations = map.getStations();
+   //     stations.forEach((key, value) -> {
+   //         // System.out.println(value.toString());
+   //         count1[0]++;
+   //         value.getSchedules();
+   //     });
+   //     System.out.println("nb stations = " + count1[0]);
+   //     System.out.println("============================ End print schedules  ===================================");
+   // }
 
-    //  System.out.println("============= Print getDurations  ===========================================");
-    //  int[] count = {0};
-    //  graph.forEach((key, value) ->  {
-    //      if (key.getName().equals("Jussieu"))
-    //      {
-    //          value.forEach((segm) -> {
-    //              System.out.println(segm.getEndPoint().getName() + " - " + segm.getDuration());
-    //              count[0]++;
-    //          });
-    //      }
-    //  });
-    //  System.out.println("nb stations connected with Jussieu = " + count[0]);
-    //  System.out.println("============= End print getDurations  ===========================================");
+    /**
+     * {@summary Print to explore the results of getDurations() method call.}
+     */
+   // @ParameterizedTest
+   // @ValueSource(strings = {"Jussieu"})
+   // public void simplePrintGetDurations(String name) {
+   //     System.out.println("============= Print getDurations  ===========================================");
+   //     MetroMap map = new MetroMap();
+   //     assertDoesNotThrow(map::initializeFields);
+   //     int[] count = {0};
+   //     Map<Node, Set<Segment>> graph = map.getGraph();
+   //     graph.forEach((key, value) -> {
+   //         if (key.getName().equals(name)) {
+   //             value.forEach((segm) -> {
+   //                 System.out.println(segm.getEndPoint().getName() + " - " + segm.getDuration());
+   //                 count[0]++;
+   //             });
+   //         }
+   //     });
+   //     System.out.println("nb stations connected with " + name + "= " + count[0]);
+   //     System.out.println("============= End print getDurations  ===========================================");
+   // }
 
-    //  System.out.println("============= cummulative getSchedules results observation ================");
-    //  int[] count2 = {0};
-    //Station testingStation = getStationByName("Bastille");
-    //  Map<ScheduleKey, Integer> sh = testingStation.getSchedules();
-    //  sh.forEach((scheduleKey, value) ->  {
-    //      System.out.println(scheduleKey.toString() + " : " + value);
-    //      List<Integer> times = scheduleKey.getMetroLine().getSchedules();
-    //      for (int i = 0; i < times.size(); i++) {
-    //          System.out.println("departure time of " + scheduleKey.toString() + " = " + times.get(i));
-    //      }
-    //      count2[0]++;
-    //  });
-    //  System.out.println("nb schedules = " + count2[0] + "\n");
+    /**
+     * {@summary Print schedules of Station (i.e. travel time from schKey to station)
+     * and summ with schedule of line => it's timeTable in Station.}
+     * Useful to check and getDurations in MetroMap and testGetSchedules() in StationTest.
+     */
+   // @ParameterizedTest
+   // @ValueSource(strings = {"Duroc"})
+   // public void simplePrintCummulativeSchedules(String name) {
+   //     System.out.println("============= cummulative getSchedules results observation ================");
+   //     MetroMap map = new MetroMap();
+   //     assertDoesNotThrow(map::initializeFields);
+   //     int[] count2 = {0};
+   //     Station testingStation = map.getStationByName(name);
+   //     Map<ScheduleKey, Integer> sh = testingStation.getSchedules();
+   //     sh.forEach((scheduleKey, value) -> {
+   //         System.out.println(scheduleKey.toString() + " : " + value);
+   //         List<Integer> times = scheduleKey.getMetroLine().getSchedules();
+   //         for (int i = 0; i < times.size(); i++) {
+   //             System.out.println("departure time of " + scheduleKey.toString() + " = " + times.get(i));
+   //         }
+   //         count2[0]++;
+   //     });
+   //     System.out.println("nb schedules = " + count2[0] + "\n");
+   // }
 
+    /**
+     * {@summary Print the result of getNearestDepartureTime() method call.}
+     * Return only one nearest departure time.
+     */
+   //  @ParameterizedTest
+   //  @CsvSource({"58500, Duroc"})
+   //  public void simplePrintgetNearestDepartureTime(int time, String name) {
+   //      System.out.println("\n================ Best opportunity observation ========================================");
+   //      MetroMap map = new MetroMap();
+   //      assertDoesNotThrow(map::initializeFields);
+   //      Station testingStation = map.getStationByName(name);
+   //      Map.Entry<MetroLine, Integer> best = map.getNearestDepartureTime(time, testingStation);
+   //      System.out.println("From station " + testingStation.toString() + " departure time " + time);
+   //      System.out.println("            the nearest train " + best.getKey() + " on time = " + best.getValue());
+   //      System.out.println("================ End best opportunity observation =====================================\n");
+   //  }
 
-    //  System.out.println("\n================ Best opportunity observation ========================================");
-    //  Map.Entry<MetroLine, Integer> best = getNearestDepartureTime(58500, testingStation);
-    //  System.out.println("From station " + testingStation.toString() + " departure time " + 58500);
-    //  System.out.println("            the nearest train " + best.getKey() + " on time = " + best.getValue());
-//
-    //  System.out.println("================ End best opportunity observation ======================================\n");
-//
-      //  System.out.println("================ Print path from Dikjstra  ===========================================\n");
-    //
-    //Map<Node, Node> dikjstra = Dikjstra(testingStation, 58100);
-    //   Node arrive = getStationByName("Pernety");
-//
-    //   Node current = arrive;
-    //   Node end = testingStation;
-//
-    //   int c = 10;     // limite probable loops
-    //   while( !current.equals(end) && (c > 0))
-    //   {
-    //       System.out.println("d : " + current + " - arr : " + dikjstra.get(current));
-    //       current = dikjstra.get(current);
-    //       c--;
-    //   }
+    /**
+     * {@summary Print the path obtained after Dikjstra() method call.}
+     *           WARNING : !!!!!!!!!!! print from FINISH to START !!!!!!!!!!!!!!
+     */
+    //@ParameterizedTest
+    //@CsvSource({"58100, Duroc, Pernety"})
+    //public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
+    //    System.out.println("\n================ Print path from Dikjstra  ===========================================");
+    //    MetroMap map = new MetroMap();
+    //    assertDoesNotThrow(map::initializeFields);
+    //    Station testingStation = map.getStationByName(nameStart);
+
+    //    Map<Node, Node> dikjstra = map.Dikjstra(testingStation, timeStart);
+
+    //    Node arrive = map.getStationByName(nameFinish);
+    //    Node current = arrive;
+    //    Node end = testingStation;
+
+    //    int c = 10;     // limit for potentual loops caused by imperfection of the algorithm/data
+
+    //    while (!current.equals(end) && (c > 0)) {
+    //        System.out.println("dep : " + current + " - arr : " + dikjstra.get(current));
+    //        current = dikjstra.get(current);
+    //        c--;
+    //    }
     //    System.out.println("================ End Print path from Dikjstra =====================================\n");
-    //
-    //  System.out.println("================ Print all parents (Dikjstra) ========================================\n");
-    //  dikjstra.forEach((ch1, par) -> {
-    //      if (par  != null ) {
-    //          System.out.println("child " + ch1.toString() + " : parent " + par.toString());
-    //      }
-//
-    //  });
-    //    System.out.println("================ End Print all parents (Dikjstra) =====================================\n");
+    //}
 
+    /**
+     * {@summary Print all paires (Child, Parent) obtained after Dikjstra() method call.}
+     * Return only one nearest departure time.
+     */
+   // @ParameterizedTest
+   // @CsvSource({"58100, Duroc"})
+   // public void simplePrintgetChildsParents(int timeStart, String nameStart) {
+   //     System.out.println("\n================ Print all parents and child (Dikjstra) ===============================");
+   //     MetroMap map = new MetroMap();
+   //     assertDoesNotThrow(map::initializeFields);
+   //     Station testingStation = map.getStationByName(nameStart);
+
+   //     Map<Node, Node> dikjstra = map.Dikjstra(testingStation, timeStart);
+   //     dikjstra.forEach((ch1, par) -> {
+   //         if (par != null) {
+   //             System.out.println("child " + ch1.toString() + " : parent " + par.toString());
+   //         }
+   //     });
+   //     System.out.println("================ End Print  all parents and child (Dikjstra) ===========================\n");
+   // }
 }

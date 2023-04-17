@@ -40,7 +40,7 @@ public class StationTest extends Assertions {
             System.out.println(key.toString() + " : " + val.toString());
         });
         System.out.println("Nb Schedules = " + sh.size());
-        // assertEquals( ??, station.getTimeTable().size());         // AZH how many terminusStation & depart times has to be ?
+        // assertEquals( ??, station.getSchedules().size());         // AZH how many terminusStation & depart times has to be ?
                                                                     // Why only 4 out of 7 variants for Line 13 are present
                                                                     // and only 3 out of 4 variants for Line 10 are present
         System.out.println("========= End Test getSchedules for Station ====================\n\n");
@@ -75,7 +75,4 @@ public class StationTest extends Assertions {
 
         System.out.println("========= End Test GetTimeTable ====================\n\n");
     }
-
-
-    // void addTimeToTimeTable(ScheduleKey key,  List<Integer> times) { this.timeTable.put(key, times); }
 }
