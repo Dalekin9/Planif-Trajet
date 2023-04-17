@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -115,4 +116,95 @@ public class MetroMapTest {
         assertEquals(4, station.getSchedules().size());
         System.out.println(station.getSchedules());
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Gare d'Austerlitz"})
+    public void testgetScheduleKeyByName(String name) {
+        MetroMap map = new MetroMap();
+        assertDoesNotThrow(map::initializeFields);
+        assertNotNull(map.getScheduleKeyByName(name));
+        ScheduleKey station = map.getScheduleKeyByName(name);
+        assertNotNull(station.getTerminusStation());
+        assertNotNull(station.getMetroLine());
+    }
+
+
+    @Test
+    public void simplePrintSchedules() {
+        System.out.println("============================ Print schedules  =====================================");
+        MetroMap map = new MetroMap();
+        assertDoesNotThrow(map::initializeFields);
+        int[] count1 = {0};
+        Map<String, Station> stations = map.getStations();
+        stations.forEach((key, value) -> {
+            // System.out.println(value.toString());
+            count1[0]++;
+            value.getSchedules();
+        });
+        System.out.println("nb stations = " + count1[0]);
+        System.out.println("============================ End print schedules  ===================================");
+    }
+
+    //  System.out.println("============= Print getDurations  ===========================================");
+    //  int[] count = {0};
+    //  graph.forEach((key, value) ->  {
+    //      if (key.getName().equals("Jussieu"))
+    //      {
+    //          value.forEach((segm) -> {
+    //              System.out.println(segm.getEndPoint().getName() + " - " + segm.getDuration());
+    //              count[0]++;
+    //          });
+    //      }
+    //  });
+    //  System.out.println("nb stations connected with Jussieu = " + count[0]);
+    //  System.out.println("============= End print getDurations  ===========================================");
+
+    //  System.out.println("============= cummulative getSchedules results observation ================");
+    //  int[] count2 = {0};
+    //Station testingStation = getStationByName("Bastille");
+    //  Map<ScheduleKey, Integer> sh = testingStation.getSchedules();
+    //  sh.forEach((scheduleKey, value) ->  {
+    //      System.out.println(scheduleKey.toString() + " : " + value);
+    //      List<Integer> times = scheduleKey.getMetroLine().getSchedules();
+    //      for (int i = 0; i < times.size(); i++) {
+    //          System.out.println("departure time of " + scheduleKey.toString() + " = " + times.get(i));
+    //      }
+    //      count2[0]++;
+    //  });
+    //  System.out.println("nb schedules = " + count2[0] + "\n");
+
+
+    //  System.out.println("\n================ Best opportunity observation ========================================");
+    //  Map.Entry<MetroLine, Integer> best = getNearestDepartureTime(58500, testingStation);
+    //  System.out.println("From station " + testingStation.toString() + " departure time " + 58500);
+    //  System.out.println("            the nearest train " + best.getKey() + " on time = " + best.getValue());
+//
+    //  System.out.println("================ End best opportunity observation ======================================\n");
+//
+      //  System.out.println("================ Print path from Dikjstra  ===========================================\n");
+    //
+    //Map<Node, Node> dikjstra = Dikjstra(testingStation, 58100);
+    //   Node arrive = getStationByName("Pernety");
+//
+    //   Node current = arrive;
+    //   Node end = testingStation;
+//
+    //   int c = 10;     // limite probable loops
+    //   while( !current.equals(end) && (c > 0))
+    //   {
+    //       System.out.println("d : " + current + " - arr : " + dikjstra.get(current));
+    //       current = dikjstra.get(current);
+    //       c--;
+    //   }
+    //    System.out.println("================ End Print path from Dikjstra =====================================\n");
+    //
+    //  System.out.println("================ Print all parents (Dikjstra) ========================================\n");
+    //  dikjstra.forEach((ch1, par) -> {
+    //      if (par  != null ) {
+    //          System.out.println("child " + ch1.toString() + " : parent " + par.toString());
+    //      }
+//
+    //  });
+    //    System.out.println("================ End Print all parents (Dikjstra) =====================================\n");
+
 }

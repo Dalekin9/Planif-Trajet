@@ -11,7 +11,8 @@ import java.util.LinkedList;
 public final class Station extends Node {
     /** Time to train movement from the each terminal station and this one. */
     private final Map<ScheduleKey, Integer> schedules;
-    /** Time table of all arrivings trains to this station. */
+    /** Time table of all arrivings trains to this station.
+     *  List is sorted */
     private Map<ScheduleKey, List<Integer>> timeTable;
 
     /**
