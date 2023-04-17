@@ -190,7 +190,7 @@ public final class MetroMap {
      * @param startTime time of starting the trip
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
-    private Map<Node, Node> Dikjstra(Node startNode, int startTime)
+    private Map<Node, Node> Dijkstra(Node startNode, int startTime)
     {
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");

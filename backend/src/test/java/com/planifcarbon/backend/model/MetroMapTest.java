@@ -219,48 +219,48 @@ public class MetroMapTest {
      * {@summary Print the path obtained after Dikjstra() method call.}
      *           WARNING : !!!!!!!!!!! print from FINISH to START !!!!!!!!!!!!!!
      */
-    //@ParameterizedTest
-    //@CsvSource({"58100, Duroc, Pernety"})
-    //public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
-    //    System.out.println("\n================ Print path from Dikjstra  ===========================================");
-    //    MetroMap map = new MetroMap();
-    //    assertDoesNotThrow(map::initializeFields);
-    //    Station testingStation = map.getStationByName(nameStart);
+   // @ParameterizedTest
+   // @CsvSource({"58100, Duroc, Pernety"})
+   // public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
+   //     System.out.println("\n================ Print path from Dikjstra  ===========================================");
+   //     MetroMap map = new MetroMap();
+   //     assertDoesNotThrow(map::initializeFields);
+   //     Station testingStation = map.getStationByName(nameStart);
 
-    //    Map<Node, Node> dikjstra = map.Dikjstra(testingStation, timeStart);
+   //     Map<Node, Node> dijkstra = map.Dijkstra(testingStation, timeStart);
 
-    //    Node arrive = map.getStationByName(nameFinish);
-    //    Node current = arrive;
-    //    Node end = testingStation;
+   //     Node arrive = map.getStationByName(nameFinish);
+   //     Node current = arrive;
+   //     Node end = testingStation;
 
-    //    int c = 10;     // limit for potentual loops caused by imperfection of the algorithm/data
+   //     int c = 10;     // limit for potentual loops caused by imperfection of the algorithm/data
 
-    //    while (!current.equals(end) && (c > 0)) {
-    //        System.out.println("dep : " + current + " - arr : " + dikjstra.get(current));
-    //        current = dikjstra.get(current);
-    //        c--;
-    //    }
-    //    System.out.println("================ End Print path from Dikjstra =====================================\n");
-    //}
+   //     while (!current.equals(end) && (c > 0)) {
+   //         System.out.println("dep : " + current + " - arr : " + dijkstra.get(current));
+   //         current = dijkstra.get(current);
+   //         c--;
+   //     }
+   //     System.out.println("================ End Print path from Dikjstra =====================================\n");
+   // }
 
     /**
      * {@summary Print all paires (Child, Parent) obtained after Dikjstra() method call.}
      * Return only one nearest departure time.
      */
-   // @ParameterizedTest
-   // @CsvSource({"58100, Duroc"})
-   // public void simplePrintgetChildsParents(int timeStart, String nameStart) {
-   //     System.out.println("\n================ Print all parents and child (Dikjstra) ===============================");
-   //     MetroMap map = new MetroMap();
-   //     assertDoesNotThrow(map::initializeFields);
-   //     Station testingStation = map.getStationByName(nameStart);
+  //  @ParameterizedTest
+  //  @CsvSource({"58100, Duroc"})
+  //  public void simplePrintgetChildsParents(int timeStart, String nameStart) {
+  //      System.out.println("\n================ Print all parents and child (Dikjstra) ===============================");
+  //      MetroMap map = new MetroMap();
+  //      assertDoesNotThrow(map::initializeFields);
+  //      Station testingStation = map.getStationByName(nameStart);
 
-   //     Map<Node, Node> dikjstra = map.Dikjstra(testingStation, timeStart);
-   //     dikjstra.forEach((ch1, par) -> {
-   //         if (par != null) {
-   //             System.out.println("child " + ch1.toString() + " : parent " + par.toString());
-   //         }
-   //     });
-   //     System.out.println("================ End Print  all parents and child (Dikjstra) ===========================\n");
-   // }
+  //      Map<Node, Node> dijkstra = map.Dijkstra(testingStation, timeStart);
+  //      dijkstra.forEach((ch1, par) -> {
+  //          if (par != null) {
+  //              System.out.println("child " + ch1.toString() + " : parent " + par.toString());
+  //          }
+  //      });
+  //      System.out.println("================ End Print  all parents and child (Dikjstra) ===========================\n");
+  //  }
 }
