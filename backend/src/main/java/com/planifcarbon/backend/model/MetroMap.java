@@ -22,8 +22,11 @@ public final class MetroMap {
     private final Map<Node, Set<Segment>> graph;
     private final Map<String, MetroLine> lines;
     private final Map<String, Station> stations;
+    /** Set of all final stations stations (mostly used in tests). */
     private Set<ScheduleKey> scheduleKeys;
-    private Map<KeyTotalTable, List<TimeValue>> totalTable;
+    /** Structure to collect pairs (Node from, Node to) like a keys,
+     *  and pairs (int departTime, int arriveTime) like a values. */
+    private TreeMap<KeyTotalTable, List<TimeValue>> totalTable;
 
     /**
      * {@summary Main constructor.}
@@ -33,77 +36,50 @@ public final class MetroMap {
         lines = new HashMap<String, MetroLine>();
         stations = new HashMap<String, Station>();
         scheduleKeys = new HashSet<ScheduleKey>();
-
         totalTable = new TreeMap<KeyTotalTable, List<TimeValue>>(new Comparator<KeyTotalTable>() {
             @Override
             public int compare(KeyTotalTable k1, KeyTotalTable k2) {
-                int cmp1 = k1.startNode.toString().compareTo(k2.startNode.toString());
-                int cmp2 = k1.finishNode.toString().compareTo(k2.finishNode.toString());
-                if ((cmp1 == 0) && (cmp2 == 0)) return 0;       // we are interesting only equality
-                if (cmp1 > cmp2) return 1;
+                int cmp1 = k1.nodeFrom.getName().compareTo(k2.nodeFrom.getName());
+                int cmp2 = k1.nodeTo.getName().compareTo(k2.nodeTo.getName());
+                if ((cmp1 == 0) && (cmp2 == 0))
+                {   //System.out.println(">> compare K1{" + k1.nodeFrom.getName() + ":" + k1.nodeTo.getName()
+                    //                   + "} == K2{" + k2.nodeFrom.getName() + ":" + k2.nodeTo.getName() + "}"
+                    //                  );
+                    return 0;
+                }
+                if (cmp1 > 0) return 1;
+                if ((cmp1 == 0) && (cmp2 > 0)) return 1;
                 return -1;
             }
         });
     }
 
+    /**
+     * {@summary Class of pairs (Node from, Node to) to use in totalTable like a key.}
+     */
     private class KeyTotalTable {
-        public Node startNode;
-        public Node finishNode;
+        public Node nodeFrom;
+        public Node nodeTo;
         private KeyTotalTable(Node start, Node finish) {
-            startNode = start;
-            finishNode = finish;
+            nodeFrom = start;
+            nodeTo = finish;
+        }
+        public boolean isTheSameKey(Node first, Node second) {
+            if (first.equals(nodeFrom) && second.equals(nodeTo)) { return true; }
+            return false;
         }
     }
-
+    /**
+     * {@summary Class of pairs (int departTime, int arriveTime) to use in totalTable like a values.}
+     */
     private class TimeValue {
-        public int startTime;
-        public int finishTime;
+        public int departTime;
+        public int arriveTime;
         private TimeValue(int start, int finish) {
-            startTime = start;
-            finishTime = finish;
+            departTime = start;
+            arriveTime = finish;
         }
     }
-
-
-    private void fillTotalTable()
-    {
-        Set<Node> allNodes = this.getNodes();
-
-        allNodes.forEach(node -> {
-            if (node instanceof Station)
-            {
-                Station startStation = getStationByName(node.getName());
-                Set<Segment> herSegments = getSegments(node);
-
-                // take all trains of start station
-                Collection<Integer> herSchedules = startStation.getSchedules().values();
-
-                herSegments.forEach(segm -> {
-                    if (segm.getEndPoint() instanceof Station)
-                    {
-                        Node finishStation = segm.getEndPoint();
-                        KeyTotalTable newKey = new KeyTotalTable(startStation, finishStation);
-                        List<TimeValue> newValue = new ArrayList<TimeValue>();
-
-                        herSchedules.forEach(departShed -> {
-                            newValue.add(new TimeValue(departShed.intValue(), departShed.intValue() + segm.getDuration()));
-                        });
-
-                        this.totalTable.put(newKey, newValue);
-                    }
-                });
-            }
-        });
-
-        totalTable.forEach((key, list) -> {
-            System.out.println( key.startNode.toString() + " : " + key.finishNode.toString());
-            list.forEach(el -> {
-                System.out.println(el.startTime + " - " + el.finishTime);
-            });
-        });
-    }
-
-    Map<KeyTotalTable, List<TimeValue>> getTotalTable() { return totalTable; }
 
     public Map<String, Station> getStations() { return stations; }
     public Set<Station> getAllStations() { return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll); }
@@ -118,6 +94,8 @@ public final class MetroMap {
      * {@summary Return the list of nodes.}
      */
     public Set<Node> getNodes() { return graph.keySet(); }
+
+    public Map<KeyTotalTable, List<TimeValue>> getTotalTable() { return totalTable; }
 
 
     /**
@@ -150,10 +128,10 @@ public final class MetroMap {
      * @param keyExtractor function which will play the role of filter.
      * @return predicate to apply in stream.
      */
-    private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
+  //  private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+  //      Set<Object> seen = ConcurrentHashMap.newKeySet();
+  //      return t -> seen.add(keyExtractor.apply(t));
+  //  }
 
     /**
      * {@summary Finds all nodes-neighbours of given node and get weights (expressed in form of distances)
@@ -161,16 +139,16 @@ public final class MetroMap {
      * @param currentNode current node
      * @return neighbDistances map made up of neighboring nodes and distances to them
      */
-    private Map <Node, Double> getNeighboursDistances (Node currentNode) {
-        if (null == currentNode) {
-            throw new IllegalArgumentException("input should not be null");
-        }
-        Map <Node, Double> neighbDistances = graph.get(currentNode)   // Set
-                .stream()
-                .filter(distinctByKey(b -> b.getEndPoint()))
-                .collect(Collectors.toMap(segment -> segment.getEndPoint(), segment -> segment.getDistance()));
-        return neighbDistances;
-    }
+  //  private Map <Node, Double> getNeighboursDistances (Node currentNode) {
+  //      if (null == currentNode) {
+  //          throw new IllegalArgumentException("input should not be null");
+  //      }
+  //      Map <Node, Double> neighbDistances = graph.get(currentNode)   // Set
+  //              .stream()
+  //              .filter(distinctByKey(b -> b.getEndPoint()))
+  //              .collect(Collectors.toMap(segment -> segment.getEndPoint(), segment -> segment.getDistance()));
+  //      return neighbDistances;
+  //  }
 
     /**
      * {@summary Finds all nodes-neighbours of given node and get weights (expressed in form of durations of trip)
@@ -178,16 +156,16 @@ public final class MetroMap {
      * @param currentNode current node
      * @return neighbDurations map made up of neighboring nodes and durations to them
      */
-    private Map <Node, Integer> getNeighboursDurations (Node currentNode) {
-        if (null == currentNode) {
-            throw new IllegalArgumentException("input should not be null");
-        }
-        Map <Node, Integer> neighbDurations = graph.get(currentNode)   // Set
-                .stream()
-                .filter(distinctByKey(b -> b.getEndPoint()))
-                .collect(Collectors.toMap(segment -> segment.getEndPoint(), segment -> segment.getDuration()));
-        return neighbDurations;
-    }
+   // private Map <Node, Integer> getNeighboursDurations (Node currentNode) {
+   //     if (null == currentNode) {
+   //         throw new IllegalArgumentException("input should not be null");
+   //     }
+   //     Map <Node, Integer> neighbDurations = graph.get(currentNode)   // Set
+   //             .stream()
+   //             .filter(distinctByKey(b -> b.getEndPoint()))
+   //             .collect(Collectors.toMap(segment -> segment.getEndPoint(), segment -> segment.getDuration()));
+   //     return neighbDurations;
+   // }
 
    // private boolean notAllVisited(Map<Node, Boolean> visited)
    // {
@@ -263,6 +241,18 @@ public final class MetroMap {
      */
     public Map<Node, Node> Dijkstra(Node startNode, int startTime)
     {
+        Set<KeyTotalTable> keysMap = this.totalTable.keySet();
+        int cccc = 0;
+        for (var el: keysMap)
+        {
+            if (null == this.totalTable.get(el))
+            {
+                System.out.println(">> LIST IS NULL {" + el.nodeFrom.getName() + ":" + el.nodeTo.getName() + "}");
+                cccc++;
+            }
+        }
+        if (cccc != 0)  while(true){}
+
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
         }
@@ -270,6 +260,7 @@ public final class MetroMap {
             throw new IllegalArgumentException("time has to be positive");
         }
 
+        KeyTotalTable key = new KeyTotalTable(null, null);
         // ============ 0. Create returned structure ===================================================================
         Map<Node, Node> parents = new HashMap<Node, Node>();
 
@@ -301,7 +292,7 @@ public final class MetroMap {
 
         // ------------  put  weight for start node --------------------------------------------------------------------
         weightNodes.replace(startNode, departureTime);
-        System.out.println("Departure from start = " + departureTime);
+        System.out.println("Departure at time = " + departureTime);
 
         // ============= 5. Create priorityQueue where will be stocked pairs (Station, time) ===========================
         PriorityQueue<Map.Entry<Station, Integer>> priorityQueue = new PriorityQueue<>(
@@ -314,7 +305,7 @@ public final class MetroMap {
         while( priorityQueue.size() != 0 ) {
             // obtain the minimal weight and it's station to work with
             Map.Entry<Station, Integer> current = priorityQueue.poll();
-            Integer currentTime = current.getValue();           // minimal time
+            int currentTime = current.getValue().intValue();           // minimal time
             Station currentStation = current.getKey();          // it's station
 
             if (visited.get(currentStation) == true) {
@@ -324,32 +315,54 @@ public final class MetroMap {
             List<Station> getNeibs = getNeighbours(currentStation);              // neib stations of current station
 
             visited.replace(currentStation, new Boolean(true));
+
             int min = Integer.MAX_VALUE;
-            Station nextStation = null;
-            // for each neighbour
+            Station nextStation = currentStation;  // hack: being a key of map it cannot be initialized here by null
+
+            // find all segments with all neighbours where currentStation is startStation and neighbour is endStation
+            //      for that use totalTable with key (currentNode, neibNode)
+            //      to find values (departTime, arriveTime)
             for (Station neib: getNeibs) {
-                // take all (startTime, finishTime) for this (currentNode, neibNode)
-                List<TimeValue> listDepTimeArrTime = this.totalTable.get(new KeyTotalTable(currentStation, neib));
-                // fins minimal
-                for (int i = 0; i < listDepTimeArrTime.size(); i++)
-                {
-                    if (listDepTimeArrTime.get(i).startTime == currentTime)
-                    {
-                        if (listDepTimeArrTime.get(i).finishTime < min)
-                        {
-                            min = listDepTimeArrTime.get(i).finishTime;
+                // take all (departTime, arriveTime) for this (currentNode, neibNode)
+                key.nodeFrom = currentStation;
+                key.nodeTo = neib;
+                List<TimeValue> listDepTimeArrTime = this.totalTable.get(key);      // AZH here return null for
+                                                                                    // existing key and value in TotalTable (jump to AZH1)
+                                                                                    // - PROBLEM !!!
+             //  if (listDepTimeArrTime == null)
+             //  {
+             //      System.out.println(">> LIST IS NULL {" + key.nodeFrom.getName() + ":" +
+             //              key.nodeTo.getName() + "} map size is " + this.totalTable.size() + " Hash "+ System.identityHashCode(this.totalTable));
+             //      while (true) {}
+             //  }
+             //  else
+             //  {
+             //      System.out.println(">> LIST Found {" + key.nodeFrom.getName() + ":" + key.nodeTo.getName() + "} map size is " + this.totalTable.size());
+             //  }
+
+             //  System.out.println(Arrays.toString(listDepTimeArrTime.toArray()));
+
+                // find minimal time between them
+                for (int i = 0; i < listDepTimeArrTime.size(); i++) {
+                    if (listDepTimeArrTime.get(i).departTime == currentTime) {      // check only pairs with depart = current time
+                        if (listDepTimeArrTime.get(i).arriveTime < min) {
+                            System.out.println(" <<<<<<<<<<<<<<<<<<< HERE <<<<<<<<<<<<<<<<<<<<<<");
+                            min = listDepTimeArrTime.get(i).arriveTime;
                             nextStation = neib;
                         }
+
                     }
                 }
+                currentTime = min;
+                parents.replace(nextStation, currentStation);
+                priorityQueue.add(new AbstractMap.SimpleEntry(nextStation, min));
             }
-            parents.replace(nextStation, currentStation);
-            priorityQueue.add(new AbstractMap.SimpleEntry(nextStation, min));
+
         }
         return parents;
     }
 
-    // ==================================  Dikjstra and it's auxiliary functions =======================================
+    // ================================== End Dikjstra and it's auxiliary functions ====================================
 
     // Build functions
     // --------------------------------------------------------------------------------------------------------------------
@@ -388,8 +401,9 @@ public final class MetroMap {
         diffuseTrainTimeFromTerminus(metroLinesTerminus);
 
      //   addAllWalkSegments(getAllStations());
-        fillTotalTable();
         calculateTimeTableForStations();
+        fillTotalTable();
+
     }
 
     /**
@@ -549,7 +563,106 @@ public final class MetroMap {
         });
     }
 
+    private void fillTotalTable()
+    {
+        Set<Node> allNodes = this.getNodes();
 
+        for (Node node : allNodes)
+        {
+            if (node instanceof Station)
+            {
+                Station startStation = getStationByName(node.getName());
+                Set<Segment> herSegments = getSegments(node);
+
+                // take all trains of this station
+                Collection<Integer> herSchedules = new ArrayList<Integer>();
+                Map<ScheduleKey, List<Integer>> timeTable = startStation.getTimeTable();
+                timeTable.forEach((keyShed, listShed) -> {
+                    herSchedules.addAll(listShed);
+                });
+
+
+                for (Segment segm : herSegments)
+                {
+                    if (segm.getEndPoint() instanceof Station)
+                    {
+                        Node neibStation = segm.getEndPoint();
+                        KeyTotalTable newKey = new KeyTotalTable(startStation, neibStation);
+
+                        boolean isNewValue = false;
+                        List<TimeValue> newValue = this.totalTable.get(newKey);
+                        if (null == newValue)
+                        {
+                            isNewValue = true;
+                            newValue = new ArrayList<TimeValue>();
+                        }
+                        else
+                        {
+                            //System.out.println("++ key duplicate {" + newKey.nodeFrom.getName() + ":" + newKey.nodeTo.getName()
+                            //        + "} TimeTableSize " + newValue.size()+ " Hash "+ System.identityHashCode(this.totalTable));
+                        }
+                        //else
+                        //{
+                        //    System.out.println(">> AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                        //    while (true) {}
+                        //}
+
+                        for (Integer el : herSchedules)
+                        {
+                            newValue.add(new TimeValue(el.intValue(), el.intValue() + segm.getDuration()));
+                        }
+
+                        //AZH: TODO: check for duplicates
+                        //herSchedules.forEach(departShed -> {
+                        //    newValue.add(new TimeValue(departShed.intValue(), departShed.intValue() + segm.getDuration()));
+                        //});
+                       // newValue.forEach(el -> {
+                       //     if ((node.equals(getStationByName("Duroc")) && neibStation.equals(getStationByName("Saint-François-Xavier"))))
+                       //     {
+                       //         System.out.print(" [");
+                       //         System.out.print(el.departTime + " - " + el.arriveTime);
+                       //         System.out.print("], ");
+                       //     }
+                       //
+                       //  });
+
+                        if (isNewValue)
+                        {
+                            //System.out.println(">> Add key {" + newKey.nodeFrom.getName() + ":" + newKey.nodeTo.getName()
+                            //        + "} TimeTableSize " + newValue.size()+ " Hash "+ System.identityHashCode(this.totalTable));
+                            this.totalTable.put(newKey, newValue);
+                            //if (null == this.totalTable.get(newKey))
+                            //{
+                            //    System.out.println(">> PANIC");
+                            //    while(true){}
+                            //
+                            //}
+                        }
+                    }
+                }
+            }
+        }
+
+        //Set<KeyTotalTable> keysMap = this.totalTable.keySet();
+        //int cccc = 0;
+        //for (var el: keysMap)
+        //{
+        //    if (null == this.totalTable.get(el))
+        //    {
+        //        System.out.println(">> LIST IS NULL {" + el.nodeFrom.getName() + ":" + el.nodeTo.getName() + "}");
+        //        cccc++;
+        //    }
+        //    else
+        //    {
+        //        System.out.println(">> Key in place {" + el.nodeFrom.getName() + ":" + el.nodeTo.getName() + "}");
+        //    }
+        //}
+        //if (cccc != 0)
+        //{
+        //    System.out.println(">> Missing " + cccc + " Keys count " + keysMap.size() + " Map size " + this.totalTable.size());
+        //    while(true){}
+        //}
+    }
 
     // Main functions
     // ---------------------------------------------------------------------------------------------------------------------

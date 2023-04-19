@@ -24,55 +24,55 @@ public class StationTest extends Assertions {
     }
 
     @ParameterizedTest
-    @CsvSource({"Duroc"})                                                   // AZH need to check some more stations
+    @CsvSource({"Saint-François-Xavier"})                                                   // AZH need to check some more stations
     public void testGetSchedules(String name) {
-        System.out.println("\n\n========= Test getSchedules for Station ====================");
+       // System.out.println("\n\n========= Test getSchedules for Station " + name + " ====================");
        // MetroMap map = new MetroMap();
        // assertDoesNotThrow(map::initializeFields);
        // assertNotNull(map.getLines());
        // assertNotNull(map.getStations());
        // assertNotNull(map.getGraph());
-//
+////
        // Station station = map.getStationByName(name);
        // assertNotNull(station.getSchedules());
        // Map<ScheduleKey, Integer> sh = station.getSchedules();
-      //  sh.forEach((key, val) -> {
-      //      System.out.println(key.toString() + " : " + val.toString());
-      //  });
-      //  System.out.println("Nb Schedules = " + sh.size());
-        // assertEquals( ??, station.getSchedules().size());         // AZH how many terminusStation & depart times has to be ?
-                                                                    // Why only 4 out of 7 variants for Line 13 are present
-                                                                    // and only 3 out of 4 variants for Line 10 are present
+       // sh.forEach((key, val) -> {
+       //     System.out.println(key.toString() + " : " + val.toString());
+       // });
+       // System.out.println("Nb Schedules = " + sh.size());
+       // // assertEquals( ??, station.getSchedules().size());         // AZH how many terminusStation & depart times has to be ?
+       //                                                             // Why only 4 out of 7 variants for Line 13 are present
+       //                                                             // and only 3 out of 4 variants for Line 10 are present
        // System.out.println("========= End Test getSchedules for Station ====================\n\n");
     }
 
     @ParameterizedTest
-    @CsvSource({"Duroc, 242, Châtillon-Montrouge, 13 variant 4"})           // AZH need to check some more stations
+    @CsvSource({"Duroc, 121, Châtillon-Montrouge, 13 variant 4"})           // AZH need to check some more stations
     public void testGetTimeTable(String stName, int nb, String schKeyName, String lineName) {
-      //  System.out.println("\n\n========= Test GetTimeTable for Station ====================");
-      //  MetroMap map = new MetroMap();
-      //  assertDoesNotThrow(map::initializeFields);
-      //  assertNotNull(map.getLines());
-      //  assertNotNull(map.getStations());
-      //  assertNotNull(map.getGraph());
+        System.out.println("\n\n========= Test getTimeTable for Station " + stName + " ====================");
+        MetroMap map = new MetroMap();
+        assertDoesNotThrow(map::initializeFields);
+        assertNotNull(map.getLines());
+        assertNotNull(map.getStations());
+        assertNotNull(map.getGraph());
 //
-      //  Station station = map.getStationByName(stName);
-      //  assertNotNull(station.getTimeTable());
-      //  Map<ScheduleKey, List<Integer>> timeTable = station.getTimeTable();
-       // timeTable.forEach((key, val) -> {
-       //     System.out.println(key.toString() + " : " + Arrays.toString(val.toArray()));
-       // });
-       // System.out.println("Nb TimeTables = " + timeTable.size());
-
-      //  assertNotNull(map.getScheduleKeyByName(schKeyName));
-      //  ScheduleKey schKey = map.getScheduleKeyByName(schKeyName);
+        Station station = map.getStationByName(stName);
+        assertNotNull(station.getTimeTable());
+        Map<ScheduleKey, List<Integer>> timeTable = station.getTimeTable();
+        timeTable.forEach((key, val) -> {
+           System.out.println(key.toString() + " : " + Arrays.toString(val.toArray()));
+        });
+        System.out.println("Nb TimeTables = " + timeTable.size());
 //
-      //  Map<String, MetroLine> lines = map.getLines();
-      //  MetroLine line = lines.get(lineName);
+        assertNotNull(map.getScheduleKeyByName(schKeyName));
+        ScheduleKey schKey = map.getScheduleKeyByName(schKeyName);
 //
-      //  assertEquals(schKey.getMetroLine(), line);
-      //  assertEquals(nb, timeTable.get(schKey).size());
+        Map<String, MetroLine> lines = map.getLines();
+        MetroLine line = lines.get(lineName);
 //
-      //  System.out.println("========= End Test GetTimeTable ====================\n\n");
+        assertEquals(schKey.getMetroLine(), line);
+        assertEquals(nb, timeTable.get(schKey).size());
+//
+        System.out.println("========= End Test GetTimeTable ====================\n\n");
     }
 }
