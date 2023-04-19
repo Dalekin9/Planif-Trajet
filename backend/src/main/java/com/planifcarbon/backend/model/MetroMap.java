@@ -23,6 +23,7 @@ public final class MetroMap {
     private final Map<String, MetroLine> lines;
     private final Map<String, Station> stations;
     private Set<ScheduleKey> scheduleKeys;
+    private Map<KeyTotalTable, List<TimeValue>> totalTable;
 
     /**
      * {@summary Main constructor.}
@@ -32,7 +33,77 @@ public final class MetroMap {
         lines = new HashMap<String, MetroLine>();
         stations = new HashMap<String, Station>();
         scheduleKeys = new HashSet<ScheduleKey>();
+
+        totalTable = new TreeMap<KeyTotalTable, List<TimeValue>>(new Comparator<KeyTotalTable>() {
+            @Override
+            public int compare(KeyTotalTable k1, KeyTotalTable k2) {
+                int cmp1 = k1.startNode.toString().compareTo(k2.startNode.toString());
+                int cmp2 = k1.finishNode.toString().compareTo(k2.finishNode.toString());
+                if ((cmp1 == 0) && (cmp2 == 0)) return 0;       // we are interesting only equality
+                if (cmp1 > cmp2) return 1;
+                return -1;
+            }
+        });
     }
+
+    private class KeyTotalTable {
+        public Node startNode;
+        public Node finishNode;
+        private KeyTotalTable(Node start, Node finish) {
+            startNode = start;
+            finishNode = finish;
+        }
+    }
+
+    private class TimeValue {
+        public int startTime;
+        public int finishTime;
+        private TimeValue(int start, int finish) {
+            startTime = start;
+            finishTime = finish;
+        }
+    }
+
+
+    private void fillTotalTable()
+    {
+        Set<Node> allNodes = this.getNodes();
+
+        allNodes.forEach(node -> {
+            if (node instanceof Station)
+            {
+                Station startStation = getStationByName(node.getName());
+                Set<Segment> herSegments = getSegments(node);
+
+                // take all trains of start station
+                Collection<Integer> herSchedules = startStation.getSchedules().values();
+
+                herSegments.forEach(segm -> {
+                    if (segm.getEndPoint() instanceof Station)
+                    {
+                        Node finishStation = segm.getEndPoint();
+                        KeyTotalTable newKey = new KeyTotalTable(startStation, finishStation);
+                        List<TimeValue> newValue = new ArrayList<TimeValue>();
+
+                        herSchedules.forEach(departShed -> {
+                            newValue.add(new TimeValue(departShed.intValue(), departShed.intValue() + segm.getDuration()));
+                        });
+
+                        this.totalTable.put(newKey, newValue);
+                    }
+                });
+            }
+        });
+
+        totalTable.forEach((key, list) -> {
+            System.out.println( key.startNode.toString() + " : " + key.finishNode.toString());
+            list.forEach(el -> {
+                System.out.println(el.startTime + " - " + el.finishTime);
+            });
+        });
+    }
+
+    Map<KeyTotalTable, List<TimeValue>> getTotalTable() { return totalTable; }
 
     public Map<String, Station> getStations() { return stations; }
     public Set<Station> getAllStations() { return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll); }
@@ -141,6 +212,7 @@ public final class MetroMap {
         return neighbs;
     }
 
+
     /**
      * {@summary Finds the nearest trains departing from the given station after given time.}
      * @param arrivalTime time after which need to find nearest trains.
@@ -183,14 +255,13 @@ public final class MetroMap {
         return null;
     }
 
-
     /**
      * {@summary Implementation of Dikjstra algorithm.}
      * @param startNode node from which Dikjstra will be launched
      * @param startTime time of starting the trip
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
-    private Map<Node, Node> Dijkstra(Node startNode, int startTime)
+    public Map<Node, Node> Dijkstra(Node startNode, int startTime)
     {
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
@@ -251,29 +322,29 @@ public final class MetroMap {
             }
 
             List<Station> getNeibs = getNeighbours(currentStation);              // neib stations of current station
-            Map <Node, Integer> neibWeight = getNeighboursDurations ((Node)currentStation);    // durations = cout
 
-            visited.replace(currentStation, true);
-
+            visited.replace(currentStation, new Boolean(true));
+            int min = Integer.MAX_VALUE;
+            Station nextStation = null;
             // for each neighbour
             for (Station neib: getNeibs) {
-                // obtain nearest train time
-                nearestTrain = getNearestDepartureTime(currentTime, neib);
-                int nearestTime = nearestTrain.getValue().intValue();
-
-                // obtain time of movement from currentStation to neib
-                int cout = neibWeight.get(neib);
-
-                Integer weightNeib = weightNodes.get(neib);
-                Integer weightCurr = weightNodes.get(currentStation);
-
-                // re-evaluate
-                if (weightNeib > (weightCurr + cout)) {
-                    weightNeib = weightCurr + cout;
-                    parents.replace(neib, currentStation);
-                    priorityQueue.add(new AbstractMap.SimpleEntry(neib, weightNeib));
+                // take all (startTime, finishTime) for this (currentNode, neibNode)
+                List<TimeValue> listDepTimeArrTime = this.totalTable.get(new KeyTotalTable(currentStation, neib));
+                // fins minimal
+                for (int i = 0; i < listDepTimeArrTime.size(); i++)
+                {
+                    if (listDepTimeArrTime.get(i).startTime == currentTime)
+                    {
+                        if (listDepTimeArrTime.get(i).finishTime < min)
+                        {
+                            min = listDepTimeArrTime.get(i).finishTime;
+                            nextStation = neib;
+                        }
+                    }
                 }
             }
+            parents.replace(nextStation, currentStation);
+            priorityQueue.add(new AbstractMap.SimpleEntry(nextStation, min));
         }
         return parents;
     }
@@ -315,7 +386,9 @@ public final class MetroMap {
         addSegmentMetroToLinesAndGraph(segmentMetroDTOS, metroLines);
         setMetroLineSchedules(metroLines, metroLinesTerminus, schedules);
         diffuseTrainTimeFromTerminus(metroLinesTerminus);
-        addAllWalkSegments(getAllStations());
+
+     //   addAllWalkSegments(getAllStations());
+        fillTotalTable();
         calculateTimeTableForStations();
     }
 
