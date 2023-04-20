@@ -220,7 +220,7 @@ public class MetroMapTest {
      *           WARNING : !!!!!!!!!!! print from FINISH to START !!!!!!!!!!!!!!
      */
     @ParameterizedTest
-    @CsvSource({"58100, Duroc, Palais Royal - Musée du Louvre"})
+    @CsvSource({"53100, Duroc, Palais Royal - Musée du Louvre"})
     public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
         System.out.println("\n\n================ Print path from Dikjstra  ===========================================");
         MetroMap map = new MetroMap();
@@ -233,7 +233,9 @@ public class MetroMapTest {
         Node current = arrive;
         Node end = testingStation;
 
-        int c = 10;     // limit for potentual loops caused by imperfection of the algorithm/data
+        int c = 25;     // limit for potentual loops caused by imperfection of the algorithm/data
+
+        System.out.println("\n\n================ Print Dikjstra +++++ ===========================================");
 
         while (!current.equals(end) && (c > 0)) {
             System.out.println("arr : " + current + " - dep : " + dijkstra.get(current));

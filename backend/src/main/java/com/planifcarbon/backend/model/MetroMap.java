@@ -64,10 +64,6 @@ public final class MetroMap {
             nodeFrom = start;
             nodeTo = finish;
         }
-        public boolean isTheSameKey(Node first, Node second) {
-            if (first.equals(nodeFrom) && second.equals(nodeTo)) { return true; }
-            return false;
-        }
     }
     /**
      * {@summary Class of pairs (int departTime, int arriveTime) to use in totalTable like a values.}
@@ -122,57 +118,6 @@ public final class MetroMap {
     // ==================================  Dikjstra and it's auxiliary functions =======================================
 
     /**
-     * {@summary Tool for stream usage. Helps to find unique values from stream. That migth be necessary if
-     * need to create new map and the keys for it have duplicate.}
-     * Source : https://stackoverflow.com/questions/59211179/stream-api-distinct-by-name-and-max-by-value
-     * @param keyExtractor function which will play the role of filter.
-     * @return predicate to apply in stream.
-     */
-  //  private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-  //      Set<Object> seen = ConcurrentHashMap.newKeySet();
-  //      return t -> seen.add(keyExtractor.apply(t));
-  //  }
-
-    /**
-     * {@summary Finds all nodes-neighbours of given node and get weights (expressed in form of distances)
-     * of segments connected with whem.}
-     * @param currentNode current node
-     * @return neighbDistances map made up of neighboring nodes and distances to them
-     */
-  //  private Map <Node, Double> getNeighboursDistances (Node currentNode) {
-  //      if (null == currentNode) {
-  //          throw new IllegalArgumentException("input should not be null");
-  //      }
-  //      Map <Node, Double> neighbDistances = graph.get(currentNode)   // Set
-  //              .stream()
-  //              .filter(distinctByKey(b -> b.getEndPoint()))
-  //              .collect(Collectors.toMap(segment -> segment.getEndPoint(), segment -> segment.getDistance()));
-  //      return neighbDistances;
-  //  }
-
-    /**
-     * {@summary Finds all nodes-neighbours of given node and get weights (expressed in form of durations of trip)
-     * of segments connected with whem.}
-     * @param currentNode current node
-     * @return neighbDurations map made up of neighboring nodes and durations to them
-     */
-   // private Map <Node, Integer> getNeighboursDurations (Node currentNode) {
-   //     if (null == currentNode) {
-   //         throw new IllegalArgumentException("input should not be null");
-   //     }
-   //     Map <Node, Integer> neighbDurations = graph.get(currentNode)   // Set
-   //             .stream()
-   //             .filter(distinctByKey(b -> b.getEndPoint()))
-   //             .collect(Collectors.toMap(segment -> segment.getEndPoint(), segment -> segment.getDuration()));
-   //     return neighbDurations;
-   // }
-
-   // private boolean notAllVisited(Map<Node, Boolean> visited)
-   // {
-   //     return visited.values().stream().anyMatch(Boolean.FALSE::equals);
-   // }
-
-    /**
      * {@summary Obtain all neighbour stations of given node.}
      * @param startNode node from which Dikjstra will be launched
      * @param startTime time of starting the trip
@@ -197,40 +142,40 @@ public final class MetroMap {
      * @param currentStation station for which need to find nearest trains.
      * @return map contains ending stations (key) and arrival time on given station (value).
      */
-    private Map.Entry<MetroLine, Integer> getNearestDepartureTime(int arrivalTime, Station currentStation) {
+
+
+    private  Map.Entry<Station, Integer> getNearestDepartureTime(int arrivalTime, Station currentStation) {
         if (null == currentStation) {
             throw new IllegalArgumentException("input should not be null");
         }
      //   if (arrivalTime < 0) {                                              // AZH with that tests doesn't pass !!!! Somebody have negative time
      //       throw new IllegalArgumentException("time has to be positive");
      //   }
-        // find all ScheduleKey for currentStation
-        Map<ScheduleKey, Integer> sh = currentStation.getSchedules();
 
-        Map<MetroLine, Integer> bestOpportunities = new HashMap<MetroLine, Integer>();
-
-        // for ScheduleKey find the first time schedule witch will be > that arrivalTime (i.e. nearest train for each ScheduleKey)
-        sh.forEach((scheduleKey, value) ->  {
-            List<Integer> times = scheduleKey.getMetroLine().getSchedules();
-            int i = 0;
-            while(arrivalTime > (times.get(i) + value)) {
-                i++;
-            }
-            bestOpportunities.put(scheduleKey.getMetroLine(), times.get(i) + value);
-        });
-
-        // between them chose the min one
-        int min = Integer.MAX_VALUE;
-
-        for (Map.Entry<MetroLine, Integer> entry : bestOpportunities.entrySet()) {
-            if (entry.getValue() < min)
+        System.out.println("Start time = " + arrivalTime);
+        int minTime = Integer.MAX_VALUE;
+        Node bestArriveStation = null;
+        for (var entity : totalTable.entrySet())
+        {
+            if (entity.getKey().nodeFrom.equals((Node)currentStation))
             {
-                min = entry.getValue();
-                return entry;
+               // System.out.println("nodeFrom " + entity.getKey().nodeFrom + " = nodeTo " + entity.getKey().nodeTo);
+                List<TimeValue> listValues = entity.getValue();
+                for (int i = 0; i < listValues.size(); i++)
+                {
+                    int curr = listValues.get(i).departTime;
+                    if (( curr >= arrivalTime) && (curr < minTime))
+                    {
+                        minTime = curr;
+                        bestArriveStation = entity.getKey().nodeTo;
+                    }
+                }
             }
         }
-        System.out.println("Nearest Departure Time not found");
-        return null;
+
+        System.out.println("Depart at = " + minTime + " till station " + bestArriveStation);
+
+        return new AbstractMap.SimpleEntry(bestArriveStation, new Integer(minTime));
     }
 
     /**
@@ -241,18 +186,6 @@ public final class MetroMap {
      */
     public Map<Node, Node> Dijkstra(Node startNode, int startTime)
     {
-        Set<KeyTotalTable> keysMap = this.totalTable.keySet();
-        int cccc = 0;
-        for (var el: keysMap)
-        {
-            if (null == this.totalTable.get(el))
-            {
-                System.out.println(">> LIST IS NULL {" + el.nodeFrom.getName() + ":" + el.nodeTo.getName() + "}");
-                cccc++;
-            }
-        }
-        if (cccc != 0)  while(true){}
-
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
         }
@@ -286,13 +219,16 @@ public final class MetroMap {
         // ================== 4. Prepare all for startStation ==========================================================
         Station startStation = getStationByName(startNode.getName());
 
-        // --------- find departure time from start station ------------------------------------------------------------
-        Map.Entry<MetroLine, Integer> nearestTrain = getNearestDepartureTime(startTime, startStation);
-        Integer departureTime = nearestTrain.getValue();
+        // --------- find nearest train and dep time from start station ------------------------------------------------------------
+
+        Map.Entry<Station, Integer> tmp = getNearestDepartureTime(startTime, startStation);
+        int departureTime = tmp.getValue();
+        Node arrNode = tmp.getKey();
+      //  System.out.println("Departure at time = " + departureTime + " arrive station will be " + arrNode);
 
         // ------------  put  weight for start node --------------------------------------------------------------------
         weightNodes.replace(startNode, departureTime);
-        System.out.println("Departure at time = " + departureTime);
+
 
         // ============= 5. Create priorityQueue where will be stocked pairs (Station, time) ===========================
         PriorityQueue<Map.Entry<Station, Integer>> priorityQueue = new PriorityQueue<>(
@@ -301,11 +237,13 @@ public final class MetroMap {
         // ----------------- add start station -------------------------------------------------------------------------
         priorityQueue.add(new AbstractMap.SimpleEntry(startStation, departureTime));
 
+        int count = 1;
         // ================= 6. Graph traversal ========================================================================
         while( priorityQueue.size() != 0 ) {
             // obtain the minimal weight and it's station to work with
             Map.Entry<Station, Integer> current = priorityQueue.poll();
-            int currentTime = current.getValue().intValue();           // minimal time
+
+            int currentTime = current.getValue().intValue();    // minimal time
             Station currentStation = current.getKey();          // it's station
 
             if (visited.get(currentStation) == true) {
@@ -313,56 +251,64 @@ public final class MetroMap {
             }
 
             List<Station> getNeibs = getNeighbours(currentStation);              // neib stations of current station
-
-            visited.replace(currentStation, new Boolean(true));
-
-            int min = Integer.MAX_VALUE;
-            Station nextStation = currentStation;  // hack: being a key of map it cannot be initialized here by null
+          //  System.out.println(" Neibours :" + Arrays.toString(getNeibs.toArray()) + "\n\n");
 
             // find all segments with all neighbours where currentStation is startStation and neighbour is endStation
-            //      for that use totalTable with key (currentNode, neibNode)
-            //      to find values (departTime, arriveTime)
-            for (Station neib: getNeibs) {
-                // take all (departTime, arriveTime) for this (currentNode, neibNode)
+            //      for that use totalTable with key (currentNode, neibNode) to find values (departTime, arriveTime)
+            for (Station neib : getNeibs) {
                 key.nodeFrom = currentStation;
                 key.nodeTo = neib;
-                List<TimeValue> listDepTimeArrTime = this.totalTable.get(key);      // AZH here return null for
-                                                                                    // existing key and value in TotalTable (jump to AZH1)
-                                                                                    // - PROBLEM !!!
-             //  if (listDepTimeArrTime == null)
-             //  {
-             //      System.out.println(">> LIST IS NULL {" + key.nodeFrom.getName() + ":" +
-             //              key.nodeTo.getName() + "} map size is " + this.totalTable.size() + " Hash "+ System.identityHashCode(this.totalTable));
-             //      while (true) {}
-             //  }
-             //  else
-             //  {
-             //      System.out.println(">> LIST Found {" + key.nodeFrom.getName() + ":" + key.nodeTo.getName() + "} map size is " + this.totalTable.size());
-             //  }
 
-             //  System.out.println(Arrays.toString(listDepTimeArrTime.toArray()));
+                if (visited.get(getStationByName(neib.getName())) == true) {
+                    continue;
+                }
+
+                //  System.out.println("\n\n-->>   Neib found in totalTable by Key  = " + neib + "\n\n");
+                List<TimeValue> listDepTimeArrTime = this.totalTable.get(key);
 
                 // find minimal time between them
-                for (int i = 0; i < listDepTimeArrTime.size(); i++) {
-                    if (listDepTimeArrTime.get(i).departTime == currentTime) {      // check only pairs with depart = current time
-                        if (listDepTimeArrTime.get(i).arriveTime < min) {
-                            System.out.println(" <<<<<<<<<<<<<<<<<<< HERE <<<<<<<<<<<<<<<<<<<<<<");
-                            min = listDepTimeArrTime.get(i).arriveTime;
-                            nextStation = neib;
-                        }
+                int bestTimeDiff = Integer.MAX_VALUE;
+                int bestIndex    = -1;
 
+                for (int i = 0; i < listDepTimeArrTime.size(); i++) {
+                   // System.out.println("[" + listDepTimeArrTime.get(i).departTime + " : " + listDepTimeArrTime.get(i).arriveTime + "]");
+                    if (    (listDepTimeArrTime.get(i).departTime >= currentTime)
+                         && ((listDepTimeArrTime.get(i).departTime - currentTime) < bestTimeDiff)
+                       )
+                    {      // check only pairs with depart = current time
+                        bestTimeDiff = listDepTimeArrTime.get(i).departTime - currentTime;
+                        bestIndex = i;
                     }
                 }
-                currentTime = min;
-                parents.replace(nextStation, currentStation);
-                priorityQueue.add(new AbstractMap.SimpleEntry(nextStation, min));
-            }
 
+                int min = Integer.MAX_VALUE;
+
+                if (bestIndex >= 0)
+                {
+                    min = listDepTimeArrTime.get(bestIndex).arriveTime;
+                }
+                else
+                {
+                    min = Integer.MAX_VALUE;
+                    System.out.println("PANIC time not found!");
+                }
+                priorityQueue.add(new AbstractMap.SimpleEntry(neib, min));
+                Station neibStation = getStationByName(neib.getName());
+
+                int weightNeib = weightNodes.get(neibStation).intValue();
+                // re-evaluate
+                if (weightNeib > min) {
+                  //  System.out.println("Replace station = " + neibStation + " best time " + min);
+                    parents.replace(neibStation, currentStation);
+                    weightNodes.replace(neibStation, min);
+                }
+            }
+          //  System.out.println("priorityQueue size = " + priorityQueue.size());
+            count++;
+            visited.replace(currentStation, new Boolean(true));
         }
         return parents;
     }
-
-    // ================================== End Dikjstra and it's auxiliary functions ====================================
 
     // Build functions
     // --------------------------------------------------------------------------------------------------------------------
