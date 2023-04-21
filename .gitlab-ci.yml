@@ -36,7 +36,6 @@ test-back:
   only:
     - develop
     - master
-    - djikstra-improvments
   tags:
     - cicd
 
@@ -56,6 +55,7 @@ build-front:
     name: "front-$CI_COMMIT_REF_NAME"
     paths:
       - ./frontend/dist/
+      - djikstra-improvments
   only:
     - master
 
@@ -80,6 +80,7 @@ build-back:
       - ./backend/target/*.jar
   only:
     - master
+    - djikstra-improvments
   tags:
     - cicd
 
