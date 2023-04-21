@@ -10,8 +10,6 @@ import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.StationDTO;
 import com.planifcarbon.backend.parser.Parser;
 import jakarta.annotation.PostConstruct;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * {@summary Represents the metro map.}
@@ -97,12 +95,11 @@ public final class MetroMap {
      */
     public Set<Segment> getSegments(Node node) { return graph.get(node); }
     public Set<Segment> getSegmentsMetro(Node node) {
-        return graph.get(node).stream().filter(segment -> segment instanceof SegmentMetro).collect(HashSet::new, HashSet::add,
-                HashSet::addAll);
+        return graph.get(node).stream().filter(segment -> segment instanceof SegmentMetro).collect(Collectors.toSet());
     }
 
     /**
-     * {@summary Fing scheduleKey (final station of matro line) by name.}
+     * {@summary Find scheduleKey (final station of matro line) by name.}
      * @return the scheduleKey (final station of matro line)
      */
     public ScheduleKey getScheduleKeyByName(String name) {
@@ -116,20 +113,18 @@ public final class MetroMap {
 
     /**
      * {@summary Obtain all neighbour stations of given node.}
-     * @param startNode node from which Dikjstra will be launched
-     * @param startTime time of starting the trip
+     * @param currentNode node from which Dikjstra will be launched
      * @return the map of pairs of nodes (Child, Parent) which represent the path of most optimized by time
      */
     private List<Station> getNeighbours (Node currentNode) {
         if (null == currentNode) {
             throw new IllegalArgumentException("input should not be null");
         }
-        List<Station> neighbs = graph.get(currentNode)
+        return graph.get(currentNode)
                 .stream()
-                .map(segment -> segment.getEndPoint())
+                .map(Segment::getEndPoint)
                 .map(node -> getStationByName(node.getName()))
                 .collect(Collectors.toList());
-        return neighbs;
     }
 
     /**
@@ -194,7 +189,7 @@ public final class MetroMap {
             }
             path.put(node, new SearchResultBestDuration(startNode, 0, null));
         });
-       
+
 
         // =========== 3. Create and init structure of visited vertex ==================================================
         Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
@@ -489,7 +484,7 @@ public final class MetroMap {
      */
     private void fillTotalTable() {
         Set<Node> allNodes = this.getNodes();
-        
+
         for (Node node : allNodes){
             if (node instanceof Station){
                 Station startStation = getStationByName(node.getName());
