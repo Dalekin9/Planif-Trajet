@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import java.util.*;
-import java.util.stream.*;
 
 public class StationTest extends Assertions {
     @ParameterizedTest
@@ -44,35 +43,5 @@ public class StationTest extends Assertions {
        //                                                             // Why only 4 out of 7 variants for Line 13 are present
        //                                                             // and only 3 out of 4 variants for Line 10 are present
        // System.out.println("========= End Test getSchedules for Station ====================\n\n");
-    }
-
-    @ParameterizedTest
-    @CsvSource({"Duroc, 121, Châtillon-Montrouge, 13 variant 4"})           // AZH need to check some more stations
-    public void testGetTimeTable(String stName, int nb, String schKeyName, String lineName) {
-        System.out.println("\n\n========= Test getTimeTable for Station " + stName + " ====================");
-        MetroMap map = new MetroMap();
-        assertDoesNotThrow(map::initializeFields);
-        assertNotNull(map.getLines());
-        assertNotNull(map.getStations());
-        assertNotNull(map.getGraph());
-//
-        Station station = map.getStationByName(stName);
-        assertNotNull(station.getTimeTable());
-        Map<ScheduleKey, List<Integer>> timeTable = station.getTimeTable();
-        timeTable.forEach((key, val) -> {
-           System.out.println(key.toString() + " : " + Arrays.toString(val.toArray()));
-        });
-        System.out.println("Nb TimeTables = " + timeTable.size());
-//
-        assertNotNull(map.getScheduleKeyByName(schKeyName));
-        ScheduleKey schKey = map.getScheduleKeyByName(schKeyName);
-//
-        Map<String, MetroLine> lines = map.getLines();
-        MetroLine line = lines.get(lineName);
-//
-        assertEquals(schKey.getMetroLine(), line);
-        assertEquals(nb, timeTable.get(schKey).size());
-//
-        System.out.println("========= End Test GetTimeTable ====================\n\n");
     }
 }

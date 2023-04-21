@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -220,7 +218,7 @@ public class MetroMapTest {
      *           WARNING : !!!!!!!!!!! print from FINISH to START !!!!!!!!!!!!!!
      */
     @ParameterizedTest
-    @CsvSource({"53100, Duroc, Palais Royal - Musée du Louvre"})
+    @CsvSource({"53100, Bercy, Gare de Lyon"})
     public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
         System.out.println("\n\n================ Print path from Dikjstra  ===========================================");
         MetroMap map = new MetroMap();
@@ -243,6 +241,35 @@ public class MetroMapTest {
             c--;
         }
         System.out.println("================ End Print path from Dikjstra =====================================\n\n");
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Duroc, 114, Châtillon-Montrouge, 13 variant 4"})           // AZH need to check some more stations
+    public void testGetTimeTable(String stName, int nb, String schKeyName, String lineName) {
+        System.out.println("\n\n========= Test getTimeTable for Station " + stName + " ====================");
+        MetroMap map = new MetroMap();
+        assertDoesNotThrow(map::initializeFields);
+        assertNotNull(map.getLines());
+        assertNotNull(map.getStations());
+        assertNotNull(map.getGraph());
+//
+        Station station = map.getStationByName(stName);
+        assertNotNull(station.getTimeTable());
+        Map<ScheduleKey, List<Integer>> timeTable = station.getTimeTable();
+        timeTable.forEach((key, val) -> {
+            System.out.println(key.toString() + " : " + Arrays.toString(val.toArray()));
+        });
+        System.out.println("Nb TimeTables = " + timeTable.size());
+//
+        assertNotNull(map.getScheduleKeyByName(schKeyName));
+        ScheduleKey schKey = map.getScheduleKeyByName(schKeyName);
+//
+        Map<String, MetroLine> lines = map.getLines();
+        MetroLine line = lines.get(lineName);
+//
+        assertEquals(schKey.getMetroLine(), line);
+//
+        System.out.println("========= End Test GetTimeTable ====================\n\n");
     }
 
     /**

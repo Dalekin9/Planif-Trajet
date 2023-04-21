@@ -1,6 +1,5 @@
 package com.planifcarbon.backend.parser;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import org.springframework.util.ResourceUtils;
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.StationDTO;
+import org.apache.logging.log4j.util.Strings;
 
 /**
  * {@summary Its static methods are used to parse CSV files}
@@ -45,18 +44,8 @@ public class Parser {
     /** Tool function used to parse time from hh:mm:ss.ms to ms */
     // TODO rename to make it more different from timeStringToInt
     static int durationStringToInt(String str) {
-        String[] duration = splitString(":", str);
-        int hours, minutes, seconds;
-        if (duration.length == 3) {
-            hours = Integer.parseInt(duration[0]);
-            minutes = Integer.parseInt(duration[1]);
-            seconds = Integer.parseInt(duration[2]);
-        } else {
-            hours = 0;
-            minutes = Integer.parseInt(duration[0]);
-            seconds = Integer.parseInt(duration[1]);
-        }
-        return hours * 60 * 60 + minutes * 60 + seconds; // TODO s -> ms ?
+        String duration = str.replace(":", "");
+        return Integer.parseInt(duration);
     }
     /** Tool function used to parse time from hh:mm to ms */
     // TODO rename to make it more different from durationStringToInt
@@ -68,7 +57,7 @@ public class Parser {
         hours = hours * 60 * 60; // hours to seconds
         minutes = minutes * 60;
 
-        return hours + minutes; // TODO s -> ms ?
+        return hours + minutes;
     }
 
     /**
@@ -95,7 +84,7 @@ public class Parser {
                 end = new StationDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 stations.add(start);
                 stations.add(end);
-                segmentMetro.add(new SegmentMetroDTO(start, end, durationStringToInt(currentLine[5]), Double.parseDouble(currentLine[6]),
+                segmentMetro.add(new SegmentMetroDTO(start, end, durationStringToInt(currentLine[5]), Double.parseDouble(currentLine[6]) / 10,
                         currentLine[4]));
                 metroLines.putIfAbsent(currentLine[4], currentLine[0]);
             }

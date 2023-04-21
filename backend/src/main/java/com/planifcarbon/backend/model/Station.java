@@ -13,7 +13,7 @@ public final class Station extends Node {
     private final Map<ScheduleKey, Integer> schedules;
     /** Time table of all arrivings trains to this station.
      *  List is sorted */
-    private Map<ScheduleKey, List<Integer>> timeTable;
+    private final Map<ScheduleKey, List<Integer>> timeTable;
 
     /**
      * {@summary Main constructor.}
@@ -45,5 +45,4 @@ public final class Station extends Node {
     public Map<ScheduleKey, List<Integer>> getTimeTable() { return timeTable;}
 
     public void addTimeToTimeTable(ScheduleKey key,  List<Integer> times) { this.timeTable.put(key, times); }
-
 }

@@ -175,7 +175,7 @@ public final class MetroMap {
 
         System.out.println("Depart at = " + minTime + " till station " + bestArriveStation);
 
-        return new AbstractMap.SimpleEntry(bestArriveStation, new Integer(minTime));
+        return new AbstractMap.SimpleEntry(bestArriveStation, minTime);
     }
 
     /**
@@ -213,7 +213,7 @@ public final class MetroMap {
         // =========== 3. Create and init structure of visited vertex ==================================================
         Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
         allNodes.forEach(node -> {
-            visited.put(node, new Boolean(false));
+            visited.put(node, false);
         });
 
         // ================== 4. Prepare all for startStation ==========================================================
@@ -243,10 +243,10 @@ public final class MetroMap {
             // obtain the minimal weight and it's station to work with
             Map.Entry<Station, Integer> current = priorityQueue.poll();
 
-            int currentTime = current.getValue().intValue();    // minimal time
+            int currentTime = current.getValue();    // minimal time
             Station currentStation = current.getKey();          // it's station
 
-            if (visited.get(currentStation) == true) {
+            if (visited.get(currentStation)) {
                 continue;
             }
 
@@ -259,7 +259,7 @@ public final class MetroMap {
                 key.nodeFrom = currentStation;
                 key.nodeTo = neib;
 
-                if (visited.get(getStationByName(neib.getName())) == true) {
+                if (visited.get(getStationByName(neib.getName()))) {
                     continue;
                 }
 
@@ -295,7 +295,7 @@ public final class MetroMap {
                 priorityQueue.add(new AbstractMap.SimpleEntry(neib, min));
                 Station neibStation = getStationByName(neib.getName());
 
-                int weightNeib = weightNodes.get(neibStation).intValue();
+                int weightNeib = weightNodes.get(neibStation);
                 // re-evaluate
                 if (weightNeib > min) {
                   //  System.out.println("Replace station = " + neibStation + " best time " + min);
@@ -305,7 +305,7 @@ public final class MetroMap {
             }
           //  System.out.println("priorityQueue size = " + priorityQueue.size());
             count++;
-            visited.replace(currentStation, new Boolean(true));
+            visited.replace(currentStation, true);
         }
         return parents;
     }
@@ -499,8 +499,8 @@ public final class MetroMap {
 
                 stationSchedules.forEach((scheduleKey, value) -> {           // ... from each terminus
                     List<Integer> listSched = new LinkedList<Integer>();
-                    for (int i = 0; i < lineSchedules.size(); i++) {
-                        listSched.add(value.intValue() + lineSchedules.get(i).intValue());      // create time table
+                    for (Integer lineSchedule : lineSchedules) {
+                        listSched.add(value + lineSchedule);      // create time table
                     }
                     listSched = listSched.stream().sorted().collect(Collectors.toList());       // sort
                     currStation.addTimeToTimeTable(scheduleKey, listSched);                     // add to class
@@ -555,7 +555,7 @@ public final class MetroMap {
 
                         for (Integer el : herSchedules)
                         {
-                            newValue.add(new TimeValue(el.intValue(), el.intValue() + segm.getDuration()));
+                            newValue.add(new TimeValue(el, el + segm.getDuration()));
                         }
 
                         //AZH: TODO: check for duplicates
