@@ -1,8 +1,6 @@
 package com.planifcarbon.backend.model;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * {@summary Represents a metro line.}
@@ -42,10 +40,8 @@ public final class MetroLine {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         MetroLine metroLine = (MetroLine) o;
         return Objects.equals(name, metroLine.name);
     }
@@ -54,5 +50,9 @@ public final class MetroLine {
     public int hashCode() { return Objects.hash(name); }
 
     @Override
-    public String toString() { return "MetroLine{" + "id='" + name + "'" + "}"; }
+    public String toString() {
+        return "MetroLine{" +
+                "id='" + name + '\'' +
+                '}';
+    }
 }

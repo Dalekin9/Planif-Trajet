@@ -54,6 +54,7 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
      */
     @Override
     public String toString() { return name + ": " + coordinates; }
+    //public String toString() { return name; }          // TODO temporary simplification, to simplify testing
 
     public abstract boolean isInMetro();
 }
