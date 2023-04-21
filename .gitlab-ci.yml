@@ -55,9 +55,9 @@ build-front:
     name: "front-$CI_COMMIT_REF_NAME"
     paths:
       - ./frontend/dist/
-      - djikstra-improvments
   only:
     - master
+    - djikstra-improvments
 
 build-back:
   stage: build-back
