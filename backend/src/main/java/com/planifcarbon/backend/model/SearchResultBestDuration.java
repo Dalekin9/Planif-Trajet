@@ -6,9 +6,9 @@ package com.planifcarbon.backend.model;
  * Map(Node nodeTo, SearchResultBestDuration result).}
  */
 public class SearchResultBestDuration {
-    private Node nodeFrom;
-    private int arrivalTime;
-    private MetroLine line;
+    private final Node nodeDestination;
+    private final int arrivalTime;
+    private final MetroLine line;
 
     /**
      * {@summay Main constructor.}
@@ -18,25 +18,12 @@ public class SearchResultBestDuration {
      * @param  line metro line that was used
      */
     public SearchResultBestDuration(Node nodeFrom, int arrivalTime, MetroLine line) {
-        this.nodeFrom = nodeFrom;
+        this.nodeDestination = nodeFrom;
         this.arrivalTime = arrivalTime;
         this.line = line;
     }
 
-    public Node getNodeFrom() { return nodeFrom; }
+    public Node getNodeDestination() { return nodeDestination; }
     public int getArrivalTime() { return arrivalTime; }
     public MetroLine getMetroLine() { return line; }
-
-    /**
-     * {@summay Replace values of class attributes.}
-     *
-     * @param  node node from which movement was made
-     * @param  arrivalTime arrival time from nodeFrom to key station
-     * @param  line metro line that was used
-     */
-    public void replace(Node node, int time, MetroLine l) {
-        this.nodeFrom = node;
-        this.arrivalTime = time;
-        this.line = l;
-    }
 }

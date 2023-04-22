@@ -111,7 +111,7 @@ public final class MetroMap {
      * @param startTime time of starting the trip
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
-    public Map<Node, DjikstraData> Dijkstra(Node startNode, Node endNode, int startTime) {
+    public Map<Node, SearchResultBestDuration> Dijkstra(Node startNode, Node endNode, int startTime) {
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
         }
@@ -120,13 +120,13 @@ public final class MetroMap {
         }
 
         // ============ 0. Create returned structure ===================================================================
-        Map<Node, DjikstraData> path = new HashMap<Node, DjikstraData>();
+        Map<Node, SearchResultBestDuration> path = new HashMap<Node, SearchResultBestDuration>();
 
         // ============ 1. Set initial weight for all vertex = ꚙ ======================================================
         Set<Node> allNodes = getNodes();
 
         // =========== 2. Create structure of vertex (let’s call it ‘parens’), which size = nb of vertex ===============
-        path.put(startNode, new DjikstraData(startNode, null, startTime)); // (node, parent)
+        path.put(startNode, new SearchResultBestDuration(startNode, startTime,null)); // (node, parent)
 
         // =========== 3. Create and init structure of visited vertex ==================================================
         Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
@@ -176,11 +176,11 @@ public final class MetroMap {
                         djikstraInfo.get().setTime(djToTest.getTime());
                         priorityQueue.remove(djikstraInfo.get());
                         priorityQueue.add(djikstraInfo.get());
-                        path.replace(neighbor.getEndPoint(), new DjikstraData(currentStation, this.lines.get(((SegmentMetro) neighbor).getLine()), djToTest.getTime()));
+                        path.replace(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(), this.lines.get(((SegmentMetro) neighbor).getLine())));
                     }
                 } else if (!visited.get(neighbor.getEndPoint())) {
                     priorityQueue.add(djToTest);
-                    path.put(neighbor.getEndPoint(), new DjikstraData(currentStation, this.lines.get(((SegmentMetro) neighbor).getLine()), djToTest.getTime()));
+                    path.put(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(), this.lines.get(((SegmentMetro) neighbor).getLine())));
                 }
             }
         }
@@ -365,15 +365,6 @@ public final class MetroMap {
         addSegment(new SegmentMetro(startNode, endNode, distance, duration, line));
     }
 
-    // Main functions
-    // ---------------------------------------------------------------------------------------------------------------------
-    public List<Node> routeCalculation(String startNodeName, String endNodeName) {
-        // TODO get the 2 nodes from their names
-        // TODO call Dijkstra
-        // TODO return the list of nodes to go through
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
     // Adapters functions
     // -----------------------------------------------------------------------------------------------------------------
     Station stationDTOtoStation(StationDTO dto) {
@@ -384,10 +375,6 @@ public final class MetroMap {
     private static class DjikstraInfo implements Comparable<DjikstraInfo> {
         private final Node node;
         private int time;
-
-        public DjikstraInfo(Node node) { // Used for equals purpose.
-            this.node = node;
-        }
 
         public DjikstraInfo(Node node, int time) {
             this.node = node;
@@ -422,30 +409,6 @@ public final class MetroMap {
         @Override
         public int compareTo(DjikstraInfo o) {
             return Integer.compare(time, o.time);
-        }
-    }
-
-    public static class DjikstraData {
-        private final Node endDestination;
-        private final MetroLine line;
-        private final int time;
-
-        public DjikstraData(Node endDestination, MetroLine line, int time) {
-            this.endDestination = endDestination;
-            this.line = line;
-            this.time = time;
-        }
-
-        public int getTime() {
-            return time;
-        }
-
-        public MetroLine getLine() {
-            return line;
-        }
-
-        public Node getEndDestination() {
-            return endDestination;
         }
     }
 }

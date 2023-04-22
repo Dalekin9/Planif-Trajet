@@ -137,7 +137,7 @@ public class MetroMapTest {
 
         Station endStation = map.getStationByName(nameFinish);
 
-        Map<Node, MetroMap.DjikstraData> dijkstra = map.Dijkstra(startStation, endStation, timeStart);
+        Map<Node, SearchResultBestDuration> dijkstra = map.Dijkstra(startStation, endStation, timeStart);
 
         Node current = endStation;
 
@@ -146,8 +146,8 @@ public class MetroMapTest {
         System.out.println("\n\n================ Print Dikjstra +++++ ===========================================");
 
         while (!current.equals(startStation) && dijkstra.get(current) != null) {
-            System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getEndDestination() + " - time : " + dijkstra.get(current).getTime() + " - line : " + dijkstra.get(current).getLine().getName());
-            current = dijkstra.get(current).getEndDestination();
+            System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : " + dijkstra.get(current).getArrivalTime() + " - line : " + dijkstra.get(current).getMetroLine().getName());
+            current = dijkstra.get(current).getNodeDestination();
             c--;
         }
         System.out.println("==================================== End Print path Dikjstra =====================================\n\n");
