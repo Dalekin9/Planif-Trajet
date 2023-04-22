@@ -44,8 +44,8 @@ public class Parser {
     /** Tool function used to parse time from hh:mm:ss.ms to ms */
     // TODO rename to make it more different from timeStringToInt
     static int durationStringToInt(String str) {
-        String duration = str.replace(":", "");
-        return Integer.parseInt(duration);
+        double seconds = Double.parseDouble(str.replace(':', '.')) * 10;
+        return (int) Math.ceil(seconds);
     }
     /** Tool function used to parse time from hh:mm to ms */
     // TODO rename to make it more different from durationStringToInt
