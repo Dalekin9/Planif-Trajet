@@ -135,15 +135,19 @@ public class MetroMapTest {
         assertDoesNotThrow(map::initializeFields);
         Station testingStation = map.getStationByName(nameStart);
 
-        Map<Node, Node> dijkstra = map.Dijkstra(testingStation, timeStart);
+        Map<Node, SearchResultBestDuration> dijkstra = map.Dijkstra(testingStation, timeStart);
 
         Node arrive = map.getStationByName(nameFinish);
         Node current = arrive;
         Node end = testingStation;
+        int totalTime = 0;
         
         while (!current.equals(end)) {
-            System.out.println(current + "     <--     " + dijkstra.get(current));
-            current = dijkstra.get(current);
+            totalTime += dijkstra.get(current).getDuration();
+            System.out.println(current.getName() + "   <--   " + dijkstra.get(current).getNodeFrom().getName() +
+                    "         [ " + dijkstra.get(current).getDuration() + " ]" +
+                    "         { line " + dijkstra.get(current).getMetroLine().getName() + " }");
+            current = dijkstra.get(current).getNodeFrom();
         }
         System.out.println("==================================== End Print path Dikjstra =====================================\n\n");
     }

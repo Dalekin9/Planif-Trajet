@@ -65,9 +65,11 @@ public final class MetroMap {
     private class TimeValue {
         public int departTime;
         public int arriveTime;
-        private TimeValue(int start, int finish) {
+        public MetroLine line;
+        private TimeValue(int start, int finish, MetroLine l) {
             departTime = start;
             arriveTime = finish;
+            line = l;
         }
     }
 
@@ -166,7 +168,7 @@ public final class MetroMap {
      * @param startTime time of starting the trip
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
-    public Map<Node, Node> Dijkstra(Node startNode, int startTime){
+    public Map<Node, SearchResultBestDuration> Dijkstra(Node startNode, int startTime){
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
         }
@@ -176,7 +178,7 @@ public final class MetroMap {
 
         KeyTotalTable key = new KeyTotalTable(null, null);
         // ============ 0. Create returned structure ===================================================================
-        Map<Node, Node> parents = new HashMap<Node, Node>();
+        Map<Node, SearchResultBestDuration> path = new HashMap();
 
         // ============ 1. Set initial weight for all vertex = ꚙ ======================================================
         Map<Node, Integer> weightNodes = new HashMap<Node, Integer>();
@@ -187,9 +189,12 @@ public final class MetroMap {
 
         // =========== 2. Create structure of vertex (let’s call it ‘parens’), which size = nb of vertex ===============
         allNodes.forEach(node -> {
-            parents.put(node, startNode);
+            if (node.equals(startNode)) {   // startNode has no parent, if not -> loop
+                path.put(node, new SearchResultBestDuration(null, 0, null));
+            }
+            path.put(node, new SearchResultBestDuration(startNode, 0, null));
         });
-        parents.replace(startNode, null);       // startNode has no parent, if not -> loop
+       
 
         // =========== 3. Create and init structure of visited vertex ==================================================
         Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
@@ -257,9 +262,12 @@ public final class MetroMap {
                 }
 
                 int min = Integer.MAX_VALUE;
+                MetroLine currLine = null;
 
                 if (bestIndex >= 0){
                     min = listDepTimeArrTime.get(bestIndex).arriveTime;
+                    currLine = listDepTimeArrTime.get(bestIndex).line;
+
                 } else {  //this arrNode not will be taken in consideration
                     min = Integer.MAX_VALUE;
                 }
@@ -269,13 +277,13 @@ public final class MetroMap {
 
                 // re-evaluate
                 if (weightNeib > min) {
-                    parents.replace(neibStation, currentStation);
+                    path.get(neibStation).replace(currentStation, min, currLine);
                     weightNodes.replace(neibStation, min);
                 }
             }
             visited.replace(currentStation, true);
         }
-        return parents;
+        return path;
     }
 
     // Build functions
@@ -487,11 +495,12 @@ public final class MetroMap {
                 Station startStation = getStationByName(node.getName());
                 Set<Segment> herSegments = getSegments(node);
 
-                // take all trains of this station
-                Collection<Integer> herSchedules = new ArrayList<Integer>();
+                // take all trains of this station and her lines
+                Map<MetroLine, List<Integer>> linesSchedules = new HashMap();
+
                 Map<ScheduleKey, List<Integer>> timeTable = startStation.getTimeTable();
                 timeTable.forEach((keyShed, listShed) -> {
-                    herSchedules.addAll(listShed);
+                    linesSchedules.put(keyShed.getMetroLine(), listShed);
                 });
 
                 for (Segment segm : herSegments){
@@ -505,8 +514,12 @@ public final class MetroMap {
                             isNewValue = true;
                             newValue = new ArrayList<TimeValue>();
                         }
-                        for (Integer el : herSchedules) {
-                            newValue.add(new TimeValue(el, el + segm.getDuration()));
+                        for (Map.Entry<MetroLine, List<Integer>> el : linesSchedules.entrySet()) {
+                            MetroLine line = el.getKey();
+                            List<Integer> times = el.getValue();
+                            for (Integer t : times){
+                                newValue.add(new TimeValue(t, t + segm.getDuration(), line));
+                            }
                         }
                         if (isNewValue) {
                             this.totalTable.put(newKey, newValue);
