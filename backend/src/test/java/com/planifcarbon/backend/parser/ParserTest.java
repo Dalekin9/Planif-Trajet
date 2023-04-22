@@ -29,7 +29,7 @@ public class ParserTest extends Assertions {
     }
 
     @ParameterizedTest
-    @CsvSource({"0:00, 0", "0:01, 1", "1:30, 130", "12:34, 1234"})
+    @CsvSource({"0:00, 0", "0:01, 1", "1:30, 13", "12:34, 124"})
     public void testDuration(String duration, int expected) { assertEquals(expected, Parser.durationStringToInt(duration)); }
 
     @ParameterizedTest

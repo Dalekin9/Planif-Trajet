@@ -25,6 +25,7 @@ public final class MetroLine {
         this.name = id;
         this.stations = Set.copyOf(stations);
         this.schedules = schedules;
+        Collections.sort(this.schedules);
         this.terminusStation = terminus;
     }
 

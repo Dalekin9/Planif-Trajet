@@ -57,6 +57,7 @@ build-front:
       - ./frontend/dist/
   only:
     - master
+    - djikstra-improvments
 
 build-back:
   stage: build-back
@@ -79,6 +80,7 @@ build-back:
       - ./backend/target/*.jar
   only:
     - master
+    - djikstra-improvments
   tags:
     - cicd
 

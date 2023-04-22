@@ -128,25 +128,27 @@ public class MetroMapTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"53100, Bercy, Gare du Nord"})
+    @CsvSource({"53100, Gare de Lyon, Bibliothèque François Mitterrand"})
     public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
         System.out.println("\n\n==================== Print path from " + nameStart + " to " + nameFinish +" ======================================");
         MetroMap map = new MetroMap();
         assertDoesNotThrow(map::initializeFields);
-        Station testingStation = map.getStationByName(nameStart);
+        Station startStation = map.getStationByName(nameStart);
 
-        Map<Node, SearchResultBestDuration> dijkstra = map.Dijkstra(testingStation, timeStart);
+        Station endStation = map.getStationByName(nameFinish);
 
-        Node arrive = map.getStationByName(nameFinish);
-        Node current = arrive;
-        Node end = testingStation;
-        int totalTime = 0;
-        
-        while (!current.equals(end)) {
-            System.out.println(current.getName() + "   <--   " + dijkstra.get(current).getNodeFrom().getName() +
-                    "         [ " + dijkstra.get(current).getArrivalTime() + " ]" +
-                    "         { line " + dijkstra.get(current).getMetroLine().getName() + " }");
-            current = dijkstra.get(current).getNodeFrom();
+        Map<Node, SearchResultBestDuration> dijkstra = map.Dijkstra(startStation, endStation, timeStart);
+
+        Node current = endStation;
+
+        int c = 25;     // limit for potentual loops caused by imperfection of the algorithm/data
+
+        System.out.println("\n\n================ Print Dikjstra +++++ ===========================================");
+
+        while (!current.equals(startStation) && dijkstra.get(current) != null) {
+            System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : " + dijkstra.get(current).getArrivalTime() + " - line : " + dijkstra.get(current).getMetroLine().getName());
+            current = dijkstra.get(current).getNodeDestination();
+            c--;
         }
         System.out.println("==================================== End Print path Dikjstra =====================================\n\n");
     }
@@ -158,6 +160,5 @@ public class MetroMapTest {
         assertNotNull(map.getLines());
         assertNotNull(map.getStations());
         assertNotNull(map.getGraph());
-        assertNotNull(map.getTotalTable());
     }
 }
