@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
@@ -9,6 +9,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 export class GetmesomewhereComponent implements OnInit {
 
   public metroForm: FormGroup;
+  public data: string;
 
   constructor() { }
 
@@ -50,5 +51,17 @@ export class GetmesomewhereComponent implements OnInit {
 
   public onSubmit() {
 
+  }
+
+  public onComeFrom(coords){
+    this.metroForm.patchValue({
+      from: coords
+    });
+  }
+
+  public onGoTo(coords){
+    this.metroForm.patchValue({
+      to: coords
+    });
   }
 }

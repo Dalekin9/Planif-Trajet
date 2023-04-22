@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild, ViewRef} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild, ViewRef} from '@angular/core';
 import {MapInfoWindow, MapMarker} from '@angular/google-maps';
 import {RequestsService} from "../../requests.service";
 import {takeUntil} from "rxjs/operators";
@@ -30,6 +30,9 @@ export class WiseMapComponent implements OnInit {
   public stationsMarkers: IMarkerStation[] = [];
   public selectedMarker: IMarkerStation = null;
   public defaultStations: IMetroStationCorrespondence[] = [];
+  @Output() onComeFrom:EventEmitter<any> = new EventEmitter();
+  @Output() onGoTo:EventEmitter<any> = new EventEmitter();
+
 
   constructor(
     private service: RequestsService,
@@ -51,7 +54,7 @@ export class WiseMapComponent implements OnInit {
   }
 
   public openInfoWindow(marker: MapMarker): void {
-    this.selectedMarker = this.stationsMarkers.find((stationMarker) => stationMarker.marker.getTitle() === marker.marker.getTitle());
+    this.selectedMarker = this.stationsMarkers.find((stationMarker) => stationMarker.marker.getPosition() === marker.marker.getPosition());
     this.infoWindow.open(marker);
   }
 
@@ -84,6 +87,24 @@ export class WiseMapComponent implements OnInit {
 
   private static coordsToLatLng(lat: number, lon: number): google.maps.LatLng {
     return new google.maps.LatLng(lat, lon);
+  }
+
+  public comeFrom(): void{
+    if(this.selectedMarker.marker.getTitle() == CUSTOM_MARKER){
+      this.onComeFrom.emit(this.selectedMarker.marker.getPosition())
+    }else{
+      this.onComeFrom.emit(this.selectedMarker.marker.getTitle())
+    }
+    this.infoWindow.close()
+  }
+
+  public goTo(): void{
+    if(this.selectedMarker.marker.getTitle() == CUSTOM_MARKER){
+      this.onGoTo.emit(this.selectedMarker.marker.getPosition())
+    }else{
+      this.onGoTo.emit(this.selectedMarker.marker.getTitle())
+    }
+    this.infoWindow.close()
   }
 }
 

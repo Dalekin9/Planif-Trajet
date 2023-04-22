@@ -14,5 +14,10 @@
     <div class="metro-lines" *ngIf="!!selectedMarker?.station">
       <img [src]="'assets/images/metro/' + line + '.png'" *ngFor="let line of selectedMarker.station.metroLines" alt="Metro Image"/>
     </div>
+    <div>
+      <button mat-stroked-button class="button" (click)="comeFrom()">Come from</button>
+      <button mat-stroked-button class="button" (click)="goTo()">Go to</button>
+    </div>
+
   </map-info-window>
 </google-map>

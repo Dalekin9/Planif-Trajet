@@ -43,5 +43,5 @@
     <button mat-flat-button color="primary" type="submit">GO</button>
   </div>
 </form>
-<app-wise-map>
+<app-wise-map (onComeFrom)="onComeFrom($event)" (onGoTo)="onGoTo($event)">
 </app-wise-map>
