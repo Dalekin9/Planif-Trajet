@@ -143,9 +143,8 @@ public class MetroMapTest {
         int totalTime = 0;
         
         while (!current.equals(end)) {
-            totalTime += dijkstra.get(current).getDuration();
             System.out.println(current.getName() + "   <--   " + dijkstra.get(current).getNodeFrom().getName() +
-                    "         [ " + dijkstra.get(current).getDuration() + " ]" +
+                    "         [ " + dijkstra.get(current).getArrivalTime() + " ]" +
                     "         { line " + dijkstra.get(current).getMetroLine().getName() + " }");
             current = dijkstra.get(current).getNodeFrom();
         }
