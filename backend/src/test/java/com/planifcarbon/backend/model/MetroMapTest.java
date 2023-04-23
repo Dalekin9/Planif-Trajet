@@ -167,6 +167,41 @@ public class MetroMapTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("generateDataSegmentList")
+    public void testGetSegmentsFromPath(int timeStart, String nameStart, String nameFinish, boolean metro, boolean walk,
+            List<String> expected) {
+        MetroMap map = new MetroMap();
+        assertDoesNotThrow(map::initializeFields);
+        Station startStation = map.getStationByName(nameStart);
+        Station endStation = map.getStationByName(nameFinish);
+        List<DataSegment> segments = map.getSegmentsFromPath(startStation, endStation, timeStart, metro, walk);
+        System.out.println(segments);
+        for (int i = 0; i < segments.size(); i++) {
+            assertEquals(expected.get(i), segments.get(i).getNodeStart().getName());
+            assertEquals(expected.get(i + 1), segments.get(i).getNodeEnd().getName());
+        }
+    }
+
+    static Stream<Arguments> generateDataSegmentList() {
+        // @formatter:off
+        return Stream.of(
+            Arguments.of(0, "Avron", "Nation", true, true, List.of("Avron", "Nation")),
+            Arguments.of(0, "Alexandre Dumas", "Nation", true, true, List.of("Alexandre Dumas", "Nation")),
+            Arguments.of(0, "Alexandre Dumas", "Nation", true, false, List.of("Alexandre Dumas", "Avron", "Nation")),
+            Arguments.of(0, "Père Lachaise", "Nation", true, false, List.of("Père Lachaise", "Rue Saint-Maur", "Parmentier",
+            "République", "Oberkampf", "Saint-Ambroise", "Voltaire", "Charonne", "Rue des Boulets", "Nation")),
+            Arguments.of(0, "Père Lachaise", "Nation", true, true, List.of("Père Lachaise", "Nation")),
+            Arguments.of(35000, "Père Lachaise", "Nation", true, true, List.of("Père Lachaise", "Philippe Auguste",
+            "Alexandre Dumas", "Avron", "Nation")),
+            Arguments.of(35000, "Gambetta", "Nation", true, true, List.of("Gambetta", "Père Lachaise", "Philippe Auguste",
+            "Alexandre Dumas", "Avron", "Nation")),
+            Arguments.of(35000, "Gare de Lyon", "Gare du Nord", true, false, List.of("Gare de Lyon", "Bastille", "Chemin Vert",
+            "Saint-Sébastien - Froissart", "Filles du Calvaire", "République", "Strasbourg - Saint-Denis", "Château d'Eau", "Gare de l'Est", "Gare du Nord"))
+            );
+        // @formatter:on
+    }
+
     @Test
     public void testGetTotalTable() {
         MetroMap map = new MetroMap();

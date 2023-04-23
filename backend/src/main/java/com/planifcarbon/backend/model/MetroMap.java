@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -188,6 +189,24 @@ public final class MetroMap {
 
     public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime) {
         return dijkstra(startNode, endNode, startTime, true, true);
+    }
+
+    public List<DataSegment> getSegmentsFromPath(Node startNode, Node endNode, int startTime, boolean metro, boolean walk) {
+        Map<Node, SearchResultBestDuration> map = dijkstra(startNode, endNode, startTime, metro, walk);
+
+        LinkedList<DataSegment> segments = new LinkedList<DataSegment>();
+        Node current = endNode;
+        int departureTime = startTime;
+
+        while (!current.equals(startNode) && map.get(current) != null) {
+            Node next = map.get(current).getNodeDestination();
+            int arrivalTime = map.get(current).getArrivalTime();
+            segments.addFirst(new DataSegment(next, current, arrivalTime, departureTime, map.get(current).getMetroLine(), 0));
+            departureTime = arrivalTime;
+            current = next;
+        }
+
+        return segments;
     }
 
     // ================================== Dikjstra and it's auxiliary functions =======================================
