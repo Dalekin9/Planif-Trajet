@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -128,62 +128,76 @@ public class MetroMapTest {
         assertNotNull(station.getMetroLine());
     }
 
-    @ParameterizedTest
-    // @CsvSource({"53100, Gare de Lyon, Bibliothèque François Mitterrand", "0, Gare de Lyon, Nation"})
-    // Starting at 0 give best walk path because there is no metro at midnight, starting at 53100 give best metro path most of the time.
-    @CsvSource({"0, Avron, Nation", "30000, Avron, Nation", "0, Alexandre Dumas, Nation", "0, Philippe Auguste, Nation",
-            "0, Père Lachaise, Nation", "53100, Père Lachaise, Nation"})
-    public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
-        System.out.println("\n\n==================== Print path from " + nameStart + " to " + nameFinish + " at " + timeStart
-                + "======================================");
-        MetroMap map = new MetroMap();
-        assertDoesNotThrow(map::initializeFields);
-        Station startStation = map.getStationByName(nameStart);
+    // Graphic test
+    // @ParameterizedTest
+    // // @CsvSource({"53100, Gare de Lyon, Bibliothèque François Mitterrand", "0, Gare de Lyon, Nation"})
+    // // Starting at 0 give best walk path because there is no metro at midnight, starting at 53100 give best metro path most of the time.
+    // @CsvSource({"0, Avron, Nation", "30000, Avron, Nation", "0, Alexandre Dumas, Nation", "0, Philippe Auguste, Nation",
+    // "0, Père Lachaise, Nation", "53100, Père Lachaise, Nation"})
+    // public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
+    // System.out.println("\n\n==================== Print path from " + nameStart + " to " + nameFinish + " at " + timeStart
+    // + "======================================");
+    // MetroMap map = new MetroMap();
+    // assertDoesNotThrow(map::initializeFields);
+    // Station startStation = map.getStationByName(nameStart);
 
-        Station endStation = map.getStationByName(nameFinish);
+    // Station endStation = map.getStationByName(nameFinish);
 
-        for (int i = 0; i < 3; i++) {
-            boolean metro = (i != 1);
-            boolean walk = (i != 0);
-            Map<Node, SearchResultBestDuration> dijkstra = map.dijkstra(startStation, endStation, timeStart, metro, walk);
+    // for (int i = 0; i < 3; i++) {
+    // boolean metro = (i != 1);
+    // boolean walk = (i != 0);
+    // Map<Node, SearchResultBestDuration> dijkstra = map.dijkstra(startStation, endStation, timeStart, metro, walk);
 
-            Node current = endStation;
+    // Node current = endStation;
 
-            int c = 25; // limit for potentual loops caused by imperfection of the algorithm/data
-            System.out.println("\n\nmetro : " + metro + " - walk : " + walk);
-            System.out.println("================ Print Dikjstra +++++ ===========================================");
+    // int c = 25; // limit for potentual loops caused by imperfection of the algorithm/data
+    // System.out.println("\n\nmetro : " + metro + " - walk : " + walk);
+    // System.out.println("================ Print Dikjstra +++++ ===========================================");
 
-            while (!current.equals(startStation) && dijkstra.get(current) != null) {
-                String line = dijkstra.get(current).getMetroLine() != null ? " - line : " + dijkstra.get(current).getMetroLine().getName()
-                        : "";
-                System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : "
-                        + dijkstra.get(current).getArrivalTime() + line);
-                current = dijkstra.get(current).getNodeDestination();
-                c--;
-            }
-            System.out.println("==================================== End Print path Dikjstra =====================================\n\n");
-            // int totalTime = dijkstra.entrySet().stream().mapToInt(e -> e.getValue().getArrivalTime()).sum();
-            // System.out.println(dijkstra);
-        }
-    }
+    // while (!current.equals(startStation) && dijkstra.get(current) != null) {
+    // String line = dijkstra.get(current).getMetroLine() != null ? " - line : " + dijkstra.get(current).getMetroLine().getName()
+    // : "";
+    // System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : "
+    // + dijkstra.get(current).getArrivalTime() + line);
+    // current = dijkstra.get(current).getNodeDestination();
+    // c--;
+    // }
+    // System.out.println("==================================== End Print path Dikjstra =====================================\n\n");
+    // // int totalTime = dijkstra.entrySet().stream().mapToInt(e -> e.getValue().getArrivalTime()).sum();
+    // // System.out.println(dijkstra);
+    // }
+    // }
 
     @ParameterizedTest
     @MethodSource("generateDataSegmentList")
-    public void testGetSegmentsFromPath(int timeStart, String nameStart, String nameFinish, boolean metro, boolean walk,
-            List<String> expected) {
+    public void testGetSegmentsFromPath(int timeStart, Object start, Object end, boolean metro, boolean walk, List<String> expected) {
         MetroMap map = new MetroMap();
         assertDoesNotThrow(map::initializeFields);
-        Station startStation = map.getStationByName(nameStart);
-        Station endStation = map.getStationByName(nameFinish);
-        List<DataSegment> segments = map.getSegmentsFromPath(startStation, endStation, timeStart, metro, walk);
-        System.out.println(segments);
+        Node startNode;
+        if (start instanceof String) {
+            startNode = map.getStationByName((String) start);
+        } else {
+            startNode = (Node) start;
+        }
+        Node endNode;
+        if (end instanceof String) {
+            endNode = map.getStationByName((String) end);
+        } else {
+            endNode = (Node) end;
+        }
+
+        List<DataSegment> segments = map.getSegmentsFromPath(startNode, endNode, timeStart, metro, walk);
+        String list = segments.get(0).getNodeStart() + ", "
+                + segments.stream().map(s -> s.getNodeEnd().getName()).collect(Collectors.joining(", "));
+        System.out.println(list);
+        assertEquals(expected.size() - 1, segments.size());
         for (int i = 0; i < segments.size(); i++) {
             assertEquals(expected.get(i), segments.get(i).getNodeStart().getName());
             assertEquals(expected.get(i + 1), segments.get(i).getNodeEnd().getName());
         }
     }
 
-    static Stream<Arguments> generateDataSegmentList() {
+    private static Stream<Arguments> generateDataSegmentList() {
         // @formatter:off
         return Stream.of(
             Arguments.of(0, "Avron", "Nation", true, true, List.of("Avron", "Nation")),
@@ -197,7 +211,40 @@ public class MetroMapTest {
             Arguments.of(35000, "Gambetta", "Nation", true, true, List.of("Gambetta", "Père Lachaise", "Philippe Auguste",
             "Alexandre Dumas", "Avron", "Nation")),
             Arguments.of(35000, "Gare de Lyon", "Gare du Nord", true, false, List.of("Gare de Lyon", "Bastille", "Chemin Vert",
-            "Saint-Sébastien - Froissart", "Filles du Calvaire", "République", "Strasbourg - Saint-Denis", "Château d'Eau", "Gare de l'Est", "Gare du Nord"))
+            "Saint-Sébastien - Froissart", "Filles du Calvaire", "République", "Strasbourg - Saint-Denis", "Château d'Eau", "Gare de l'Est", "Gare du Nord")),
+
+            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), "Nation", true, true, List.of("A", "Nation")),
+
+            // From A to La Défense (Grande Arche)
+            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), "La Défense (Grande Arche)", true, true, List.of("A", 
+            "Nation", "Rue des Boulets", "Charonne", "Voltaire", "Saint-Ambroise", "Oberkampf", "République", "Strasbourg - Saint-Denis", "Bonne Nouvelle",
+            "Grands Boulevards", "Richelieu - Drouot", "Chaussée d'Antin - La Fayette", "Havre-Caumartin", "Saint-Augustin", "Miromesnil", "Saint-Philippe du Roule",
+            "Franklin D. Roosevelt", "George V", "Charles de Gaulle - Etoile", "Argentine", "Porte Maillot", "Les Sablons", "Pont de Neuilly",
+            "Esplanade de la Défense", "La Défense (Grande Arche)")),
+
+            // From A to B at time where line 9 is better than 1.
+            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.893216, 2.234292), true, true, List.of("A", 
+            "Nation", "Rue des Boulets", "Charonne", "Voltaire", "Saint-Ambroise", "Oberkampf", "République", "Strasbourg - Saint-Denis", "Bonne Nouvelle",
+            "Grands Boulevards", "Richelieu - Drouot", "Chaussée d'Antin - La Fayette", "Havre-Caumartin", "Saint-Augustin", "Miromesnil", "Saint-Philippe du Roule",
+            "Franklin D. Roosevelt", "George V", "Charles de Gaulle - Etoile", "Argentine", "Porte Maillot", "Les Sablons", "Pont de Neuilly",
+            "Esplanade de la Défense", "La Défense (Grande Arche)", "B")),
+
+            // From A to B with different time where line 1 is better than 9.
+            Arguments.of(36000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.893216, 2.234292), true, true, List.of("A", 
+            "Nation", "Reuilly - Diderot", "Gare de Lyon", "Bastille", "Saint-Paul (Le Marais)", "Hôtel de Ville", "Châtelet", "Louvre - Rivoli",
+            "Palais Royal - Musée du Louvre", "Tuileries", "Concorde", "Champs-Élysées - Clemenceau",
+            "Franklin D. Roosevelt", "George V", "Charles de Gaulle - Etoile", "Argentine", "Porte Maillot", "Les Sablons", "Pont de Neuilly",
+            "Esplanade de la Défense", "La Défense (Grande Arche)", "B")),
+
+            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.909886, 2.336266), true, true, List.of("A", 
+            "Nation", "Rue des Boulets", "Charonne", "Voltaire", "Saint-Ambroise", "Oberkampf", "République", "Strasbourg - Saint-Denis", "Bonne Nouvelle",
+            "Grands Boulevards", "Richelieu - Drouot", "Chaussée d'Antin - La Fayette", "Havre-Caumartin", "Saint-Lazare", "Pont Cardinet", "Porte de Clichy",
+            "Saint-Ouen", "Mairie de Saint-Ouen", "B")),
+
+            Arguments.of(35000, new PersonalizedNode("Maison", 48.8453461388873, 2.396355180412703), new PersonalizedNode("Travail", 48.872641940207515, 2.303847587524504),
+            true, true, List.of("Maison", "Nation", "Reuilly - Diderot", "Gare de Lyon", "Bastille", "Saint-Paul (Le Marais)", "Hôtel de Ville",
+            "Châtelet", "Louvre - Rivoli", "Palais Royal - Musée du Louvre", "Tuileries", "Concorde", "Champs-Élysées - Clemenceau",
+            "Franklin D. Roosevelt", "George V", "Travail"))
             );
         // @formatter:on
     }

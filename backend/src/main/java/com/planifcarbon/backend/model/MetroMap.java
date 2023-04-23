@@ -118,6 +118,16 @@ public final class MetroMap {
 
         // ============ 1. Set initial weight for all vertex = ꚙ ======================================================
         Set<Node> allNodes = getNodes();
+        // Add start and end nodes if they are personalized
+        if (startNode instanceof PersonalizedNode || endNode instanceof PersonalizedNode) {
+            allNodes = new HashSet<Node>(allNodes); // make set mutable
+        }
+        if (startNode instanceof PersonalizedNode && !allNodes.contains(startNode)) {
+            allNodes.add(startNode);
+        }
+        if (endNode instanceof PersonalizedNode && !allNodes.contains(endNode)) {
+            allNodes.add(endNode);
+        }
 
         // =========== 2. Create structure of vertex (let’s call it ‘parens’), which size = nb of vertex ===============
         path.put(startNode, new SearchResultBestDuration(startNode, startTime, null)); // (node, parent)
@@ -143,15 +153,42 @@ public final class MetroMap {
             DjikstraInfo current = priorityQueue.poll();
 
             int currentTime = current.getTime();
-            Station currentStation = (Station) current.getNode();
+            Node currentNode = current.getNode();
 
-            visited.replace(currentStation, true);
+            visited.replace(currentNode, true);
 
-            if (currentStation.equals(endNode)) {
+            if (currentNode.equals(endNode)) {
                 return path;
             }
 
-            Set<Segment> neighbors = this.getSegments(currentStation);
+            Set<Segment> neighbors;
+            // neighbors = new HashSet<Segment>(this.getSegments(currentNode));
+            if (startNode.equals(currentNode) && startNode instanceof PersonalizedNode) {
+                neighbors = new HashSet<Segment>();
+                for (Node node : allNodes) {
+                    if (!node.equals(startNode)) {
+                        neighbors.add(new SegmentWalk(startNode, node));
+                    }
+                }
+            } else if (endNode.equals(currentNode) && endNode instanceof PersonalizedNode) {
+                neighbors = new HashSet<Segment>();
+                for (Node node : allNodes) {
+                    if (!node.equals(endNode)) {
+                        neighbors.add(new SegmentWalk(endNode, node));
+                    }
+                }
+            } else {
+                neighbors = new HashSet<Segment>(this.getSegments(currentNode)); // copy of set
+            }
+            // Add personalized nodes segments if start and end node is personalized
+            if (startNode instanceof PersonalizedNode && !startNode.equals(currentNode)) {
+                neighbors.add(new SegmentWalk(currentNode, startNode));
+            }
+            if (endNode instanceof PersonalizedNode && !endNode.equals(currentNode)) {
+                neighbors.add(new SegmentWalk(currentNode, endNode));
+            }
+
+            // Remove segments if only metro or only walk is allowed
             if (!metro) {
                 neighbors = neighbors.stream().filter(segment -> !(segment instanceof SegmentMetro)).collect(Collectors.toSet());
             } else if (!walk) {
@@ -175,12 +212,12 @@ public final class MetroMap {
                         priorityQueue.remove(djikstraInfo.get());
                         priorityQueue.add(djikstraInfo.get());
                         path.replace(neighbor.getEndPoint(),
-                                new SearchResultBestDuration(currentStation, djToTest.getTime(), getLineFromSegment(neighbor)));
+                                new SearchResultBestDuration(currentNode, djToTest.getTime(), getLineFromSegment(neighbor)));
                     }
                 } else if (!visited.get(neighbor.getEndPoint())) {
                     priorityQueue.add(djToTest);
                     path.put(neighbor.getEndPoint(),
-                            new SearchResultBestDuration(currentStation, djToTest.getTime(), getLineFromSegment(neighbor)));
+                            new SearchResultBestDuration(currentNode, djToTest.getTime(), getLineFromSegment(neighbor)));
                 }
             }
         }
@@ -371,7 +408,9 @@ public final class MetroMap {
      * @param distance  distance between the 2 nodes
      */
     public void addSegmentWalk(Node startNode, Node endNode, double distance) {
+        // TODO Use distance from csv file may not be a good idea since it's not the real distance outdor.
         addSegment(new SegmentWalk(startNode, endNode, distance));
+        // addSegment(new SegmentWalk(startNode, endNode));
     }
 
     /**

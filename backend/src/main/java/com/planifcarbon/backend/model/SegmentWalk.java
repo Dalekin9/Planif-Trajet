@@ -22,13 +22,23 @@ public final class SegmentWalk extends Segment {
 
     /**
      * {@summay Main constructor.}
+     * Duration will be calculated based on distance and the average walking speed.
      *
      * @param node1    first point of walking segment
      * @param node2    second point of walking segment
      * @param distance distance between two points
-     *                 Duration will be calculated based on distance and the average walking speed.
      */
     public SegmentWalk(Node node1, Node node2, double distance) { super(node1, node2, distance, (int) (distance * HTOS / SPEED)); }
+
+    /**
+     * {@summay Main constructor.}
+     * Distance will be calculated based on coordinates of two points.
+     * Duration will be calculated based on distance and the average walking speed.
+     *
+     * @param node1 first point of walking segment
+     * @param node2 second point of walking segment
+     */
+    public SegmentWalk(Node node1, Node node2) { this(node1, node2, node1.distanceTo(node2)); }
 
     /**
      * Function for tests only

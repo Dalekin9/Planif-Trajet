@@ -24,7 +24,13 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
      * @param duration travel time from the first point to the second
      */
     public Segment(final Node node1, final Node node2, double distance, int duration) throws IllegalArgumentException {
-        if (distance <= 0) {
+        if (node1 == null) {
+            throw new IllegalArgumentException("node1 must not be null");
+        } else if (node2 == null) {
+            throw new IllegalArgumentException("node2 must not be null");
+        } else if (node1.equals(node2)) {
+            throw new IllegalArgumentException("node1 and node2 must not be equals");
+        } else if (distance <= 0) {
             throw new IllegalArgumentException("distance must be greater than 0");
         } else if (duration <= 0) {
             throw new IllegalArgumentException("duration must be greater than 0");
