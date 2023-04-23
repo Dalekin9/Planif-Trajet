@@ -158,10 +158,11 @@ public final class MetroMap {
             }
 
             for (Segment neighbor : neighbors) {
+                // Time to wait for the next train
                 int minimalTime = neighbor instanceof SegmentMetro
                         ? this.getNearestDepartureTime(currentTime, (Station) neighbor.getStartPoint(), ((SegmentMetro) neighbor).getLine())
-                        : 0;
-                if (minimalTime == -1) {
+                        : currentTime;
+                if (minimalTime == -1) { // is SegmentMetro and no trains
                     continue;
                 }
                 DjikstraInfo djToTest = new DjikstraInfo(neighbor.getEndPoint(), minimalTime + neighbor.getDuration());
