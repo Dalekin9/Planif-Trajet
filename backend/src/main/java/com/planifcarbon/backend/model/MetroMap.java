@@ -153,8 +153,9 @@ public final class MetroMap {
             Set<Segment> neighbors = this.getSegments(currentStation);
 
             for (Segment neighbor : neighbors) {
-                int minimalTime = this.getNearestDepartureTime(currentTime, (Station) neighbor.getStartPoint(),
-                        ((SegmentMetro) neighbor).getLine());
+                int minimalTime = neighbor instanceof SegmentMetro
+                        ? this.getNearestDepartureTime(currentTime, (Station) neighbor.getStartPoint(), ((SegmentMetro) neighbor).getLine())
+                        : 0;
                 if (minimalTime == -1) {
                     continue;
                 }
@@ -166,13 +167,13 @@ public final class MetroMap {
                         djikstraInfo.get().setTime(djToTest.getTime());
                         priorityQueue.remove(djikstraInfo.get());
                         priorityQueue.add(djikstraInfo.get());
-                        path.replace(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(),
-                                this.lines.get(((SegmentMetro) neighbor).getLine())));
+                        path.replace(neighbor.getEndPoint(),
+                                new SearchResultBestDuration(currentStation, djToTest.getTime(), getLineFromSegment(neighbor)));
                     }
                 } else if (!visited.get(neighbor.getEndPoint())) {
                     priorityQueue.add(djToTest);
-                    path.put(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(),
-                            this.lines.get(((SegmentMetro) neighbor).getLine())));
+                    path.put(neighbor.getEndPoint(),
+                            new SearchResultBestDuration(currentStation, djToTest.getTime(), getLineFromSegment(neighbor)));
                 }
             }
         }
@@ -180,6 +181,10 @@ public final class MetroMap {
     }
 
     // ================================== Dikjstra and it's auxiliary functions =======================================
+
+    public MetroLine getLineFromSegment(Segment segment) {
+        return segment instanceof SegmentMetro ? this.lines.get(((SegmentMetro) segment).getLine()) : null;
+    }
 
     // Build functions
     // --------------------------------------------------------------------------------------------------------------------
@@ -217,7 +222,7 @@ public final class MetroMap {
         setMetroLineSchedules(metroLines, metroLinesTerminus, schedules);
         diffuseTrainTimeFromTerminus(metroLinesTerminus);
 
-        // addAllWalkSegments(getAllStations());
+        addAllWalkSegments(getAllStations());
     }
 
     /**

@@ -148,8 +148,9 @@ public class MetroMapTest {
         System.out.println("\n\n================ Print Dikjstra +++++ ===========================================");
 
         while (!current.equals(startStation) && dijkstra.get(current) != null) {
+            String line = dijkstra.get(current).getMetroLine() != null ? " - line : " + dijkstra.get(current).getMetroLine().getName() : "";
             System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : "
-                    + dijkstra.get(current).getArrivalTime() + " - line : " + dijkstra.get(current).getMetroLine().getName());
+                    + dijkstra.get(current).getArrivalTime() + line);
             current = dijkstra.get(current).getNodeDestination();
             c--;
         }
