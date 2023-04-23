@@ -9,7 +9,6 @@ import java.util.Objects;
 public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode {
     private final String name;
     private final Coordinates coordinates;
-    // private int type; // used by dijkstra ?
     // TODO store current used name for created node to avoid duplicate name
 
     /**
