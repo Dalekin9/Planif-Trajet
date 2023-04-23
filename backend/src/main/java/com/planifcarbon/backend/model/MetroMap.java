@@ -1,16 +1,24 @@
 package com.planifcarbon.backend.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.StationDTO;
 import com.planifcarbon.backend.parser.Parser;
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Component;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * {@summary Represents the metro map.}
@@ -33,40 +41,27 @@ public final class MetroMap {
         scheduleKeys = new HashSet<ScheduleKey>();
     }
 
-    public Map<String, Station> getStations() {
-        return stations;
-    }
+    public Map<String, Station> getStations() { return stations; }
 
-    public Set<Station> getAllStations() {
-        return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll);
-    }
+    public Set<Station> getAllStations() { return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll); }
 
-    public Map<String, MetroLine> getLines() {
-        return lines;
-    }
+    public Map<String, MetroLine> getLines() { return lines; }
 
-    public Map<Node, Set<Segment>> getGraph() {
-        return graph;
-    }
+    public Map<Node, Set<Segment>> getGraph() { return graph; }
 
-    public Station getStationByName(String stationName) {
-        return this.stations.getOrDefault(stationName, null);
-    }
+    public Station getStationByName(String stationName) { return this.stations.getOrDefault(stationName, null); }
 
     /**
      * {@summary Return the list of nodes.}
      */
-    public Set<Node> getNodes() {
-        return graph.keySet();
-    }
+    public Set<Node> getNodes() { return graph.keySet(); }
 
     /**
      * {@summary Return the list of segments.}
+     * 
      * @return the list of segments
      */
-    public Set<Segment> getSegments(Node node) {
-        return graph.get(node);
-    }
+    public Set<Segment> getSegments(Node node) { return graph.get(node); }
 
     public Set<Segment> getSegmentsMetro(Node node) {
         return graph.get(node).stream().filter(segment -> segment instanceof SegmentMetro).collect(Collectors.toSet());
@@ -74,18 +69,19 @@ public final class MetroMap {
 
     /**
      * {@summary Find scheduleKey (final station of matro line) by name.}
+     * 
      * @return the scheduleKey (final station of matro line)
      */
     public ScheduleKey getScheduleKeyByName(String name) {
-        List<ScheduleKey> ret = this.scheduleKeys.stream()
-                .filter(sh -> (sh.getTerminusStation().getName()).equals(name))
+        List<ScheduleKey> ret = this.scheduleKeys.stream().filter(sh -> (sh.getTerminusStation().getName()).equals(name))
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         return ret.get(0);
     }
 
     /**
      * {@summary Finds the nearest trains departing from the given station after given time.}
-     * @param arrivalTime time after which need to find nearest trains.
+     * 
+     * @param arrivalTime    time after which need to find nearest trains.
      * @param currentStation station for which need to find nearest trains.
      * @return map contains ending stations (key) and arrival time on given station (value).
      */
@@ -97,21 +93,18 @@ public final class MetroMap {
         }
         MetroLine line = this.lines.get(lineName);
         int duration = currentStation.getScheduleForKey(new ScheduleKey(line.getTerminusStation(), line));
-        return line.getSchedules()
-                .stream()
-                .filter((departureTime) -> departureTime + duration >= arrivalTime)
-                .findFirst()
-                .map((departureTime) -> departureTime + duration)
-                .orElse(-1);
+        return line.getSchedules().stream().filter((departureTime) -> departureTime + duration >= arrivalTime).findFirst()
+                .map((departureTime) -> departureTime + duration).orElse(-1);
     }
 
     /**
      * {@summary Implementation of Dikjstra algorithm.}
+     * 
      * @param startNode node from which Dikjstra will be launched
      * @param startTime time of starting the trip
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
-    public Map<Node, SearchResultBestDuration> Dijkstra(Node startNode, Node endNode, int startTime) {
+    public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime) {
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
         }
@@ -126,7 +119,7 @@ public final class MetroMap {
         Set<Node> allNodes = getNodes();
 
         // =========== 2. Create structure of vertex (let’s call it ‘parens’), which size = nb of vertex ===============
-        path.put(startNode, new SearchResultBestDuration(startNode, startTime,null)); // (node, parent)
+        path.put(startNode, new SearchResultBestDuration(startNode, startTime, null)); // (node, parent)
 
         // =========== 3. Create and init structure of visited vertex ==================================================
         Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
@@ -160,34 +153,33 @@ public final class MetroMap {
             Set<Segment> neighbors = this.getSegments(currentStation);
 
             for (Segment neighbor : neighbors) {
-                int minimalTime = this.getNearestDepartureTime(currentTime,
-                        (Station) neighbor.getStartPoint(),
+                int minimalTime = this.getNearestDepartureTime(currentTime, (Station) neighbor.getStartPoint(),
                         ((SegmentMetro) neighbor).getLine());
                 if (minimalTime == -1) {
                     continue;
                 }
                 DjikstraInfo djToTest = new DjikstraInfo(neighbor.getEndPoint(), minimalTime + neighbor.getDuration());
-                Optional<DjikstraInfo> djikstraInfo = priorityQueue.stream()
-                        .filter((dj) -> dj.equals(djToTest))
-                        .findFirst();
+                Optional<DjikstraInfo> djikstraInfo = priorityQueue.stream().filter((dj) -> dj.equals(djToTest)).findFirst();
                 if (djikstraInfo.isPresent()) {
                     int compareValue = djikstraInfo.get().compareTo(djToTest);
                     if (compareValue > 0) {
                         djikstraInfo.get().setTime(djToTest.getTime());
                         priorityQueue.remove(djikstraInfo.get());
                         priorityQueue.add(djikstraInfo.get());
-                        path.replace(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(), this.lines.get(((SegmentMetro) neighbor).getLine())));
+                        path.replace(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(),
+                                this.lines.get(((SegmentMetro) neighbor).getLine())));
                     }
                 } else if (!visited.get(neighbor.getEndPoint())) {
                     priorityQueue.add(djToTest);
-                    path.put(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(), this.lines.get(((SegmentMetro) neighbor).getLine())));
+                    path.put(neighbor.getEndPoint(), new SearchResultBestDuration(currentStation, djToTest.getTime(),
+                            this.lines.get(((SegmentMetro) neighbor).getLine())));
                 }
             }
         }
         return path;
     }
 
-    // ==================================  Dikjstra and it's auxiliary functions =======================================
+    // ================================== Dikjstra and it's auxiliary functions =======================================
 
     // Build functions
     // --------------------------------------------------------------------------------------------------------------------
@@ -225,14 +217,13 @@ public final class MetroMap {
         setMetroLineSchedules(metroLines, metroLinesTerminus, schedules);
         diffuseTrainTimeFromTerminus(metroLinesTerminus);
 
-        //   addAllWalkSegments(getAllStations());
+        // addAllWalkSegments(getAllStations());
     }
 
     /**
      * Calculates metroLines and graph with metro segments.
      */
-    private void addSegmentMetroToLinesAndGraph(Set<SegmentMetroDTO> segmentMetroDTOS,
-                                                Map<String, Set<Station>> metroLines) {
+    private void addSegmentMetroToLinesAndGraph(Set<SegmentMetroDTO> segmentMetroDTOS, Map<String, Set<Station>> metroLines) {
         segmentMetroDTOS.forEach(segment -> {
             Station start = this.stations.get(segment.getStart().getName());
             Station end = this.stations.get(segment.getEnd().getName());
@@ -253,7 +244,7 @@ public final class MetroMap {
      * Set metro line schedules.
      */
     private void setMetroLineSchedules(Map<String, Set<Station>> metroLines, Map<String, String> metroLinesTerminus,
-                                       Map<String, List<Integer>> schedules) {
+            Map<String, List<Integer>> schedules) {
         metroLines.forEach((key, value) -> {
             List<Integer> schedule = schedules.getOrDefault(key, new ArrayList<>());
             this.lines.put(key, new MetroLine(key, value, schedule, this.stations.get(metroLinesTerminus.get(key))));
@@ -280,8 +271,7 @@ public final class MetroMap {
                             .findFirst().orElse(null);
                     if (segment != null) {
                         terminusStation = (Station) segment.getEndPoint();
-                        int schedule =
-                                ((Station) segment.getStartPoint()).getScheduleForKey(scheduleKey) + segment.getDuration();
+                        int schedule = ((Station) segment.getStartPoint()).getScheduleForKey(scheduleKey) + segment.getDuration();
                         terminusStation.addSchedule(scheduleKey, schedule);
                         node = segment.getEndPoint();
                     }
@@ -313,8 +303,7 @@ public final class MetroMap {
             throw new IllegalArgumentException("nodeClass must not be null");
         }
         try {
-            Node node = nodeClass.getDeclaredConstructor(String.class, double.class, double.class).newInstance(name,
-                    latitude, longitude);
+            Node node = nodeClass.getDeclaredConstructor(String.class, double.class, double.class).newInstance(name, latitude, longitude);
             graph.put(node, new HashSet<Segment>());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
@@ -367,9 +356,7 @@ public final class MetroMap {
 
     // Adapters functions
     // -----------------------------------------------------------------------------------------------------------------
-    Station stationDTOtoStation(StationDTO dto) {
-        return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude());
-    }
+    Station stationDTOtoStation(StationDTO dto) { return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude()); }
 
     // Djikstra classes.
     private static class DjikstraInfo implements Comparable<DjikstraInfo> {
@@ -381,34 +368,26 @@ public final class MetroMap {
             this.time = time;
         }
 
-        public int getTime() {
-            return time;
-        }
+        public int getTime() { return time; }
 
-        public void setTime(int time) {
-            this.time = time;
-        }
+        public void setTime(int time) { this.time = time; }
 
-        public Node getNode() {
-            return node;
-        }
+        public Node getNode() { return node; }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             DjikstraInfo that = (DjikstraInfo) o;
             return Objects.equals(node, that.node);
         }
 
         @Override
-        public int hashCode() {
-            return Objects.hash(node);
-        }
+        public int hashCode() { return Objects.hash(node); }
 
         @Override
-        public int compareTo(DjikstraInfo o) {
-            return Integer.compare(time, o.time);
-        }
+        public int compareTo(DjikstraInfo o) { return Integer.compare(time, o.time); }
     }
 }

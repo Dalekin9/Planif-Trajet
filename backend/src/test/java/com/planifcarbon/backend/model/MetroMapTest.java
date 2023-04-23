@@ -6,8 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -101,7 +102,7 @@ public class MetroMapTest {
             metroLines.add(line);
         });
         assertEquals(nbSegmentsMetro, map.getSegmentsMetro(new NodeForTest(stationName, 0.0, 0.0)).size());
-//        assertEquals(nbSegments, map.getSegments(new NodeForTest(stationName, 0.0, 0.0)).size());
+        // assertEquals(nbSegments, map.getSegments(new NodeForTest(stationName, 0.0, 0.0)).size());
     }
 
     @ParameterizedTest
@@ -130,23 +131,25 @@ public class MetroMapTest {
     @ParameterizedTest
     @CsvSource({"53100, Gare de Lyon, Bibliothèque François Mitterrand"})
     public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
-        System.out.println("\n\n==================== Print path from " + nameStart + " to " + nameFinish +" ======================================");
+        System.out.println(
+                "\n\n==================== Print path from " + nameStart + " to " + nameFinish + " ======================================");
         MetroMap map = new MetroMap();
         assertDoesNotThrow(map::initializeFields);
         Station startStation = map.getStationByName(nameStart);
 
         Station endStation = map.getStationByName(nameFinish);
 
-        Map<Node, SearchResultBestDuration> dijkstra = map.Dijkstra(startStation, endStation, timeStart);
+        Map<Node, SearchResultBestDuration> dijkstra = map.dijkstra(startStation, endStation, timeStart);
 
         Node current = endStation;
 
-        int c = 25;     // limit for potentual loops caused by imperfection of the algorithm/data
+        int c = 25; // limit for potentual loops caused by imperfection of the algorithm/data
 
         System.out.println("\n\n================ Print Dikjstra +++++ ===========================================");
 
         while (!current.equals(startStation) && dijkstra.get(current) != null) {
-            System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : " + dijkstra.get(current).getArrivalTime() + " - line : " + dijkstra.get(current).getMetroLine().getName());
+            System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : "
+                    + dijkstra.get(current).getArrivalTime() + " - line : " + dijkstra.get(current).getMetroLine().getName());
             current = dijkstra.get(current).getNodeDestination();
             c--;
         }
