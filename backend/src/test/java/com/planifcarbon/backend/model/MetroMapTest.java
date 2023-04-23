@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -216,27 +216,27 @@ public class MetroMapTest {
             Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), "Nation", true, true, List.of("A", "Nation")),
 
             // From A to La Défense (Grande Arche)
-            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), "La Défense (Grande Arche)", true, true, List.of("A", 
+            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), "La Défense (Grande Arche)", true, true, List.of("A",
             "Nation", "Rue des Boulets", "Charonne", "Voltaire", "Saint-Ambroise", "Oberkampf", "République", "Strasbourg - Saint-Denis", "Bonne Nouvelle",
             "Grands Boulevards", "Richelieu - Drouot", "Chaussée d'Antin - La Fayette", "Havre-Caumartin", "Saint-Augustin", "Miromesnil", "Saint-Philippe du Roule",
             "Franklin D. Roosevelt", "George V", "Charles de Gaulle - Etoile", "Argentine", "Porte Maillot", "Les Sablons", "Pont de Neuilly",
             "Esplanade de la Défense", "La Défense (Grande Arche)")),
 
             // From A to B at time where line 9 is better than 1.
-            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.893216, 2.234292), true, true, List.of("A", 
+            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.893216, 2.234292), true, true, List.of("A",
             "Nation", "Rue des Boulets", "Charonne", "Voltaire", "Saint-Ambroise", "Oberkampf", "République", "Strasbourg - Saint-Denis", "Bonne Nouvelle",
             "Grands Boulevards", "Richelieu - Drouot", "Chaussée d'Antin - La Fayette", "Havre-Caumartin", "Saint-Augustin", "Miromesnil", "Saint-Philippe du Roule",
             "Franklin D. Roosevelt", "George V", "Charles de Gaulle - Etoile", "Argentine", "Porte Maillot", "Les Sablons", "Pont de Neuilly",
             "Esplanade de la Défense", "La Défense (Grande Arche)", "B")),
 
             // From A to B with different time where line 1 is better than 9.
-            Arguments.of(36000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.893216, 2.234292), true, true, List.of("A", 
+            Arguments.of(36000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.893216, 2.234292), true, true, List.of("A",
             "Nation", "Reuilly - Diderot", "Gare de Lyon", "Bastille", "Saint-Paul (Le Marais)", "Hôtel de Ville", "Châtelet", "Louvre - Rivoli",
             "Palais Royal - Musée du Louvre", "Tuileries", "Concorde", "Champs-Élysées - Clemenceau",
             "Franklin D. Roosevelt", "George V", "Charles de Gaulle - Etoile", "Argentine", "Porte Maillot", "Les Sablons", "Pont de Neuilly",
             "Esplanade de la Défense", "La Défense (Grande Arche)", "B")),
 
-            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.909886, 2.336266), true, true, List.of("A", 
+            Arguments.of(35000, new PersonalizedNode("A", 48.846408, 2.395640), new PersonalizedNode("B", 48.909886, 2.336266), true, true, List.of("A",
             "Nation", "Rue des Boulets", "Charonne", "Voltaire", "Saint-Ambroise", "Oberkampf", "République", "Strasbourg - Saint-Denis", "Bonne Nouvelle",
             "Grands Boulevards", "Richelieu - Drouot", "Chaussée d'Antin - La Fayette", "Havre-Caumartin", "Saint-Lazare", "Pont Cardinet", "Porte de Clichy",
             "Saint-Ouen", "Mairie de Saint-Ouen", "B")),

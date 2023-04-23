@@ -9,6 +9,7 @@
               [position]="stationMarker.marker.getPosition()"
               (mapRightclick)="deleteMarker(marker.marker)"
               (mapClick)="openInfoWindow(marker)"></map-marker>
+  <map-polyline *ngFor="let polyline of polyLines" [path]="polyline.vertices" [options]="{strokeColor: polyline.color, strokeWeight: 5}"></map-polyline>
   <map-info-window class="marker-info">
     <h4>{{selectedMarker?.marker.getTitle()}}</h4>
     <div class="metro-lines" *ngIf="!!selectedMarker?.station">

@@ -1,18 +1,12 @@
 package com.planifcarbon.backend.services;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.planifcarbon.backend.dtos.MetroDTO;
 import com.planifcarbon.backend.dtos.MetroScheduleDTO;
 import com.planifcarbon.backend.dtos.StationCorrespondence;
-import com.planifcarbon.backend.dtos.StationDTO;
+import com.planifcarbon.backend.dtos.NodeDTO;
 import com.planifcarbon.backend.model.MetroLine;
 import com.planifcarbon.backend.model.MetroMap;
 import com.planifcarbon.backend.model.Station;
@@ -48,17 +42,17 @@ public class MetroService {
                 .stream()
                 .filter(metroLine -> metroLine.getNonVariantName().equals(metroName))
                 .collect(Collectors.toList());
-        Set<StationDTO> stations = metroLinesVariant.stream().flatMap(metroLine -> metroLine.getStations().stream())
+        List<NodeDTO> stations = metroLinesVariant.stream().flatMap(metroLine -> metroLine.getStations().stream())
                 .map(this::stationToStationDTO)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         List<MetroScheduleDTO> schedules = metroLinesVariant.stream().map(metroLine -> new MetroScheduleDTO(metroName
                 , metroLine.getTerminusStation().getName(), metroLine.getSchedules())).collect(Collectors.toList());
-
+        stations.sort(Comparator.comparing(NodeDTO::getName));
         return new MetroDTO(metroName, stations, schedules);
     }
 
     public List<StationCorrespondence> getAllStationsCorrespondence() {
-        Map<StationDTO, Set<String>> stationCorrespondence = new HashMap<>();
+        Map<NodeDTO, Set<String>> stationCorrespondence = new HashMap<>();
         List<MetroLine> metroLines = new ArrayList<>(this.metroMap.getLines().values());
         for (MetroLine line : metroLines) {
             line.getStations().stream().map(this::stationToStationDTO).forEach(stationDTO -> {
@@ -84,8 +78,12 @@ public class MetroService {
                 .collect(Collectors.toList());
     }
 
-    private StationDTO stationToStationDTO(Station station) {
-        return new StationDTO(station.getName(), station.getCoordinates().getLongitude(),
+    public List<NodeDTO> getAllStations() {
+        return this.metroMap.getAllStations().stream().map(this::stationToStationDTO).collect(Collectors.toList());
+    }
+
+    private NodeDTO stationToStationDTO(Station station) {
+        return new NodeDTO(station.getName(), station.getCoordinates().getLongitude(),
                 station.getCoordinates().getLatitude());
     }
 }

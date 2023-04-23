@@ -1,25 +1,16 @@
 package com.planifcarbon.backend.model;
 
+import com.planifcarbon.backend.dtos.SegmentMetroDTO;
+import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.parser.Parser;
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
-import com.planifcarbon.backend.dtos.SegmentMetroDTO;
-import com.planifcarbon.backend.dtos.StationDTO;
-import com.planifcarbon.backend.parser.Parser;
-import jakarta.annotation.PostConstruct;
 
 /**
  * {@summary Represents the metro map.}
@@ -42,27 +33,40 @@ public final class MetroMap {
         scheduleKeys = new HashSet<ScheduleKey>();
     }
 
-    public Map<String, Station> getStations() { return stations; }
+    public Map<String, Station> getStations() {
+        return stations;
+    }
 
-    public Set<Station> getAllStations() { return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll); }
+    public Set<Station> getAllStations() {
+        return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll);
+    }
 
-    public Map<String, MetroLine> getLines() { return lines; }
+    public Map<String, MetroLine> getLines() {
+        return lines;
+    }
 
-    public Map<Node, Set<Segment>> getGraph() { return graph; }
+    public Map<Node, Set<Segment>> getGraph() {
+        return graph;
+    }
 
-    public Station getStationByName(String stationName) { return this.stations.getOrDefault(stationName, null); }
+    public Station getStationByName(String stationName) {
+        return this.stations.getOrDefault(stationName, null);
+    }
 
     /**
      * {@summary Return the list of nodes.}
      */
-    public Set<Node> getNodes() { return graph.keySet(); }
+    public Set<Node> getNodes() {
+        return graph.keySet();
+    }
 
     /**
      * {@summary Return the list of segments.}
-     * 
      * @return the list of segments
      */
-    public Set<Segment> getSegments(Node node) { return graph.get(node); }
+    public Set<Segment> getSegments(Node node) {
+        return graph.get(node);
+    }
 
     public Set<Segment> getSegmentsMetro(Node node) {
         return graph.get(node).stream().filter(segment -> segment instanceof SegmentMetro).collect(Collectors.toSet());
@@ -70,19 +74,18 @@ public final class MetroMap {
 
     /**
      * {@summary Find scheduleKey (final station of matro line) by name.}
-     * 
      * @return the scheduleKey (final station of matro line)
      */
     public ScheduleKey getScheduleKeyByName(String name) {
-        List<ScheduleKey> ret = this.scheduleKeys.stream().filter(sh -> (sh.getTerminusStation().getName()).equals(name))
+        List<ScheduleKey> ret = this.scheduleKeys.stream()
+                .filter(sh -> (sh.getTerminusStation().getName()).equals(name))
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         return ret.get(0);
     }
 
     /**
      * {@summary Finds the nearest trains departing from the given station after given time.}
-     * 
-     * @param arrivalTime    time after which need to find nearest trains.
+     * @param arrivalTime time after which need to find nearest trains.
      * @param currentStation station for which need to find nearest trains.
      * @return map contains ending stations (key) and arrival time on given station (value).
      */
@@ -94,15 +97,19 @@ public final class MetroMap {
         }
         MetroLine line = this.lines.get(lineName);
         int duration = currentStation.getScheduleForKey(new ScheduleKey(line.getTerminusStation(), line));
-        return line.getSchedules().stream().filter((departureTime) -> departureTime + duration >= arrivalTime).findFirst()
-                .map((departureTime) -> departureTime + duration).orElse(-1);
+        return line.getSchedules()
+                .stream()
+                .filter((departureTime) -> departureTime + duration >= arrivalTime)
+                .findFirst()
+                .map((departureTime) -> departureTime + duration)
+                .orElse(-1);
     }
 
     /**
      * {@summary Implementation of Dikjstra algorithm.}
-     * 
-     * @param startNode node from which Dikjstra will be launched
-     * @param startTime time of starting the trip
+     * @param start node from which Dikjstra will be launched
+     * @param end node where we are going.
+     * @param startTime time for launching the dijkstra.
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
     public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime, boolean metro, boolean walk) {
@@ -230,7 +237,7 @@ public final class MetroMap {
 
     /**
      * Get the shortest path between two nodes with dijkstra algorithm and return the segments of the path
-     * 
+     *
      * @param startNode the start node
      * @param endNode   the end node
      * @param startTime the start time
@@ -283,7 +290,7 @@ public final class MetroMap {
             System.out.println("IO error when parsing files " + e);
             return;
         }
-        Set<StationDTO> stationsDTO = Parser.getStations(); // To be used for walk segments.
+        Set<NodeDTO> stationsDTO = Parser.getStations(); // To be used for walk segments.
         Map<String, String> metroLinesTerminus = Parser.getMetroLines();
         stationsDTO.forEach(stationDTO -> {
             Station station = this.stationDTOtoStation(stationDTO);
@@ -325,7 +332,7 @@ public final class MetroMap {
      * Set metro line schedules.
      */
     private void setMetroLineSchedules(Map<String, Set<Station>> metroLines, Map<String, String> metroLinesTerminus,
-            Map<String, List<Integer>> schedules) {
+                                       Map<String, List<Integer>> schedules) {
         metroLines.forEach((key, value) -> {
             List<Integer> schedule = schedules.getOrDefault(key, new ArrayList<>());
             this.lines.put(key, new MetroLine(key, value, schedule, this.stations.get(metroLinesTerminus.get(key))));
@@ -439,7 +446,9 @@ public final class MetroMap {
 
     // Adapters functions
     // -----------------------------------------------------------------------------------------------------------------
-    Station stationDTOtoStation(StationDTO dto) { return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude()); }
+    Station stationDTOtoStation(NodeDTO dto) {
+        return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude());
+    }
 
     // Djikstra classes.
     private static class DjikstraInfo implements Comparable<DjikstraInfo> {
@@ -451,26 +460,34 @@ public final class MetroMap {
             this.time = time;
         }
 
-        public int getTime() { return time; }
+        public int getTime() {
+            return time;
+        }
 
-        public void setTime(int time) { this.time = time; }
+        public void setTime(int time) {
+            this.time = time;
+        }
 
-        public Node getNode() { return node; }
+        public Node getNode() {
+            return node;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             DjikstraInfo that = (DjikstraInfo) o;
             return Objects.equals(node, that.node);
         }
 
         @Override
-        public int hashCode() { return Objects.hash(node); }
+        public int hashCode() {
+            return Objects.hash(node);
+        }
 
         @Override
-        public int compareTo(DjikstraInfo o) { return Integer.compare(time, o.time); }
+        public int compareTo(DjikstraInfo o) {
+            return Integer.compare(time, o.time);
+        }
     }
 }
