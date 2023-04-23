@@ -26,4 +26,8 @@ public class SearchResultBestDuration {
     public Node getNodeDestination() { return nodeDestination; }
     public int getArrivalTime() { return arrivalTime; }
     public MetroLine getMetroLine() { return line; }
+
+    public String toString() {
+        return "SearchResultBestDuration{" + "nodeDestination=" + nodeDestination + ", arrivalTime=" + arrivalTime + ", line=" + line + '}';
+    }
 }

@@ -104,7 +104,7 @@ public final class MetroMap {
      * @param startTime time of starting the trip
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
-    public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime) {
+    public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime, boolean metro, boolean walk) {
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
         }
@@ -128,13 +128,13 @@ public final class MetroMap {
         });
 
         // ================== 4. Prepare all for startStation ==========================================================
-        Station startStation = getStationByName(startNode.getName());
+        // Station startStation = getStationByName(startNode.getName());
 
         // ============= 5. Create priorityQueue where will be stocked pairs (Station, time) ===========================
         PriorityQueue<DjikstraInfo> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(DjikstraInfo::getTime));
 
         // ----------------- add start station -------------------------------------------------------------------------
-        priorityQueue.add(new DjikstraInfo(startStation, startTime));
+        priorityQueue.add(new DjikstraInfo(startNode, startTime));
 
         // ================= 6. Graph traversal ========================================================================
 
@@ -151,6 +151,11 @@ public final class MetroMap {
             }
 
             Set<Segment> neighbors = this.getSegments(currentStation);
+            if (!metro) {
+                neighbors = neighbors.stream().filter(segment -> !(segment instanceof SegmentMetro)).collect(Collectors.toSet());
+            } else if (!walk) {
+                neighbors = neighbors.stream().filter(segment -> !(segment instanceof SegmentWalk)).collect(Collectors.toSet());
+            }
 
             for (Segment neighbor : neighbors) {
                 int minimalTime = neighbor instanceof SegmentMetro
@@ -178,6 +183,10 @@ public final class MetroMap {
             }
         }
         return path;
+    }
+
+    public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime) {
+        return dijkstra(startNode, endNode, startTime, true, true);
     }
 
     // ================================== Dikjstra and it's auxiliary functions =======================================

@@ -129,8 +129,14 @@ public class MetroMapTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"53100, Gare de Lyon, Bibliothèque François Mitterrand"})
+    // @CsvSource({"53100, Gare de Lyon, Bibliothèque François Mitterrand", "0, Gare de Lyon, Nation"})
+    @CsvSource({"0, Avron, Nation", "0, Alexandre Dumas, Nation", "0, Philippe Auguste, Nation", "0, Père Lachaise, Nation",
+            "0, Père Lachaise, Philippe Auguste"})
     public void simplePrintPathDikjstra(int timeStart, String nameStart, String nameFinish) {
+        // Philipe Auguste, Nation 67364
+        // Père Lachaise, Philipe Auguste 22354
+        // Père Lachaise, Nation 198953 en passant par république. (proposé par l'algo)
+        // Père Lachaise, Nation 67364+22354 = 89718
         System.out.println(
                 "\n\n==================== Print path from " + nameStart + " to " + nameFinish + " ======================================");
         MetroMap map = new MetroMap();
@@ -139,22 +145,32 @@ public class MetroMapTest {
 
         Station endStation = map.getStationByName(nameFinish);
 
-        Map<Node, SearchResultBestDuration> dijkstra = map.dijkstra(startStation, endStation, timeStart);
+        for (int i = 0; i < 3; i++) {
+            boolean metro = (i != 1);
+            boolean walk = (i != 0);
+            Map<Node, SearchResultBestDuration> dijkstra = map.dijkstra(startStation, endStation, timeStart, metro, walk);
 
-        Node current = endStation;
+            Node current = endStation;
 
-        int c = 25; // limit for potentual loops caused by imperfection of the algorithm/data
+            int c = 25; // limit for potentual loops caused by imperfection of the algorithm/data
+            int totalTime = 0;
+            System.out.println("\n\nmetro : " + metro + " - walk : " + walk);
+            System.out.println("================ Print Dikjstra +++++ ===========================================");
 
-        System.out.println("\n\n================ Print Dikjstra +++++ ===========================================");
-
-        while (!current.equals(startStation) && dijkstra.get(current) != null) {
-            String line = dijkstra.get(current).getMetroLine() != null ? " - line : " + dijkstra.get(current).getMetroLine().getName() : "";
-            System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : "
-                    + dijkstra.get(current).getArrivalTime() + line);
-            current = dijkstra.get(current).getNodeDestination();
-            c--;
+            while (!current.equals(startStation) && dijkstra.get(current) != null) {
+                String line = dijkstra.get(current).getMetroLine() != null ? " - line : " + dijkstra.get(current).getMetroLine().getName()
+                        : "";
+                System.out.println("arr : " + current + " - dep : " + dijkstra.get(current).getNodeDestination() + " - time : "
+                        + dijkstra.get(current).getArrivalTime() + line);
+                totalTime += dijkstra.get(current).getArrivalTime();
+                current = dijkstra.get(current).getNodeDestination();
+                c--;
+            }
+            System.out.println("==================================== End Print path Dikjstra =====================================\n\n");
+            // int totalTime = dijkstra.entrySet().stream().mapToInt(e -> e.getValue().getArrivalTime()).sum();
+            System.out.println("total time : " + totalTime);
+            // System.out.println(dijkstra);
         }
-        System.out.println("==================================== End Print path Dikjstra =====================================\n\n");
     }
 
     @Test
