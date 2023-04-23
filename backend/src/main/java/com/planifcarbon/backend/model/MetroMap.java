@@ -228,6 +228,16 @@ public final class MetroMap {
         return dijkstra(startNode, endNode, startTime, true, true);
     }
 
+    /**
+     * Get the shortest path between two nodes with dijkstra algorithm and return the segments of the path
+     * 
+     * @param startNode the start node
+     * @param endNode   the end node
+     * @param startTime the start time
+     * @param metro     if metro segments are allowed
+     * @param walk      if walk segments are allowed
+     * @return a list of segments data easy to use
+     */
     public List<DataSegment> getSegmentsFromPath(Node startNode, Node endNode, int startTime, boolean metro, boolean walk) {
         Map<Node, SearchResultBestDuration> map = dijkstra(startNode, endNode, startTime, metro, walk);
 
