@@ -9,7 +9,6 @@ import java.util.Objects;
 public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode {
     private final String name;
     private final Coordinates coordinates;
-    // private int type; // used by Dijkstra ?
     // TODO store current used name for created node to avoid duplicate name
 
     /**
@@ -54,7 +53,7 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
      */
     @Override
     public String toString() { return name + ": " + coordinates; }
-    //public String toString() { return name; }          // TODO temporary simplification, to simplify testing
+    // public String toString() { return name; } // TODO temporary simplification, to simplify testing
 
     public abstract boolean isInMetro();
 }
