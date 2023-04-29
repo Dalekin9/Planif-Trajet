@@ -91,6 +91,7 @@ export class GetmesomewhereComponent implements OnInit {
   public onSubmit() {
     if (this.metroForm?.valid) {
       const method = this.options.value;
+      const transportation = this.transportation.value;
       const fromValue = this.from.value;
       const toValue = this.to.value;
       const time = this.timeToLeave.value.toLocaleTimeString();
@@ -99,7 +100,7 @@ export class GetmesomewhereComponent implements OnInit {
       specificTime.second(0);
       const midnight = moment('2000-01-01T12:00:00 AM', format);
       const diffInSeconds = Math.abs(specificTime.diff(midnight, 'seconds'));
-      this.requestService.getBestPath(fromValue, toValue, diffInSeconds, method)
+      this.requestService.getBestPath(fromValue, toValue, diffInSeconds, method, transportation)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((bestPath) => {
           this.dijkstraPath = this.groupPaths(bestPath);

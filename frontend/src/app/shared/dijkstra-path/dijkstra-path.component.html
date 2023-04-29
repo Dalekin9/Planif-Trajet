@@ -6,7 +6,8 @@
     <mgl-timeline-entry-header (click)="onHeaderClick($event)" [class.timeline-header-expanded]="expanded[i]"
                                [style.color]="getLineColor(entry.metroLine)">
       <div class="header-container">
-        <h4>{{ entry.metroLine }} - {{entry.terminusStation}}</h4>
+        <h4 *ngIf="!!entry.metroLine">{{ entry.metroLine }} - {{entry.terminusStation}}</h4>
+        <mat-icon *ngIf="!entry.metroLine">directions_walk</mat-icon>
         <mat-divider [style.borderColor]="expanded[i] ? 'white': ''"></mat-divider>
         <div class="time-interval" [style.color]="expanded[i] ? 'white': ''">
           <div class="time">

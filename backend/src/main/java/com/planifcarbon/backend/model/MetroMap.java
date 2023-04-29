@@ -107,8 +107,8 @@ public final class MetroMap {
 
     /**
      * {@summary Implementation of Dikjstra algorithm.}
-     * @param start node from which Dikjstra will be launched
-     * @param end node where we are going.
+     * @param startNode node from which Dikjstra will be launched
+     * @param endNode node where we are going.
      * @param startTime time for launching the dijkstra.
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
      */
@@ -229,10 +229,6 @@ public final class MetroMap {
             }
         }
         return path;
-    }
-
-    public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime) {
-        return dijkstra(startNode, endNode, startTime, true, true);
     }
 
     /**

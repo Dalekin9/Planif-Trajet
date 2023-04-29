@@ -38,9 +38,10 @@ public class PathController {
             @RequestParam(name = "start") String start,
             @RequestParam(name = "end") String end,
             @RequestParam(name = "time") Integer time,
-            @RequestParam(name = "method") String method
+            @RequestParam(name = "method") String method,
+            @RequestParam(name = "transportation") String transportation
     ) {
         logger.info("Request to get best path from {} to {} at {} by {}", start, end, time, method);
-        return ResponseEntity.ok(this.pathService.getBestPath(start, end, time, method));
+        return ResponseEntity.ok(this.pathService.getBestPath(start, end, time, method, transportation));
     }
 }

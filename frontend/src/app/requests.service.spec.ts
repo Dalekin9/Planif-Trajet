@@ -43,8 +43,9 @@ describe('RequestsService', () => {
     const start = 'station1';
     const end = 'station2';
     const method = 'TIME';
+    const transportation = 'METRO';
     const time = 53100;
-    service.getBestPath(start, end, time, method).subscribe(data => {
+    service.getBestPath(start, end, time, method, transportation).subscribe(data => {
       expect(data).toEqual(dummyData);
     });
     const req = httpMock.expectOne(`${basicUrl}/path/best-time-path?start=${start}&end=${end}`);
@@ -57,8 +58,9 @@ describe('RequestsService', () => {
     const start = 'station1';
     const end = 'station2';
     const method = 'DISTANCE';
+    const transportation = 'METRO';
     const time = 53100;
-    service.getBestPath(start, end, time, method).subscribe(data => {
+    service.getBestPath(start, end, time, method, transportation).subscribe(data => {
       expect(data).toEqual(dummyData);
     });
     const req = httpMock.expectOne(`${basicUrl}/path/best-distance-path?start=${start}&end=${end}`);
@@ -72,7 +74,8 @@ describe('RequestsService', () => {
     const end = 'station2';
     const method = 'TIME_DISTANCE';
     const time = 53100;
-    service.getBestPath(start, end, time, method).subscribe(data => {
+    const transportation = 'METRO';
+    service.getBestPath(start, end, time, method, transportation).subscribe(data => {
       expect(data).toEqual(dummyData);
     });
     const req = httpMock.expectOne(`${basicUrl}/path/best-time-distance-path?start=${start}&end=${end}`);

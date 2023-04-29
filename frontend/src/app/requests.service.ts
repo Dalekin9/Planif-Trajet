@@ -34,12 +34,13 @@ export class RequestsService {
     return this.httpClient.get<IMetroStationCorrespondence[]>(this.basicUrl + `/metro/stations-correspondence`, {observe: 'body'});
   }
 
-  public getBestPath(start: string, end: string, time: number, method: string): Observable<IDijkstraSearchResult[]> {
+  public getBestPath(start: string, end: string, time: number, method: string, transportation: string): Observable<IDijkstraSearchResult[]> {
     let params = new HttpParams();
     params = params.append('start', start);
     params = params.append('end', end);
     params = params.append('time', time);
     params = params.append('method', method);
+    params = params.append('transportation', transportation);
     return this.httpClient.get<IDijkstraSearchResult[]>(this.basicUrl + `/path/best-path?${params.toString()}`, {observe: 'body'});
   }
 }
