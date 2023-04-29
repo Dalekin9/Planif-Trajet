@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { GoogleMapsModule } from '@angular/google-maps';
+import {MatIconModule} from "@angular/material/icon";
 
 describe('InfoComponent', () => {
   let component: InfoComponent;
@@ -44,7 +45,8 @@ describe('InfoComponent', () => {
         MatSelectModule,
         MatOptionModule,
         MatButtonModule,
-        GoogleMapsModule
+        GoogleMapsModule,
+        MatIconModule
       ],
       declarations: [InfoComponent]
     }).compileComponents();
@@ -78,7 +80,7 @@ describe('InfoComponent', () => {
       expect(component.metroForm.valid).toBeTruthy();
     });
 
-    it('should do nothing if the form is valid ', () => {
+    it('should do nothing if the form is not valid ', () => {
       component.onSubmit();
       expect(true).toBeTruthy();
     });

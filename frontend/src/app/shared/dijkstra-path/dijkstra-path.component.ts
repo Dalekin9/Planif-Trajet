@@ -20,6 +20,7 @@ export class DijkstraPathComponent implements OnInit {
 
   @Input('path')
   public set path(path: IDijkstraPathGroup[]) {
+    console.log(path);
     this._path = path;
     this.expanded = new Array(this._path.length).fill(false);
   }

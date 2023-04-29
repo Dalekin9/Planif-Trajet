@@ -31,7 +31,7 @@ export class GetmesomewhereComponent implements OnInit {
   public dijkstraPath: IDijkstraPathGroup[] = []
 
   constructor(
-    private requestService: RequestsService
+    public requestService: RequestsService
   ) {
   }
 

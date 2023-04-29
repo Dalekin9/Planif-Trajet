@@ -147,6 +147,7 @@ export class WiseMapComponent implements OnInit {
         deletable: false
       };
     });
+    this.polyLines = [];
   }
 
   private markForCheck(): void {
