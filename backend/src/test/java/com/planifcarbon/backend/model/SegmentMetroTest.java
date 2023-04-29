@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 public class SegmentMetroTest {
 
     @ParameterizedTest
-    @CsvSource({"0, 0, doesntmatter", "-2, 0, doesntmatter", "2, -1, doesntmatter", "-2, -4, doesntmatter",})
+    @CsvSource({"2, -1, doesntmatter", "-2, -4, doesntmatter"})
     public void checkDistanceDurationMustBeGreatherThen0(double distance, int duration, String line) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);

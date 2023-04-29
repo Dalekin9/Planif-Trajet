@@ -45,9 +45,6 @@ public class PathService {
     }
 
     private List<DataSegment> groupWalkingDataSegments(List<DataSegment> dataSegments) {
-        if (dataSegments.isEmpty()) {
-            return dataSegments;
-        }
         List<DataSegment> result = new ArrayList<DataSegment>();
         DataSegment previous = null;
         for (DataSegment dataSegment : dataSegments) {
@@ -90,12 +87,6 @@ public class PathService {
         }
         String[] parts = start.substring(1, start.length() - 1).split(", ");
         return new PersonalizedNode("start", Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
-    }
-
-    private DjikstraSearchResultDTO dijkstraSearchResultToDTO(Node current, SearchResultBestDuration search) {
-        return new DjikstraSearchResultDTO(this.stationToStationDTO(search.getNodeDestination()),
-                this.stationToStationDTO(current), search.getArrivalTime(),
-                search.getMetroLine().getNonVariantName(), search.getMetroLine().getTerminusStation().getName());
     }
 
     private NodeDTO stationToStationDTO(Node node) {

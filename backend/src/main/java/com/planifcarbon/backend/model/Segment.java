@@ -30,9 +30,9 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
             throw new IllegalArgumentException("node2 must not be null");
         } else if (node1.equals(node2)) {
             throw new IllegalArgumentException("node1 and node2 must not be equals");
-        } else if (distance <= 0) {
+        } else if (distance < 0) {
             throw new IllegalArgumentException("distance must be greater than 0");
-        } else if (duration <= 0) {
+        } else if (duration < 0) {
             throw new IllegalArgumentException("duration must be greater than 0");
         }
 

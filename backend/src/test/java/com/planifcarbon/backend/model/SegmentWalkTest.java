@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class SegmentWalkTest {
 
     @ParameterizedTest
-    @ValueSource(doubles = {0, -2, -0.252})
+    @ValueSource(doubles = {-2, -0.252})
     public void checkDistanceDurationMustBeGreatherThen0(double distance) {
         Node node1 = new Station("st1", 10.15, 0);
         Node node2 = new Station("st2", 1.98, 2.14);

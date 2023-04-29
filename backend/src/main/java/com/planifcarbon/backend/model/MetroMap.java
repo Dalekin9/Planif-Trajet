@@ -169,7 +169,6 @@ public final class MetroMap {
             }
 
             Set<Segment> neighbors;
-            // neighbors = new HashSet<Segment>(this.getSegments(currentNode));
             if (startNode.equals(currentNode) && startNode instanceof PersonalizedNode) {
                 neighbors = new HashSet<Segment>();
                 for (Node node : allNodes) {
