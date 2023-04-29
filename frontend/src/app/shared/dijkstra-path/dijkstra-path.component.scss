@@ -1,0 +1,68 @@
+:host {
+  mgl-timeline-entry-header {
+    font-size: 18px;
+    font-weight: bold;
+
+    .header-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+
+      mat-divider {
+        width: 100%;
+        border: solid 2px;
+      }
+
+      .time-interval {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+
+        .time {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+
+          .mat-icon {
+            size: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  .timeline-header-expanded {
+    color: white !important;
+  }
+
+  ::ng-deep {
+    .mgl-timeline-line {
+      border-radius: 50%;
+      width: 6px;
+      background-color: #85FFBD;
+      background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
+    }
+
+    .mgl-timeline-entry-card {
+      border-radius: 12px;
+
+      .mgl-timeline-entry-card-header {
+        border-radius: 12px;
+      }
+    }
+  }
+
+  .empty-path {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+  }
+}

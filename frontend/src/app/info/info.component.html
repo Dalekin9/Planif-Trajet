@@ -29,8 +29,8 @@
       </div>
       <div class="info-row" *ngFor="let schedule of metro.schedules">
         <h4 class="title">{{schedule.terminus}}</h4>
-        <h4 class="title">{{numberToSchedule(schedule.schedules[0])}}</h4>
-        <h4 class="title">{{numberToSchedule(schedule.schedules[schedule.schedules.length - 1])}}</h4>
+        <h4 class="title">{{!!schedule.schedules?.length ? numberToSchedule(schedule.schedules[0]) : 'Out of Service'}}</h4>
+        <h4 class="title">{{!!schedule.schedules?.length ? numberToSchedule(schedule.schedules[schedule.schedules.length - 1]): 'Out of Service'}}</h4>
       </div>
     </div>
   </div>

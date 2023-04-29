@@ -9,17 +9,17 @@ import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
  */
 @ExcludeFromJacocoGeneratedReport
 public class StationCorrespondence {
-    private final StationDTO station;
+    private final NodeDTO station;
     private final Set<String> metroLines;
 
-    public StationCorrespondence(StationDTO station, Set<String> metroLines) {
+    public StationCorrespondence(NodeDTO station, Set<String> metroLines) {
         this.station = station;
         this.metroLines = metroLines;
     }
 
     public Set<String> getMetroLines() { return metroLines; }
 
-    public StationDTO getStation() { return station; }
+    public NodeDTO getStation() { return station; }
 
     public int getNbStations() { return this.metroLines.size(); }
 

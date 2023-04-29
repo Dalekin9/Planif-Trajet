@@ -1,25 +1,16 @@
 package com.planifcarbon.backend.model;
 
+import com.planifcarbon.backend.dtos.SegmentMetroDTO;
+import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.parser.Parser;
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
-import com.planifcarbon.backend.dtos.SegmentMetroDTO;
-import com.planifcarbon.backend.dtos.StationDTO;
-import com.planifcarbon.backend.parser.Parser;
-import jakarta.annotation.PostConstruct;
 
 /**
  * {@summary Represents the metro map.}
@@ -42,68 +33,89 @@ public final class MetroMap {
         scheduleKeys = new HashSet<ScheduleKey>();
     }
 
-    public Map<String, Station> getStations() { return stations; }
+    public Map<String, Station> getStations() {
+        return stations;
+    }
 
-    public Set<Station> getAllStations() { return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll); }
+    public Set<Station> getAllStations() {
+        return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll);
+    }
 
-    public Map<String, MetroLine> getLines() { return lines; }
+    public Map<String, MetroLine> getLines() {
+        return lines;
+    }
 
-    public Map<Node, Set<Segment>> getGraph() { return graph; }
+    public Map<Node, Set<Segment>> getGraph() {
+        return graph;
+    }
 
-    public Station getStationByName(String stationName) { return this.stations.getOrDefault(stationName, null); }
+    public Station getStationByName(String stationName) {
+        return this.stations.getOrDefault(stationName, null);
+    }
 
     /**
      * {@summary Return the list of nodes.}
      */
-    public Set<Node> getNodes() { return graph.keySet(); }
+    public Set<Node> getNodes() {
+        return graph.keySet();
+    }
 
     /**
      * {@summary Return the list of segments.}
-     * 
      * @return the list of segments
      */
-    public Set<Segment> getSegments(Node node) { return graph.get(node); }
+    public Set<Segment> getSegments(Node node) {
+        return graph.get(node);
+    }
 
+    /**
+     * @param node to have all his segments.
+     * @return set of metro segments for the node.
+     */
     public Set<Segment> getSegmentsMetro(Node node) {
         return graph.get(node).stream().filter(segment -> segment instanceof SegmentMetro).collect(Collectors.toSet());
     }
 
     /**
      * {@summary Find scheduleKey (final station of matro line) by name.}
-     * 
      * @return the scheduleKey (final station of matro line)
      */
     public ScheduleKey getScheduleKeyByName(String name) {
-        List<ScheduleKey> ret = this.scheduleKeys.stream().filter(sh -> (sh.getTerminusStation().getName()).equals(name))
+        List<ScheduleKey> ret = this.scheduleKeys.stream()
+                .filter(sh -> (sh.getTerminusStation().getName()).equals(name))
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         return ret.get(0);
     }
 
     /**
      * {@summary Finds the nearest trains departing from the given station after given time.}
-     * 
-     * @param arrivalTime    time after which need to find nearest trains.
+     * @param arrivalTime time after which need to find nearest trains.
      * @param currentStation station for which need to find nearest trains.
-     * @return map contains ending stations (key) and arrival time on given station (value).
+     * @param lineName metro line.
+     * @return minimal arrival time on given station for the given line.
      */
-
-
     private int getNearestDepartureTime(int arrivalTime, Station currentStation, String lineName) {
         if (null == currentStation) {
             throw new IllegalArgumentException("input should not be null");
         }
         MetroLine line = this.lines.get(lineName);
         int duration = currentStation.getScheduleForKey(new ScheduleKey(line.getTerminusStation(), line));
-        return line.getSchedules().stream().filter((departureTime) -> departureTime + duration >= arrivalTime).findFirst()
-                .map((departureTime) -> departureTime + duration).orElse(-1);
+        return line.getSchedules()
+                .stream()
+                .filter((departureTime) -> departureTime + duration >= arrivalTime)
+                .findFirst()
+                .map((departureTime) -> departureTime + duration)
+                .orElse(-1);
     }
 
     /**
      * {@summary Implementation of Dikjstra algorithm.}
-     * 
      * @param startNode node from which Dikjstra will be launched
-     * @param startTime time of starting the trip
-     * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized by time
+     * @param endNode node where we are going.
+     * @param startTime time for launching the dijkstra.
+     * @param metro if (true) include metro segments in the search.
+     * @param walk if (true) include walk segments in the search.
+     * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized.
      */
     public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime, boolean metro, boolean walk) {
         if (null == startNode) {
@@ -142,7 +154,7 @@ public final class MetroMap {
         // Station startStation = getStationByName(startNode.getName());
 
         // ============= 5. Create priorityQueue where will be stocked pairs (Station, time) ===========================
-        PriorityQueue<DjikstraInfo> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(DjikstraInfo::getTime));
+        PriorityQueue<DjikstraInfo> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(DjikstraInfo::getWeight));
 
         // ----------------- add start station -------------------------------------------------------------------------
         priorityQueue.add(new DjikstraInfo(startNode, startTime));
@@ -152,7 +164,7 @@ public final class MetroMap {
         while (!priorityQueue.isEmpty()) {
             DjikstraInfo current = priorityQueue.poll();
 
-            int currentTime = current.getTime();
+            int currentTime = current.getWeight();
             Node currentNode = current.getNode();
 
             visited.replace(currentNode, true);
@@ -162,7 +174,6 @@ public final class MetroMap {
             }
 
             Set<Segment> neighbors;
-            // neighbors = new HashSet<Segment>(this.getSegments(currentNode));
             if (startNode.equals(currentNode) && startNode instanceof PersonalizedNode) {
                 neighbors = new HashSet<Segment>();
                 for (Node node : allNodes) {
@@ -208,29 +219,25 @@ public final class MetroMap {
                 if (djikstraInfo.isPresent()) {
                     int compareValue = djikstraInfo.get().compareTo(djToTest);
                     if (compareValue > 0) {
-                        djikstraInfo.get().setTime(djToTest.getTime());
+                        djikstraInfo.get().setWeight(djToTest.getWeight());
                         priorityQueue.remove(djikstraInfo.get());
                         priorityQueue.add(djikstraInfo.get());
                         path.replace(neighbor.getEndPoint(),
-                                new SearchResultBestDuration(currentNode, djToTest.getTime(), getLineFromSegment(neighbor)));
+                                new SearchResultBestDuration(currentNode, djToTest.getWeight(), getLineFromSegment(neighbor)));
                     }
                 } else if (!visited.get(neighbor.getEndPoint())) {
                     priorityQueue.add(djToTest);
                     path.put(neighbor.getEndPoint(),
-                            new SearchResultBestDuration(currentNode, djToTest.getTime(), getLineFromSegment(neighbor)));
+                            new SearchResultBestDuration(currentNode, djToTest.getWeight(), getLineFromSegment(neighbor)));
                 }
             }
         }
         return path;
     }
 
-    public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime) {
-        return dijkstra(startNode, endNode, startTime, true, true);
-    }
-
     /**
      * Get the shortest path between two nodes with dijkstra algorithm and return the segments of the path
-     * 
+     *
      * @param startNode the start node
      * @param endNode   the end node
      * @param startTime the start time
@@ -258,6 +265,10 @@ public final class MetroMap {
 
     // ================================== Dikjstra and it's auxiliary functions =======================================
 
+    /**
+     * @param segment from which we want to get Metro Line.
+     * @return metro line for a given segment.
+     */
     public MetroLine getLineFromSegment(Segment segment) {
         return segment instanceof SegmentMetro ? this.lines.get(((SegmentMetro) segment).getLine()) : null;
     }
@@ -265,7 +276,6 @@ public final class MetroMap {
     // Build functions
     // --------------------------------------------------------------------------------------------------------------------
     /**
-     * {@summary Build this.}
      * It initializes all the fields.
      * "@PostConstruct" is used to make sure that this method is called after the constructor.
      */
@@ -283,7 +293,7 @@ public final class MetroMap {
             System.out.println("IO error when parsing files " + e);
             return;
         }
-        Set<StationDTO> stationsDTO = Parser.getStations(); // To be used for walk segments.
+        Set<NodeDTO> stationsDTO = Parser.getStations(); // To be used for walk segments.
         Map<String, String> metroLinesTerminus = Parser.getMetroLines();
         stationsDTO.forEach(stationDTO -> {
             Station station = this.stationDTOtoStation(stationDTO);
@@ -303,6 +313,8 @@ public final class MetroMap {
 
     /**
      * Calculates metroLines and graph with metro segments.
+     * @param segmentMetroDTOS metro segments given in the CSV file.
+     * @param metroLines map of line and its stations from CSV file.
      */
     private void addSegmentMetroToLinesAndGraph(Set<SegmentMetroDTO> segmentMetroDTOS, Map<String, Set<Station>> metroLines) {
         segmentMetroDTOS.forEach(segment -> {
@@ -323,9 +335,12 @@ public final class MetroMap {
 
     /**
      * Set metro line schedules.
+     * @param metroLines map of line and its stations from CSV file.
+     * @param metroLinesTerminus terminus station for each metro line from CSV file.
+     * @param schedules each metro line and its schedules.
      */
     private void setMetroLineSchedules(Map<String, Set<Station>> metroLines, Map<String, String> metroLinesTerminus,
-            Map<String, List<Integer>> schedules) {
+                                       Map<String, List<Integer>> schedules) {
         metroLines.forEach((key, value) -> {
             List<Integer> schedule = schedules.getOrDefault(key, new ArrayList<>());
             this.lines.put(key, new MetroLine(key, value, schedule, this.stations.get(metroLinesTerminus.get(key))));
@@ -333,7 +348,8 @@ public final class MetroMap {
     }
 
     /**
-     * Calculate time for train to get to the station from terminus in each station.
+     * Calculate time for any train to get to a station from terminus in each metro line.
+     * @param metroLinesTerminus terminus station for each metro line from CSV file.
      */
     private void diffuseTrainTimeFromTerminus(Map<String, String> metroLinesTerminus) {
         metroLinesTerminus.forEach((key, value) -> {
@@ -363,6 +379,7 @@ public final class MetroMap {
 
     /**
      * Calculate graph with walk segments
+     * @param stations all metro stations in the given network.
      */
     private void addAllWalkSegments(Set<Station> stations) {
         stations.forEach(station -> {
@@ -378,6 +395,10 @@ public final class MetroMap {
 
     /**
      * {@summary Add a new node to the graph.}
+     * @param name node name.
+     * @param latitude node's latitude.
+     * @param longitude node's longitude.
+     * @param nodeClass type of node to create.
      */
     public void addNode(String name, double latitude, double longitude, Class<? extends Node> nodeClass) {
         if (nodeClass == null) {
@@ -388,7 +409,6 @@ public final class MetroMap {
             graph.put(node, new HashSet<Segment>());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
-            // System.out.println("Error while creating a new node " + e);
             throw new IllegalArgumentException("Error while creating a new node " + e);
         }
     }
@@ -418,9 +438,7 @@ public final class MetroMap {
      * @param distance  distance between the 2 nodes
      */
     public void addSegmentWalk(Node startNode, Node endNode, double distance) {
-        // TODO Use distance from csv file may not be a good idea since it's not the real distance outdor.
         addSegment(new SegmentWalk(startNode, endNode, distance));
-        // addSegment(new SegmentWalk(startNode, endNode));
     }
 
     /**
@@ -438,39 +456,56 @@ public final class MetroMap {
     }
 
     // Adapters functions
-    // -----------------------------------------------------------------------------------------------------------------
-    Station stationDTOtoStation(StationDTO dto) { return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude()); }
 
+    /**
+     * @param dto data transfer object to transform to a station.
+     * @return station from the node dto.
+     */
+    Station stationDTOtoStation(NodeDTO dto) {
+        return new Station(dto.getName(), dto.getLatitude(), dto.getLongitude());
+    }
+
+    /**
+     * @Summary Class which is used to simulate dijkstra nodes.
+     */
     // Djikstra classes.
     private static class DjikstraInfo implements Comparable<DjikstraInfo> {
         private final Node node;
-        private int time;
+        private int weight;
 
         public DjikstraInfo(Node node, int time) {
             this.node = node;
-            this.time = time;
+            this.weight = time;
         }
 
-        public int getTime() { return time; }
+        public int getWeight() {
+            return weight;
+        }
 
-        public void setTime(int time) { this.time = time; }
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
 
-        public Node getNode() { return node; }
+        public Node getNode() {
+            return node;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             DjikstraInfo that = (DjikstraInfo) o;
             return Objects.equals(node, that.node);
         }
 
         @Override
-        public int hashCode() { return Objects.hash(node); }
+        public int hashCode() {
+            return Objects.hash(node);
+        }
 
         @Override
-        public int compareTo(DjikstraInfo o) { return Integer.compare(time, o.time); }
+        public int compareTo(DjikstraInfo o) {
+            return Integer.compare(weight, o.weight);
+        }
     }
 }

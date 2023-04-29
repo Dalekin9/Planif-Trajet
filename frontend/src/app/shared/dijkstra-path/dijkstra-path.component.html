@@ -1,0 +1,48 @@
+<mgl-timeline *ngIf="!!path?.length" [toggle]="false" [alternate]="true" [side]="'center'">
+  <mgl-timeline-entry
+    *ngFor="let entry of path; let i = index"
+    (expand)="onExpandEntry($event, i)"
+  >
+    <mgl-timeline-entry-header (click)="onHeaderClick($event)" [class.timeline-header-expanded]="expanded[i]"
+                               [style.color]="getLineColor(entry.metroLine)">
+      <div class="header-container">
+        <h4 *ngIf="!!entry.metroLine">{{ entry.metroLine }} - {{entry.terminusStation}}</h4>
+        <mat-icon *ngIf="!entry.metroLine">directions_walk</mat-icon>
+        <mat-divider [style.borderColor]="expanded[i] ? 'white': ''"></mat-divider>
+        <div class="time-interval" [style.color]="expanded[i] ? 'white': ''">
+          <div class="time">
+            <mat-icon>access_time</mat-icon>
+            <p>{{getStartTimeForNode(i)}}</p>
+          </div>
+          <div class="time">
+            <mat-icon>access_time</mat-icon>
+            <p>{{getEndTimeForNode(i)}}</p>
+          </div>
+        </div>
+      </div>
+    </mgl-timeline-entry-header>
+    <mgl-timeline-entry-content
+      [expandAnimationTiming]="'150ms ease'"
+      [collapseAnimationTiming]="'100ms ease'"
+    >
+      <div *ngFor="let node of entry.nodes">
+        <div>{{ node.start?.name }}</div>
+      </div>
+      <div>{{ entry.nodes[entry.nodes.length - 1]?.end?.name }}</div>
+    </mgl-timeline-entry-content>
+    <mgl-timeline-entry-dot
+      [style.backgroundColor]="getLineColor(entry.metroLine)"
+      [size]="42"
+      (click)="onDotClick($event)"
+      [expandAnimationTiming]="'150ms ease'"
+      [collapseAnimationTiming]="'100ms ease'"
+    >
+    </mgl-timeline-entry-dot>
+  </mgl-timeline-entry>
+</mgl-timeline>
+
+<div *ngIf="!path?.length" class="empty-path">
+  <mat-icon>cloud_off</mat-icon>
+  <p>No path found for the actual selection</p>
+</div>
+

@@ -12,15 +12,14 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
-import com.planifcarbon.backend.dtos.StationDTO;
-import org.apache.logging.log4j.util.Strings;
+import com.planifcarbon.backend.dtos.NodeDTO;
 
 /**
  * {@summary Its static methods are used to parse CSV files}
  */
 public class Parser {
 
-    private static final Set<StationDTO> stations = new HashSet<StationDTO>();
+    private static final Set<NodeDTO> stations = new HashSet<NodeDTO>();
     private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<SegmentMetroDTO>();
     private static final Map<String, String> metroLines = new HashMap<String, String>();
     private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<String, List<Integer>>();
@@ -73,15 +72,15 @@ public class Parser {
                 Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             String[] coords;
-            StationDTO start;
-            StationDTO end;
+            NodeDTO start;
+            NodeDTO end;
             while (scan.hasNextLine()) {
                 currentLine = splitString(";", scan.nextLine());
                 // Each line contains 7 elements : name1, coords1, name2, coords2, line, time, dist
                 coords = splitString(",", currentLine[1]);
-                start = new StationDTO(currentLine[0], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                start = new NodeDTO(currentLine[0], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 coords = splitString(",", currentLine[3]);
-                end = new StationDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                end = new NodeDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 stations.add(start);
                 stations.add(end);
                 segmentMetro.add(new SegmentMetroDTO(start, end, durationStringToInt(currentLine[5]), Double.parseDouble(currentLine[6]) / 10,
@@ -125,5 +124,5 @@ public class Parser {
 
     public static Set<SegmentMetroDTO> getSegmentMetro() { return segmentMetro; }
 
-    public static Set<StationDTO> getStations() { return stations; }
+    public static Set<NodeDTO> getStations() { return stations; }
 }

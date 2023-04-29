@@ -12,22 +12,22 @@ import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 @ExcludeFromJacocoGeneratedReport
 public class MetroDTO {
     private final String name;
-    private final Set<StationDTO> stations;
+    private final List<NodeDTO> stations;
     private final List<MetroScheduleDTO> schedules;
 
     public MetroDTO(String name) {
         this.name = name;
-        this.stations = new HashSet<StationDTO>();
+        this.stations = new ArrayList<NodeDTO>();
         this.schedules = new ArrayList<MetroScheduleDTO>();
     }
 
-    public MetroDTO(String name, Set<StationDTO> stations, List<MetroScheduleDTO> schedules) {
+    public MetroDTO(String name, List<NodeDTO> stations, List<MetroScheduleDTO> schedules) {
         this.name = name;
         this.stations = stations;
         this.schedules = schedules;
     }
 
-    public Set<StationDTO> getStations() { return stations; }
+    public List<NodeDTO> getStations() { return stations; }
 
     public String getName() { return name; }
 

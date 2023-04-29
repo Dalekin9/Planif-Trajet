@@ -51,12 +51,11 @@ public final class SegmentMetro extends Segment {
 
     @Override
     public boolean equals(Object o) {
-        // if (this == o) return true;
-        // if (o == null || getClass() != o.getClass()) return false;
-        // if (!super.equals(o)) return false;
-        // SegmentMetro that = (SegmentMetro) o;
-        // return super.equals(that) && Objects.equals(line, that.line);
-        return super.equals(o) && Objects.equals(line, ((SegmentMetro) o).line);
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+         if (!super.equals(o)) return false;
+         SegmentMetro that = (SegmentMetro) o;
+         return super.equals(that) && Objects.equals(line, that.line);
     }
 
     @Override

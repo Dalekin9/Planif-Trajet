@@ -7,12 +7,12 @@ import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
  * Temporary Data Transfer Object for the Stationclass.
  */
 @ExcludeFromJacocoGeneratedReport
-public class StationDTO {
+public class NodeDTO {
     private final String name;
     private final double longitude;
     private final double latitude;
 
-    public StationDTO(String name, double longitude, double latitude) {
+    public NodeDTO(String name, double longitude, double latitude) {
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -30,8 +30,8 @@ public class StationDTO {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        StationDTO that = (StationDTO) o;
-        return Objects.equals(name, that.name);
+        NodeDTO that = (NodeDTO) o;
+        return name.equalsIgnoreCase(that.name);
     }
 
     @Override

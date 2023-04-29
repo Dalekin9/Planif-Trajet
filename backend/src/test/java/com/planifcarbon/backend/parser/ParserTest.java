@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
-import com.planifcarbon.backend.dtos.StationDTO;
+import com.planifcarbon.backend.dtos.NodeDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +49,7 @@ public class ParserTest extends Assertions {
         Parser.calculateStationsAndSegments(map_data);
         assertNotEquals(0, Parser.getStations().size());
         assertNotEquals(0, Parser.getSegmentMetro().size());
-        List<StationDTO> stationDTOs = new ArrayList<>();
+        List<NodeDTO> stationDTOs = new ArrayList<>();
         Parser.getStations().forEach(station -> {
             assertFalse(stationDTOs.contains(station));
             stationDTOs.add(station);

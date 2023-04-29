@@ -9,6 +9,12 @@ public class ScheduleKey {
     private final Station terminusStation;
     private final MetroLine metroLine;
 
+    /**
+     * Main Constructor.
+     *
+     * @param terminusStation metro line terminus station.
+     * @param metroLine metro line.
+     */
     public ScheduleKey(Station terminusStation, MetroLine metroLine) {
         this.terminusStation = terminusStation;
         this.metroLine = metroLine;

@@ -30,4 +30,22 @@ class MetroControllerTest {
         mvc.perform(get("/api/metro/" + metroId))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getBestStations() throws Exception {
+        mvc.perform(get("/api/metro/best-stations"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllStationsCorrespondences() throws Exception {
+        mvc.perform(get("/api/metro/stations-correspondence"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllStations() throws Exception {
+        mvc.perform(get("/api/metro/stations"))
+                .andExpect(status().isOk());
+    }
 }

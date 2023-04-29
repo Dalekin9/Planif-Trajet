@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IDummyData, IMetro, IMetroStationCorrespondence} from "./types/dtos";
+import {IDummyData, IMetro, INode, IMetroStationCorrespondence, IDijkstraSearchResult} from "./types/dtos";
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,10 @@ export class RequestsService {
     return this.httpClient.get<IMetro>(this.basicUrl + `/metro/${metroId}`, {observe: 'body'});
   }
 
+  public getAllStations(): Observable<INode[]> {
+    return this.httpClient.get<INode[]>(this.basicUrl + '/metro/stations', {observe: 'body'});
+  }
+
   public getBestStations(): Observable<IMetroStationCorrespondence[]> {
     return this.httpClient.get<IMetroStationCorrespondence[]>(this.basicUrl + `/metro/best-stations`, {observe: 'body'});
   }
@@ -30,24 +34,13 @@ export class RequestsService {
     return this.httpClient.get<IMetroStationCorrespondence[]>(this.basicUrl + `/metro/stations-correspondence`, {observe: 'body'});
   }
 
-  public getBestTimePath(start: string, end: string): Observable<IDummyData> {
+  public getBestPath(start: string, end: string, time: number, method: string, transportation: string): Observable<IDijkstraSearchResult[]> {
     let params = new HttpParams();
     params = params.append('start', start);
     params = params.append('end', end);
-    return this.httpClient.get(this.basicUrl + `/path/best-time-path?${params.toString()}`, {observe: 'body'});
-  }
-
-  public getBestDistancePath(start: string, end: string): Observable<IDummyData> {
-    let params = new HttpParams();
-    params = params.append('start', start);
-    params = params.append('end', end);
-    return this.httpClient.get(this.basicUrl + `/path/best-distance-path?${params.toString()}`, {observe: 'body'});
-  }
-
-  public getBestTimeAndDistancePath(start: string, end: string): Observable<IDummyData> {
-    let params = new HttpParams();
-    params = params.append('start', start);
-    params = params.append('end', end);
-    return this.httpClient.get(this.basicUrl + `/path/best-time-distance-path?${params.toString()}`, {observe: 'body'});
+    params = params.append('time', time);
+    params = params.append('method', method);
+    params = params.append('transportation', transportation);
+    return this.httpClient.get<IDijkstraSearchResult[]>(this.basicUrl + `/path/best-path?${params.toString()}`, {observe: 'body'});
   }
 }

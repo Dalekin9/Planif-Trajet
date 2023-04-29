@@ -8,13 +8,13 @@ import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
  */
 @ExcludeFromJacocoGeneratedReport
 public class SegmentMetroDTO {
-    private final StationDTO start;
-    private final StationDTO end;
+    private final NodeDTO start;
+    private final NodeDTO end;
     private final int duration;
     private final double distance;
     private final String line;
 
-    public SegmentMetroDTO(StationDTO start, StationDTO end, int duration, double distance, String line) {
+    public SegmentMetroDTO(NodeDTO start, NodeDTO end, int duration, double distance, String line) {
         this.start = start;
         this.end = end;
         this.duration = duration;
@@ -35,9 +35,9 @@ public class SegmentMetroDTO {
     @Override
     public int hashCode() { return Objects.hash(start, end, line); }
 
-    public StationDTO getEnd() { return end; }
+    public NodeDTO getEnd() { return end; }
 
-    public StationDTO getStart() { return start; }
+    public NodeDTO getStart() { return start; }
 
     public int getDuration() { return duration; }
 

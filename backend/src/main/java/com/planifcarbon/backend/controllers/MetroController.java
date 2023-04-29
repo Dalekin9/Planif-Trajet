@@ -1,6 +1,8 @@
 package com.planifcarbon.backend.controllers;
 
 import java.util.List;
+
+import com.planifcarbon.backend.dtos.NodeDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,7 @@ import com.planifcarbon.backend.services.MetroService;
 
 
 /**
- * The controller used to get information about the metro network.
+ * @Summary The controller used to get information about the metro network.
  */
 @RestController
 @RequestMapping("/api/metro")
@@ -68,5 +70,16 @@ public class MetroController {
     public ResponseEntity<List<StationCorrespondence>> getAllStationsCorrespondences() {
         logger.info("Request to get best stations in the network ");
         return ResponseEntity.ok(metroService.getAllStationsCorrespondence());
+    }
+
+    /**
+     * Get all stations from netword
+     *
+     * @return the list of stations
+     */
+    @GetMapping("/stations")
+    public ResponseEntity<List<NodeDTO>> getAllStations() {
+        logger.info("Request to get all stations in the network ");
+        return ResponseEntity.ok(metroService.getAllStations());
     }
 }

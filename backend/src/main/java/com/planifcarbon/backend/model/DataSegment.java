@@ -13,7 +13,9 @@ public class DataSegment {
     private final @Nullable MetroLine line;
     private final double distance;
 
-    /** Standard constructor */
+    /**
+     * {@summary Main constructor.}
+     */
     public DataSegment(Node nodeStart, Node nodeEnd, int arrivalTime, int departureTime, @Nullable MetroLine line, double distance) {
         this.nodeStart = nodeStart;
         this.nodeEnd = nodeEnd;
