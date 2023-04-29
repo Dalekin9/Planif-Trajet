@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * The controller used to calculate the paths using time and/or distance.
+ * @Summary The controller used to calculate the paths using time and/or distance.
  */
 @RestController
 @RequestMapping("/api/path")
@@ -30,7 +30,8 @@ public class PathController {
      * Calculate the best path from start to end using provided method (time / distance).
      * @param start the starting position.
      * @param end the final destination.
-     * @param method the method to use to calculate the best path.
+     * @param method the method to use to calculate the best path (time / distance).
+     * @param transportation choose between (metro, metro and walk, walk).
      * @return The best path according the method.
      */
     @GetMapping("/best-path")

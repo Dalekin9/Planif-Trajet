@@ -2,6 +2,9 @@ package com.planifcarbon.backend.dtos;
 
 import com.planifcarbon.backend.config.ExcludeFromJacocoGeneratedReport;
 
+/**
+ * Used to store dijkstra search result.
+ */
 @ExcludeFromJacocoGeneratedReport
 public class DjikstraSearchResultDTO {
     private final NodeDTO start;

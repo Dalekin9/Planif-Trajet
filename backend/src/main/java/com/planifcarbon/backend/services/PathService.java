@@ -25,6 +25,16 @@ public class PathService {
         this.metroMap = metroMap;
     }
 
+    /**
+     * @Summary calculate best path using dijkstra.
+     *
+     * @param start starting position
+     * @param end ending position
+     * @param time departure time
+     * @param method best path using time / distance
+     * @param transportation choose between (metro, metro and walk, walk)
+     * @return list of nodes which represents best path using dijkstra.
+     */
     public List<DjikstraSearchResultDTO> getBestPath(String start, String end, int time, String method,
                                                      String transportation) {
         Node startNode = this.getNode(start);
@@ -44,6 +54,12 @@ public class PathService {
         return this.dataSegmentsToDijkstraPath(groupedDataSegments);
     }
 
+    /**
+     * @Summary group walking segemnts.
+     *
+     * @param dataSegments path returned from dijkstra
+     * @return list of data segments where walking segments are grouped.
+     */
     private List<DataSegment> groupWalkingDataSegments(List<DataSegment> dataSegments) {
         List<DataSegment> result = new ArrayList<DataSegment>();
         DataSegment previous = null;
@@ -70,16 +86,24 @@ public class PathService {
         return result;
     }
 
+    /**
+     * @param dataSegments the best path result including metro and walking data segments.
+     * @return list dijkstra search result dto to print in the front end part.
+     */
     private List<DjikstraSearchResultDTO> dataSegmentsToDijkstraPath(List<DataSegment> dataSegments) {
         return dataSegments.stream().map((segment) -> {
             String lineName = segment.getLine() != null ? segment.getLine().getNonVariantName() : null;
             String terminusStation = segment.getLine() != null ? segment.getLine().getTerminusStation().getName() :
                     null;
-            return new DjikstraSearchResultDTO(stationToStationDTO(segment.getNodeStart()),
-                    stationToStationDTO(segment.getNodeEnd()), segment.getArrivalTime(), lineName, terminusStation);
+            return new DjikstraSearchResultDTO(nodeToNodeDto(segment.getNodeStart()),
+                    nodeToNodeDto(segment.getNodeEnd()), segment.getArrivalTime(), lineName, terminusStation);
         }).collect(Collectors.toList());
     }
 
+    /**
+     * @param start starting position to go from which can be station or personalized node.
+     * @return station if start is station name or personalized node if start is coordinates.
+     */
     private Node getNode(String start) {
         Station station = this.metroMap.getStationByName(start);
         if (station != null) {
@@ -89,7 +113,11 @@ public class PathService {
         return new PersonalizedNode("start", Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
     }
 
-    private NodeDTO stationToStationDTO(Node node) {
+    /**
+     * @param node node to transform to data transfer object.
+     * @return node dto from the station.
+     */
+    private NodeDTO nodeToNodeDto(Node node) {
         return new NodeDTO(node.getName(), node.getCoordinates().getLongitude(),
                 node.getCoordinates().getLatitude());
     }

@@ -16,7 +16,7 @@ import com.planifcarbon.backend.services.MetroService;
 
 
 /**
- * The controller used to get information about the metro network.
+ * @Summary The controller used to get information about the metro network.
  */
 @RestController
 @RequestMapping("/api/metro")

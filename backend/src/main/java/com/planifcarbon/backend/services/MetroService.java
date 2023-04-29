@@ -24,8 +24,10 @@ public class MetroService {
         this.metroMap = metroMap;
     }
 
-    // getters ----------------------------------------------------------------
 
+    /**
+     * @return all metro lines from network.
+     */
     public List<MetroDTO> getMetros() {
         return this.metroMap.getLines()
                 .values()
@@ -36,6 +38,10 @@ public class MetroService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @param metroName metro name to get metro and its information (stations and schedules).
+     * @return metro line with its information.
+     */
     public MetroDTO getMetroByName(String metroName) {
         List<MetroLine> metroLinesVariant = this.metroMap.getLines()
                 .values()
@@ -51,6 +57,9 @@ public class MetroService {
         return new MetroDTO(metroName, stations, schedules);
     }
 
+    /**
+     * @return for each station its metro lines correspondences.
+     */
     public List<StationCorrespondence> getAllStationsCorrespondence() {
         Map<NodeDTO, Set<String>> stationCorrespondence = new HashMap<>();
         List<MetroLine> metroLines = new ArrayList<>(this.metroMap.getLines().values());
@@ -71,6 +80,9 @@ public class MetroService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @return list of best served stations in the network.
+     */
     public List<StationCorrespondence> getBestStations() {
         return this.getAllStationsCorrespondence().stream()
                 .sorted(Comparator.comparingInt(StationCorrespondence::getNbStations).reversed())
@@ -78,10 +90,17 @@ public class MetroService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @return list of all stations in the network.
+     */
     public List<NodeDTO> getAllStations() {
         return this.metroMap.getAllStations().stream().map(this::stationToStationDTO).collect(Collectors.toList());
     }
 
+    /**
+     * @param station station to transform to data transfer object.
+     * @return node dto from the station.
+     */
     private NodeDTO stationToStationDTO(Station station) {
         return new NodeDTO(station.getName(), station.getCoordinates().getLongitude(),
                 station.getCoordinates().getLatitude());
