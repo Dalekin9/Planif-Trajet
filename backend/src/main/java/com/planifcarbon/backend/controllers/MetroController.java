@@ -2,16 +2,11 @@ package com.planifcarbon.backend.controllers;
 
 import java.util.List;
 
-import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.dtos.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.planifcarbon.backend.dtos.MetroDTO;
-import com.planifcarbon.backend.dtos.StationCorrespondence;
+import org.springframework.web.bind.annotation.*;
 import com.planifcarbon.backend.services.MetroService;
 
 
@@ -78,7 +73,7 @@ public class MetroController {
     }
 
     /**
-     * Get all stations from netword
+     * Get all stations from network
      *
      * @return the list of stations
      */
@@ -87,4 +82,19 @@ public class MetroController {
         logger.info("Request to get all stations in the network ");
         return ResponseEntity.ok(metroService.getAllStations());
     }
+
+    /**
+     * Get line schedules for specific station.
+     *
+     * @return the schedules of the provided station in specified metro line.
+     */
+    @GetMapping("/station-schedules")
+    public ResponseEntity<MetroLineStationSchedulesDTO> getLineSchedulesForStation(
+            @RequestParam(name = "station") String station,
+            @RequestParam(name = "line") String metroLine
+    ) {
+        logger.info("Request to get line schedules for specific station");
+        return ResponseEntity.ok(metroService.getLineSchedulesForStation(station, metroLine));
+    }
+
 }

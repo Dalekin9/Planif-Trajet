@@ -1,24 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import { InfoComponent } from './info.component';
-import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {InfoComponent} from './info.component';
+import {BrowserModule} from '@angular/platform-browser';
+import {HttpClientModule} from '@angular/common/http';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 import {
   NgxMatDatetimePickerModule,
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { GoogleMapsModule } from '@angular/google-maps';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatSelectModule} from '@angular/material/select';
+import {MatOptionModule} from '@angular/material/core';
+import {MatButtonModule} from '@angular/material/button';
+import {GoogleMapsModule} from '@angular/google-maps';
 import {MatIconModule} from "@angular/material/icon";
+import {of} from "rxjs";
 
 describe('InfoComponent', () => {
   let component: InfoComponent;
@@ -128,8 +129,8 @@ describe('InfoComponent', () => {
     });
   });
 
-  describe('should transform seconds to schedule', () =>  {
-    it ('should transform seconds to schedule', () => {
+  describe('should transform seconds to schedule', () => {
+    it('should transform seconds to schedule', () => {
       const value = component.numberToSchedule(36000);
       expect(value).toBe('10:00');
     });
@@ -151,7 +152,7 @@ describe('InfoComponent', () => {
 
   it('should return a FormControl when controls exist', () => {
     const control = new FormControl('', Validators.required);
-    component.metroForm.controls = { line: control };
+    component.metroForm.controls = {line: control};
     expect(component.line).toBe(control);
   });
 
@@ -160,4 +161,15 @@ describe('InfoComponent', () => {
     expect(component.line).toBeUndefined();
   })
 
+  it('should get metro line station schedules', () => {
+    spyOn(component.service, 'getMetroLineStationSchedules').and.returnValue(of({station: 'Bercy', metroLine: '6', schedules: []}));
+    const object = {name: 'Bercy', longitude: 0, latitude: 0};
+    component.metro = {name: '6'};
+    component.getSchedules(object);
+    expect(component.selectedStationSchedules).toBeTruthy();
+  });
+
+  it('should transform seconds to time', () => {
+    expect(component.getTimeForNode(53100) === '02:45:00 PM').toBeTrue();
+  });
 });
