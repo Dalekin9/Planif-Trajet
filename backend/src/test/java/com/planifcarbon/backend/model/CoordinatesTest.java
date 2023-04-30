@@ -11,6 +11,8 @@ public class CoordinatesTest extends Assertions {
 
     /**
      * Tests the creation of a {@link Coordinates} object with valid latitude and longitude values.
+     * @param la The latitude of the coordinates.
+     * @param lo The longitude of the coordinates.
      */
     @ParameterizedTest
     @CsvSource({"1,2", "0,0", "-1,0", "0,180", "0,-180", "90,-180", "80.1,-80.4567"})
@@ -22,6 +24,8 @@ public class CoordinatesTest extends Assertions {
 
     /**
      * Tests that creating a {@link Coordinates} object with valid latitude and longitude values does not throw an exception.
+     * @param la The latitude of the coordinates.
+     * @param lo The longitude of the coordinates.
      */
     @ParameterizedTest
     @CsvSource({"1,2", "0,0", "-1,0", "0,180", "0,-180", "90,-180", "80.1,-80.4567"})
@@ -31,6 +35,9 @@ public class CoordinatesTest extends Assertions {
 
     /**
      * Tests that creating a {@link Coordinates} object with invalid latitude and longitude values throws an {@link IllegalArgumentException}.
+     *
+     * @param la The latitude of the coordinates.
+     * @param lo The longitude of the coordinates.
      */
     @ParameterizedTest
     @CsvSource({"90.1, 0", "-91, 0", "0, 180.00000000009", "0, -18142531.1584152"})

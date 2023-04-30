@@ -1,5 +1,6 @@
 package com.planifcarbon.backend.model;
 
+import com.planifcarbon.backend.parser.Parser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,7 +16,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Unit tests for the {@link MetroMap} class.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = MetroMap.class)
 @TestPropertySource(locations = "classpath:application-tests.properties")
 public class MetroMapTest {
