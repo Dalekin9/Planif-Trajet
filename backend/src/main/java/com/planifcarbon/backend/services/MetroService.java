@@ -58,6 +58,7 @@ public class MetroService {
                 .collect(Collectors.toList());
         List<NodeDTO> stations = metroLinesVariant.stream().flatMap(metroLine -> metroLine.getStations().stream())
                 .map(this::stationToStationDTO)
+                .distinct()
                 .collect(Collectors.toList());
         List<MetroScheduleDTO> schedules = metroLinesVariant.stream().map(metroLine -> new MetroScheduleDTO(metroName
                 , metroLine.getTerminusStation().getName(), metroLine.getSchedules())).collect(Collectors.toList());
