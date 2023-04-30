@@ -1,10 +1,12 @@
 package com.planifcarbon.backend.services;
 
+import com.planifcarbon.backend.dtos.MetroLineStationSchedulesDTO;
 import com.planifcarbon.backend.dtos.NodeDTO;
 import com.planifcarbon.backend.dtos.StationCorrespondence;
 import com.planifcarbon.backend.model.MetroMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,7 +75,14 @@ class MetroServiceTest {
         assertEquals(5, service.getBestStations().size());
         NodeDTO station = new NodeDTO(stationName, 0, 0);
         StationCorrespondence stationCorrespondence = new StationCorrespondence(station, new HashSet<>());
-        System.out.println(service.getBestStations());
         assertTrue(service.getBestStations().contains(stationCorrespondence));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Bercy, 6", "Gare du Nord, 4"})
+    void getLineSchedulesForStation(String stationName, String metroName) {
+        MetroLineStationSchedulesDTO result = service.getLineSchedulesForStation(stationName, metroName);
+        assertNotNull(result);
+        assertFalse(result.getSchedules().isEmpty());
     }
 }

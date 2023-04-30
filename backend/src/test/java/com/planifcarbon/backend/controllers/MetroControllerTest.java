@@ -79,4 +79,15 @@ class MetroControllerTest {
         mvc.perform(get("/api/metro/stations"))
                 .andExpect(status().isOk());
     }
+
+    /**
+     * Tests the /api/metro/station-schedules endpoint.
+     *
+     * @throws Exception if an error occurs during the test
+     */
+    @Test
+    void getLineSchedulesForStation() throws Exception {
+        mvc.perform(get("/api/metro/station-schedules?station=Bercy&line=6"))
+                .andExpect(status().isOk());
+    }
 }

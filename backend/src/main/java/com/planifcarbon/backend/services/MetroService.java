@@ -1,15 +1,13 @@
 package com.planifcarbon.backend.services;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
-import com.planifcarbon.backend.dtos.MetroDTO;
-import com.planifcarbon.backend.dtos.MetroScheduleDTO;
-import com.planifcarbon.backend.dtos.StationCorrespondence;
-import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.dtos.*;
 import com.planifcarbon.backend.model.MetroLine;
 import com.planifcarbon.backend.model.MetroMap;
 import com.planifcarbon.backend.model.Station;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {Service used by the controller to communicate with the view.}
@@ -17,7 +15,9 @@ import com.planifcarbon.backend.model.Station;
  */
 @Service
 public class MetroService {
-    /** Main data object */
+    /**
+     * Main data object
+     */
     private final MetroMap metroMap;
 
     /**
@@ -121,5 +121,30 @@ public class MetroService {
     private NodeDTO stationToStationDTO(Station station) {
         return new NodeDTO(station.getName(), station.getCoordinates().getLongitude(),
                 station.getCoordinates().getLatitude());
+    }
+
+
+    /**
+     * Returns the schedule for a specific station on a specific metro line.
+     *
+     * @param stationName the name of the station
+     * @param metroLine   the name of the metro line
+     * @return a MetroLineStationSchedulesDTO object representing the schedule for the specified station on the
+     * specified metro line
+     */
+    public MetroLineStationSchedulesDTO getLineSchedulesForStation(String stationName, String metroLine) {
+        List<Integer> list = new ArrayList<>();
+        Station station = this.metroMap.getStationByName(stationName);
+        station.getSchedules()
+                .entrySet()
+                .stream()
+                .filter((entry) -> entry.getKey().getMetroLine().getNonVariantName().equalsIgnoreCase(metroLine))
+                .forEach((entry) -> {
+                    List<Integer> schedules =
+                            entry.getKey().getMetroLine().getSchedules().stream().map((schedule) -> schedule + entry.getValue()).collect(Collectors.toList());
+                    list.addAll(schedules);
+                });
+        List<Integer> listOfSchedules = list.stream().sorted().distinct().collect(Collectors.toList());
+        return new MetroLineStationSchedulesDTO(metroLine, stationName, listOfSchedules);
     }
 }

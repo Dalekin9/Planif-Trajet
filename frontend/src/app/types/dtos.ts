@@ -18,6 +18,12 @@ export interface INode {
   latitude: number
 }
 
+export interface IMetroLineStationSchedules {
+  metroLine: string,
+  station: string,
+  schedules: number[]
+}
+
 export interface IMetroStationCorrespondence {
   station: INode,
   metroLines: string[]

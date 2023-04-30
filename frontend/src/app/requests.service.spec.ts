@@ -93,4 +93,14 @@ describe('RequestsService', () => {
     const req = httpMock.expectOne(`${basicUrl}/metro/stations-correspondence`);
     expect(req.request.method).toBe('GET');
   });
+
+  it('should get metro line schedules', () => {
+    service.getMetroLineStationSchedules("6", "Bercy").subscribe(data => {
+      expect(data).toBeTruthy();
+    });
+    const station = 'Bercy';
+    const metroLine = '6';
+    const req = httpMock.expectOne(`${basicUrl}/metro/station-schedules?line=${metroLine}&station=${station}`);
+    expect(req.request.method).toBe('GET');
+  });
 });
