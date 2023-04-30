@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Unit tests for the {@link Parser} class.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = Parser.class)
 @TestPropertySource(locations = "classpath:application-tests.properties")
 public class ParserTest extends Assertions {

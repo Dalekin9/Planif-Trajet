@@ -1,13 +1,16 @@
 package com.planifcarbon.backend.controllers;
 
-import java.util.List;
-
-import com.planifcarbon.backend.dtos.*;
+import com.planifcarbon.backend.dtos.MetroDTO;
+import com.planifcarbon.backend.dtos.MetroLineStationSchedulesDTO;
+import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.dtos.StationCorrespondence;
+import com.planifcarbon.backend.services.MetroService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.planifcarbon.backend.services.MetroService;
+
+import java.util.List;
 
 
 /**
@@ -25,11 +28,13 @@ public class MetroController {
      *
      * @param metroService The MetroService object that the controller will use for processing Metro-related requests.
      */
-    public MetroController(MetroService metroService) { this.metroService = metroService; }
+    public MetroController(MetroService metroService) {
+        this.metroService = metroService;
+    }
 
     /**
      * Find the available metro lines in the network.
-     * 
+     *
      * @return a list of metro lines
      */
     @GetMapping("/list")
@@ -40,7 +45,7 @@ public class MetroController {
 
     /**
      * Get the metro information using the line number.
-     * 
+     *
      * @param metroId the metro line number to search with.
      * @return the information about the metro line.
      */
@@ -52,7 +57,7 @@ public class MetroController {
 
     /**
      * Get the stations with the higher number of metro lines
-     * 
+     *
      * @return the list of best stations.
      */
     @GetMapping("/best-stations")
@@ -63,7 +68,7 @@ public class MetroController {
 
     /**
      * Get all stations correspondences
-     * 
+     *
      * @return the list of stations with correspondences.
      */
     @GetMapping("/stations-correspondence")
@@ -86,6 +91,8 @@ public class MetroController {
     /**
      * Get line schedules for specific station.
      *
+     * @param station   station to get its schedules for the given metro line.
+     * @param metroLine metro line to get its schedules in the given station.
      * @return the schedules of the provided station in specified metro line.
      */
     @GetMapping("/station-schedules")
