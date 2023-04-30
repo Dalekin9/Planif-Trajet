@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * @Summary The controller used to calculate the paths using time and/or distance.
+ * he controller used to calculate the paths using time and/or distance.
  */
 @RestController
 @RequestMapping("/api/path")
@@ -22,14 +22,22 @@ public class PathController {
     private static final Logger logger = LoggerFactory.getLogger(PathController.class);
     private final PathService pathService;
 
+
+    /**
+     * Constructs a new PathController object.
+     *
+     * @param pathService The PathService object that the controller will use for processing Path-related requests.
+     */
     public PathController(PathService pathService) {
         this.pathService = pathService;
     }
 
     /**
      * Calculate the best path from start to end using provided method (time / distance).
+     *
      * @param start the starting position.
      * @param end the final destination.
+     * @param time the starting time.
      * @param method the method to use to calculate the best path (time / distance).
      * @param transportation choose between (metro, metro and walk, walk).
      * @return The best path according the method.

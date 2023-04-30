@@ -10,6 +10,8 @@
     justify-content: center;
     align-items: center;
     gap: 32px;
+    overflow: hidden;
+    flex-wrap: wrap-reverse;
 
     .form {
       display: flex;
@@ -20,15 +22,16 @@
       .row-fields {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 24px;
         width: 100%;
 
         .datetime {
-          width: 50%;
+          flex: 1;
         }
 
         .options {
-          width: 50%;
+          flex: 1;
         }
       }
     }

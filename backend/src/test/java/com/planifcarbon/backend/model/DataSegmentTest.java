@@ -7,7 +7,23 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.lang.Nullable;
 
+
+/**
+ *  This class contains JUnit tests for the {@link DataSegment} class.
+ */
 public class DataSegmentTest extends Assertions {
+
+    /**
+     * Test the {@link DataSegment#DataSegment(Node, Node, int, int, MetroLine, double)} constructor and the
+     *
+     * {@link DataSegment#equals(Object)} method.
+     * @param node1 the start node of the segment
+     * @param node2 the end node of the segment
+     * @param arrivalTime the time at which a metro train arrives at the start node
+     * @param departureTime the time at which a metro train departs from the start node
+     * @param line the metro line that this segment belongs to
+     * @param distance the distance between the start and end nodes
+     */
     @ParameterizedTest
     @MethodSource("generateDataSegment")
     public void testDataSegment(Node node1, Node node2, int arrivalTime, int departureTime, @Nullable MetroLine line, double distance) {
@@ -18,6 +34,17 @@ public class DataSegmentTest extends Assertions {
         assertEquals(dataSegment, dataSegment);
     }
 
+    /**
+     * Test the {@link DataSegment#toString()} method.
+     *
+     * @param node1 the start node of the segment
+     * @param node2 the end node of the segment
+     * @param arrivalTime the time at which a metro train arrives at the start node
+     * @param departureTime the time at which a metro train departs from the start node
+     * @param line the metro line that this segment belongs to
+     * @param distance the distance between the start and end nodes
+     * @param expected the expected string representation of the data segment
+     */
     @ParameterizedTest
     @MethodSource("generateDataSegment2")
     public void testDataSegmentToString(Node node1, Node node2, int arrivalTime, int departureTime, @Nullable MetroLine line,
@@ -27,6 +54,16 @@ public class DataSegmentTest extends Assertions {
         assertEquals(expected, dataSegment.toString());
     }
 
+    /**
+     * Test the {@link DataSegment#equals(Object)} method for invalid input.
+     *
+     * @param node1 the start node of the segment
+     * @param node2 the end node of the segment
+     * @param arrivalTime the time at which a metro train arrives at the start node
+     * @param departureTime the time at which a metro train departs from the start node
+     * @param line the metro line that this segment belongs to
+     * @param distance the distance between the start and end nodes
+     */
     @ParameterizedTest
     @MethodSource("generateDataSegment")
     public void testDataSegmentEquals(Node node1, Node node2, int arrivalTime, int departureTime, @Nullable MetroLine line,
@@ -37,12 +74,22 @@ public class DataSegmentTest extends Assertions {
         assertNotEquals(dataSegment, "");
     }
 
+    /**
+     * Generate a stream of arguments for {@link #testDataSegment(Node, Node, int, int, MetroLine, double)}.
+     *
+     * @return a stream of arguments
+     */
     private static Stream<Arguments> generateDataSegment() {
         return Stream.of(Arguments.of(new PersonalizedNode("A", 0, 0), new PersonalizedNode("B", 1, 2), 0, 1, null, 0.0));
     }
+
+    /**
+     * Generate a stream of arguments for {@link #testDataSegmentToString(Node, Node, int, int, MetroLine, double, String)}.
+     *
+     * @return a stream of arguments
+     */
     private static Stream<Arguments> generateDataSegment2() {
         return Stream.of(Arguments.of(new PersonalizedNode("A", 0, 0), new PersonalizedNode("B", 1, 2), 0, 1, null, 0.0,
                 "DataSegment{nodeStart=A: 0.0, 0.0, nodeEnd=B: 1.0, 2.0, arrivalTime=0, departureTime=1, line=null, distance=0.0}"));
     }
-
 }

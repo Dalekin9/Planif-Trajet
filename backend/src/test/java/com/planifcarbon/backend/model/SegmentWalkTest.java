@@ -1,14 +1,23 @@
 package com.planifcarbon.backend.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class SegmentWalkTest {
 
+/**
+ * This class is a JUnit test class for the SegmentWalk class.
+ */
+public class SegmentWalkTest extends Assertions {
+
+    /**
+     * This test method checks if an IllegalArgumentException is thrown when the distance parameter in the
+     * SegmentWalk constructor is less than or equal to 0.
+     *
+     * @param distance the distance between two points in a segment of a walk
+     */
     @ParameterizedTest
     @ValueSource(doubles = {-2, -0.252})
     public void checkDistanceDurationMustBeGreatherThen0(double distance) {
@@ -17,6 +26,12 @@ public class SegmentWalkTest {
         assertThrows(IllegalArgumentException.class, () -> new SegmentWalk(node1, node2, distance));
     }
 
+    /**
+     * This test method tests the functionality of the getDistance() method in the SegmentWalk class. It tests if the
+     * method returns the correct distance value set in the SegmentWalk constructor.
+     *
+     * @param distance the distance between two points in a segment of a walk
+     */
     @ParameterizedTest
     @ValueSource(doubles = {1.23, 4.56789, 1.022, 20})
     public void testGetDistanceMethode(double distance) {
@@ -26,6 +41,13 @@ public class SegmentWalkTest {
         assertEquals(distance, t.getDistance());
     }
 
+    /**
+     * This test method tests the functionality of the getDuration() method in the SegmentWalk class. It tests if the
+     * method returns the correct duration value based on the distance value set in the SegmentWalk constructor.
+     *
+     * @param distance the distance between two points in a segment of a walk
+     * @param time     the expected time taken to travel the distance
+     */
     @ParameterizedTest
     @CsvSource({"1.23, 1006363", "4.56789, 3737364", "1.022, 836181", "20, 16363636"})
     public void testGetDurationMethode(double distance, int time) {
@@ -35,6 +57,12 @@ public class SegmentWalkTest {
         assertEquals(time / 1000, t.getDuration());
     }
 
+    /**
+     * This test method tests the functionality of the getStartPoint() method in the SegmentWalk class. It tests if the
+     * method returns the correct start point of the segment set in the SegmentWalk constructor.
+     *
+     * @param distance the distance between two points in a segment of a walk
+     */
     @ParameterizedTest
     @ValueSource(doubles = {1.23, 4.56789, 1.022, 20})
     public void testGetStartPointMethode(double distance) {
@@ -45,6 +73,11 @@ public class SegmentWalkTest {
         assertNotEquals(node2, t.getStartPoint());
     }
 
+    /**
+     * Test the getEndPoint method of the SegmentWalk class using different distances.
+     *
+     * @param distance the distance of the SegmentWalk object
+     */
     @ParameterizedTest
     @ValueSource(doubles = {1.23, 4.56789, 1.022, 20})
     public void testGetEndPointMethode(double distance) {
@@ -55,6 +88,11 @@ public class SegmentWalkTest {
         assertNotEquals(node1, t.getEndPoint());
     }
 
+    /**
+     * Test the isEquals method of the SegmentWalk class using different distances.
+     *
+     * @param distance the distance of the SegmentWalk objects
+     */
     @ParameterizedTest
     @ValueSource(doubles = {1.23, 4.56789, 1.022, 20})
     public void testIsEqualsMethode(double distance) {

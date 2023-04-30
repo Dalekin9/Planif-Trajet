@@ -21,12 +21,17 @@ public class PathService {
      */
     private final MetroMap metroMap;
 
+    /**
+     * Creates a new instance of PathService with the provided MetroMap.
+     *
+     * @param metroMap the MetroMap used to calculate the paths.
+     */
     public PathService(MetroMap metroMap) {
         this.metroMap = metroMap;
     }
 
     /**
-     * @Summary calculate best path using dijkstra.
+     * calculate the best path using dijkstra.
      *
      * @param start starting position
      * @param end ending position
@@ -55,7 +60,7 @@ public class PathService {
     }
 
     /**
-     * @Summary group walking segemnts.
+     * Group walking segemnts.
      *
      * @param dataSegments path returned from dijkstra
      * @return list of data segments where walking segments are grouped.
@@ -87,6 +92,8 @@ public class PathService {
     }
 
     /**
+     * Transform data segments to dijkstra search result which will be given to front later.
+     *
      * @param dataSegments the best path result including metro and walking data segments.
      * @return list dijkstra search result dto to print in the front end part.
      */
@@ -101,6 +108,8 @@ public class PathService {
     }
 
     /**
+     * Get the node (custom, station) from network.
+     *
      * @param start starting position to go from which can be station or personalized node.
      * @return station if start is station name or personalized node if start is coordinates.
      */
@@ -114,6 +123,8 @@ public class PathService {
     }
 
     /**
+     * Transform node to node dto.
+     *
      * @param node node to transform to data transfer object.
      * @return node dto from the station.
      */

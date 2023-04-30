@@ -12,7 +12,7 @@ import com.planifcarbon.backend.model.MetroMap;
 import com.planifcarbon.backend.model.Station;
 
 /**
- * {@summary Service used by the controller to communicate with the view.}
+ * {Service used by the controller to communicate with the view.}
  * It transforms the data from the model so that it fit the one used by the view.
  */
 @Service
@@ -20,12 +20,18 @@ public class MetroService {
     /** Main data object */
     private final MetroMap metroMap;
 
+    /**
+     * Constructs a new `MetroService` instance with the given `MetroMap`.
+     *
+     * @param metroMap the `MetroMap` instance to use for the `MetroService`
+     */
     public MetroService(MetroMap metroMap) {
         this.metroMap = metroMap;
     }
 
-
     /**
+     * Get the list of available metro lines.
+     *
      * @return all metro lines from network.
      */
     public List<MetroDTO> getMetros() {
@@ -39,6 +45,8 @@ public class MetroService {
     }
 
     /**
+     * Get the metro using its name.
+     *
      * @param metroName metro name to get metro and its information (stations and schedules).
      * @return metro line with its information.
      */
@@ -58,6 +66,8 @@ public class MetroService {
     }
 
     /**
+     * Get all stations correspondences.
+     *
      * @return for each station its metro lines correspondences.
      */
     public List<StationCorrespondence> getAllStationsCorrespondence() {
@@ -81,6 +91,8 @@ public class MetroService {
     }
 
     /**
+     * Get the best stations in the network.
+     *
      * @return list of best served stations in the network.
      */
     public List<StationCorrespondence> getBestStations() {
@@ -91,6 +103,8 @@ public class MetroService {
     }
 
     /**
+     * Get all stations from the network.
+     *
      * @return list of all stations in the network.
      */
     public List<NodeDTO> getAllStations() {
@@ -98,6 +112,8 @@ public class MetroService {
     }
 
     /**
+     * Transform station to station dto.
+     *
      * @param station station to transform to data transfer object.
      * @return node dto from the station.
      */

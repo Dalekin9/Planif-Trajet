@@ -20,10 +20,27 @@ public class ScheduleKey {
         this.metroLine = metroLine;
     }
 
+    /**
+     * Gets the terminus station of the schedule.
+     *
+     * @return the terminus station
+     */
     public Station getTerminusStation() { return terminusStation; }
 
+    /**
+     * Gets the metro line of the schedule.
+     *
+     * @return the metro line
+     */
     public MetroLine getMetroLine() { return metroLine; }
 
+    /**
+     * Compares this ScheduleKey with another object for equality.
+     * Two ScheduleKeys are considered equal if their terminus station and metro line are equal.
+     *
+     * @param o the object to compare with
+     * @return true if the objects are equal, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -34,9 +51,19 @@ public class ScheduleKey {
         return Objects.equals(terminusStation, that.terminusStation) && Objects.equals(metroLine, that.metroLine);
     }
 
+    /**
+     * Returns a hash code value for the object.
+     *
+     * @return a hash code value for this object
+     */
     @Override
     public int hashCode() { return Objects.hash(terminusStation, metroLine); }
 
+    /**
+     * Returns a string representation of the ScheduleKey.
+     *
+     * @return a string representation of the ScheduleKey
+     */
     @Override
     public String toString() {
         return "terminusStation = " + terminusStation +

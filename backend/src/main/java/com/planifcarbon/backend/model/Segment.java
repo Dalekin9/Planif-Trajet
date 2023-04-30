@@ -16,7 +16,7 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
     protected double distance;
 
     /**
-     * {@summay Main constructor.}
+     * {Main constructor.}
      *
      * @param node1    first point of segment
      * @param node2    second point of segment
@@ -42,16 +42,40 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
         this.duration = duration;
     }
 
+    /**
+     * Returns the starting node of the segment.
+     *
+     * @return the starting node of the segment
+     */
     public Node getStartPoint() { return startPoint; }
+
+    /**
+     * Returns the ending node of the segment.
+     *
+     * @return the ending node of the segment
+     */
     public Node getEndPoint() { return endPoint; }
+
+    /**
+     * Returns the duration of the segment in seconds.
+     *
+     * @return the duration of the segment in seconds
+     */
     public int getDuration() { return duration; }
+
+    /**
+     * Returns the distance of the segment in kilometers.
+     *
+     * @return the distance of the segment in kilometers
+     */
     public double getDistance() { return distance; }
 
 
     /**
-     * {@summary Test if this is equals to anotherSegment.}
-     * 
-     * @param anotherSegment segment to test equals with
+     * Tests whether this segment is equal to another segment.
+     *
+     * @param anotherSegment the segment to test equality with
+     * @return true if this segment is equal to the given segment, false otherwise
      */
     @Override
     public boolean equals(Object anotherSegment) {
@@ -63,6 +87,11 @@ public abstract sealed class Segment permits SegmentMetro, SegmentWalk {
         return Objects.equals(startPoint, segment.startPoint) && Objects.equals(endPoint, segment.endPoint);
     }
 
+    /**
+     * Returns a hash code value for the segment.
+     *
+     * @return a hash code value for the segment
+     */
     @Override
     public int hashCode() { return Objects.hash(startPoint, endPoint); }
 }

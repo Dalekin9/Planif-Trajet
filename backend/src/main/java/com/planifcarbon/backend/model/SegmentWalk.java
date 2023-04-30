@@ -1,7 +1,7 @@
 package com.planifcarbon.backend.model;
 
 /**
- * {@summary Represents a segment walked by a pedestrian with average walking speed between two points.}
+ * {Represents a segment walked by a pedestrian with average walking speed between two points.}
  */
 public final class SegmentWalk extends Segment {
 
@@ -21,7 +21,7 @@ public final class SegmentWalk extends Segment {
     private static final int HTOS = 3600; // 60 * 60
 
     /**
-     * {@summay Main constructor.}
+     * {Main constructor.}
      * Duration will be calculated based on distance and the average walking speed.
      *
      * @param node1    first point of walking segment
@@ -31,7 +31,7 @@ public final class SegmentWalk extends Segment {
     public SegmentWalk(Node node1, Node node2, double distance) { super(node1, node2, distance, (int) (distance * HTOS / SPEED)); }
 
     /**
-     * {@summay Main constructor.}
+     * {Main constructor.}
      * Distance will be calculated based on coordinates of two points.
      * Duration will be calculated based on distance and the average walking speed.
      *
@@ -41,8 +41,9 @@ public final class SegmentWalk extends Segment {
     public SegmentWalk(Node node1, Node node2) { this(node1, node2, node1.distanceTo(node2)); }
 
     /**
-     * Function for tests only
-     * {@return SPEED constant wich represent sverage walking speed (km/h).}
+     * Function for tests only.
+     *
+     * @return SPEED constant wich represent sverage walking speed (km/h).
      */
     public static double getSpeed() { return SPEED; }
 }
