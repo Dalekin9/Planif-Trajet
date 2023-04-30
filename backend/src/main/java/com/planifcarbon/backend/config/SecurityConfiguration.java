@@ -5,7 +5,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @Summary Configure Security layer to let requests from front-end part.
+ * Configure Security layer to let requests from front-end part.
  */
 @Configuration
 public class SecurityConfiguration implements WebMvcConfigurer {

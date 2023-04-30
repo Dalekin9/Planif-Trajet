@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * {@summary Represents the metro map.}
+ * {Represents the metro map.}
  */
 @Component
 public final class MetroMap {
@@ -24,7 +24,7 @@ public final class MetroMap {
     private Set<ScheduleKey> scheduleKeys;
 
     /**
-     * {@summary Main constructor.}
+     * {Main constructor.}
      */
     public MetroMap() {
         graph = new HashMap<Node, Set<Segment>>();
@@ -33,35 +33,65 @@ public final class MetroMap {
         scheduleKeys = new HashSet<ScheduleKey>();
     }
 
+    /**
+     * Returns a map of all stations in the network, keyed by their names.
+     *
+     * @return A map of all stations in the network.
+     */
     public Map<String, Station> getStations() {
         return stations;
     }
 
+    /**
+     * Returns a set of all stations in the network.
+     *
+     * @return A set of all stations in the network.
+     */
     public Set<Station> getAllStations() {
         return getStations().values().stream().collect(HashSet::new, HashSet::add, HashSet::addAll);
     }
 
+    /**
+     * Returns a map of all lines in the network, keyed by their names.
+     *
+     * @return A map of all lines in the network.
+     */
     public Map<String, MetroLine> getLines() {
         return lines;
     }
 
+    /**
+     * Returns the graph of the network, represented as a map from nodes to sets of segments.
+     *
+     * @return The graph of the network.
+     */
     public Map<Node, Set<Segment>> getGraph() {
         return graph;
     }
 
+    /**
+     * Returns the station in the network with the given name, or null if there is no such station.
+     *
+     * @param stationName The name of the station to retrieve.
+     * @return The station with the given name, or null if there is no such station.
+     */
     public Station getStationByName(String stationName) {
         return this.stations.getOrDefault(stationName, null);
     }
 
     /**
-     * {@summary Return the list of nodes.}
+     * Get the nodes from dijkstra graphs.
+     *
+     * @return the list of nodes.
      */
     public Set<Node> getNodes() {
         return graph.keySet();
     }
 
     /**
-     * {@summary Return the list of segments.}
+     * {Return the list of segments.}
+     *
+     * @param node the node to get its segments.
      * @return the list of segments
      */
     public Set<Segment> getSegments(Node node) {
@@ -69,6 +99,8 @@ public final class MetroMap {
     }
 
     /**
+     * Get set of metro segments.
+     *
      * @param node to have all his segments.
      * @return set of metro segments for the node.
      */
@@ -77,7 +109,9 @@ public final class MetroMap {
     }
 
     /**
-     * {@summary Find scheduleKey (final station of matro line) by name.}
+     * {Find scheduleKey (final station of matro line) by name.}
+     *
+     * @param name name of terminus station to get schedule.
      * @return the scheduleKey (final station of matro line)
      */
     public ScheduleKey getScheduleKeyByName(String name) {
@@ -88,7 +122,8 @@ public final class MetroMap {
     }
 
     /**
-     * {@summary Finds the nearest trains departing from the given station after given time.}
+     * {Finds the nearest trains departing from the given station after given time.}
+     *
      * @param arrivalTime time after which need to find nearest trains.
      * @param currentStation station for which need to find nearest trains.
      * @param lineName metro line.
@@ -109,7 +144,8 @@ public final class MetroMap {
     }
 
     /**
-     * {@summary Implementation of Dikjstra algorithm.}
+     * {Implementation of Dikjstra algorithm.}
+     *
      * @param startNode node from which Dikjstra will be launched
      * @param endNode node where we are going.
      * @param startTime time for launching the dijkstra.
@@ -313,6 +349,7 @@ public final class MetroMap {
 
     /**
      * Calculates metroLines and graph with metro segments.
+     *
      * @param segmentMetroDTOS metro segments given in the CSV file.
      * @param metroLines map of line and its stations from CSV file.
      */
@@ -335,6 +372,7 @@ public final class MetroMap {
 
     /**
      * Set metro line schedules.
+     *
      * @param metroLines map of line and its stations from CSV file.
      * @param metroLinesTerminus terminus station for each metro line from CSV file.
      * @param schedules each metro line and its schedules.
@@ -349,6 +387,7 @@ public final class MetroMap {
 
     /**
      * Calculate time for any train to get to a station from terminus in each metro line.
+     *
      * @param metroLinesTerminus terminus station for each metro line from CSV file.
      */
     private void diffuseTrainTimeFromTerminus(Map<String, String> metroLinesTerminus) {
@@ -379,6 +418,7 @@ public final class MetroMap {
 
     /**
      * Calculate graph with walk segments
+     *
      * @param stations all metro stations in the given network.
      */
     private void addAllWalkSegments(Set<Station> stations) {
@@ -394,7 +434,8 @@ public final class MetroMap {
     }
 
     /**
-     * {@summary Add a new node to the graph.}
+     * Add a new node to the graph.
+     *
      * @param name node name.
      * @param latitude node's latitude.
      * @param longitude node's longitude.
@@ -414,7 +455,7 @@ public final class MetroMap {
     }
 
     /**
-     * {@summary Add a new segment to the graph.}
+     * Add a new segment to the graph.
      * It need both nodes to be in the graph.
      *
      * @param segment segment to add
@@ -430,7 +471,7 @@ public final class MetroMap {
     }
 
     /**
-     * {@summary Add a new segment to the graph.}
+     * Add a new segment to the graph.
      * It need both nodes to be in the graph.
      *
      * @param startNode the start node
@@ -442,7 +483,7 @@ public final class MetroMap {
     }
 
     /**
-     * {@summary Add a new segment to the graph.}
+     * Add a new segment to the graph.
      * It need both nodes to be in the graph.
      *
      * @param startNode the start node
@@ -458,6 +499,8 @@ public final class MetroMap {
     // Adapters functions
 
     /**
+     * Transform station dto object to station.
+     *
      * @param dto data transfer object to transform to a station.
      * @return station from the node dto.
      */
@@ -473,23 +516,50 @@ public final class MetroMap {
         private final Node node;
         private int weight;
 
-        public DjikstraInfo(Node node, int time) {
+        /**
+         * Constructs a new `DjikstraInfo` instance with the given node and weight.
+         *
+         * @param node the node represented by this instance
+         * @param weight the distance from the source node to this node
+         */
+        public DjikstraInfo(Node node, int weight) {
             this.node = node;
-            this.weight = time;
+            this.weight = weight;
         }
 
+        /**
+         * Gets the distance from the source node to this node.
+         *
+         * @return the distance from the source node to this node
+         */
         public int getWeight() {
             return weight;
         }
 
+        /**
+         * Sets the distance from the source node to this node.
+         *
+         * @param weight the new distance from the source node to this node
+         */
         public void setWeight(int weight) {
             this.weight = weight;
         }
 
+        /**
+         * Gets the node represented by this instance.
+         *
+         * @return the node represented by this instance
+         */
         public Node getNode() {
             return node;
         }
 
+        /**
+         * Checks whether this instance is equal to the specified object.
+         *
+         * @param o the object to compare to
+         * @return true if this instance is equal to the specified object, false otherwise
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -498,11 +568,22 @@ public final class MetroMap {
             return Objects.equals(node, that.node);
         }
 
+        /**
+         * Computes the hash code for this instance.
+         *
+         * @return the hash code for this instance
+         */
         @Override
         public int hashCode() {
             return Objects.hash(node);
         }
 
+        /**
+         * Compares this instance to the specified `DjikstraInfo` instance based on their weights.
+         *
+         * @param o the `DjikstraInfo` instance to compare to
+         * @return a negative integer, zero, or a positive integer as this instance is less than, equal to, or greater than the specified instance
+         */
         @Override
         public int compareTo(DjikstraInfo o) {
             return Integer.compare(weight, o.weight);

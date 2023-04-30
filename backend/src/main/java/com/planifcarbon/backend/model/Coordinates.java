@@ -1,7 +1,7 @@
 package com.planifcarbon.backend.model;
 
 /**
- * {@summary Represents a point on map.}
+ * { Represents a point on map.}
  */
 public class Coordinates {
     private final double latitude;
@@ -9,7 +9,7 @@ public class Coordinates {
     private static final double EARTH_RADIUS = 6378.127;
 
     /**
-     * {@summay Main constructor.}
+     * { Main constructor.}
      * 
      * @param latitude  latitude of this
      * @param longitude longitude of this
@@ -22,11 +22,22 @@ public class Coordinates {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
-    public double getLatitude() { return latitude; }
-    public double getLongitude() { return longitude; }
     /**
-     * {@summary Test if this is equals to o.}
+     * Returns the latitude of the location.
+     *
+     * @return The latitude of the location.
+     */
+    public double getLatitude() { return latitude; }
+
+    /**
+     * Returns the longitude of the location.
+     *
+     * @return The longitude of the location.
+     */
+    public double getLongitude() { return longitude; }
+
+    /**
+     * {Test if this is equals to o.}
      * 
      * @param o object to test equals with
      */
@@ -42,13 +53,16 @@ public class Coordinates {
 
 
     /**
-     * {@return A simple string representation of this.}
+     * Represents a geographical coordinate point with latitude and longitude.
+     *
+     * @return A simple string representation of this.
      */
     @Override
     public String toString() { return latitude + ", " + longitude; }
 
     /**
      * @param co the other coordinate to reach
+     *
      * @return distance in km
      */
     public double distanceTo(Coordinates co) {

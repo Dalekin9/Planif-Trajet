@@ -20,11 +20,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = "classpath:application-tests.properties")
 public class MetroMapTest {
 
+    /**
+     * Generate a stream of arguments.
+     *
+     * @return a stream of arguments
+     */
     static Stream<Arguments> generateDataNode() {
         return Stream.of(Arguments.of("A", 1.0, 2.0, Station.class), Arguments.of("Maison", 1.0, 2.0,
                 PersonalizedNode.class));
     }
 
+    /**
+     * Generate a stream of arguments.
+     *
+     * @return a stream of arguments
+     */
     private static Stream<Arguments> generateDataSegmentList() {
         // @formatter:off
         return Stream.of(
@@ -104,6 +114,14 @@ public class MetroMapTest {
         // @formatter:on
     }
 
+    /**
+     * Tests the addNode method of the MetroMap class.
+     *
+     * @param name the name of the node to add
+     * @param la the latitude of the node to add
+     * @param lo the longitude of the node to add
+     * @param cl the class of the node to add
+     */
     @ParameterizedTest
     @MethodSource("generateDataNode")
     public void testAddNode(String name, double la, double lo, Class<? extends Node> cl) {
@@ -112,6 +130,13 @@ public class MetroMapTest {
         assertEquals(1, map.getNodes().size());
     }
 
+    /**
+     * Tests the addNode method of the MetroMap class when an invalid node instance is provided.
+     *
+     * @param name the name of the node to add
+     * @param la the latitude of the node to add
+     * @param lo the longitude of the node to add
+     */
     @ParameterizedTest
     @CsvSource({"A, 1.0, 2.0", "Maison, 1.0, 2.0"})
     public void testAddNodeThrows(String name, double la, double lo) {
@@ -119,6 +144,9 @@ public class MetroMapTest {
         assertThrows(IllegalArgumentException.class, () -> map.addNode(name, la, lo, null));
     }
 
+    /**
+     * Tests the addSegmentMetro method of the MetroMap class.
+     */
     @Test
     public void testAddSegmentMetro() {
         MetroMap map = new MetroMap();
@@ -128,6 +156,11 @@ public class MetroMapTest {
         assertEquals(1, map.getSegments(new NodeForTest("A", 0.0, 0.0)).size());
     }
 
+    /**
+     * Tests that an exception is not thrown when adding a metro segment between two existing nodes.
+     *
+     * @throws IllegalArgumentException if the node is not in the graph or if there is already a segment between the two nodes
+     */
     @Test
     public void testAddSegmentThrow() {
         MetroMap map = new MetroMap();
@@ -136,6 +169,12 @@ public class MetroMapTest {
                 40000, "1"));
     }
 
+
+    /**
+     * Tests that an IllegalArgumentException is thrown when trying to add a segment with a null line name.
+     *
+     * @throws IllegalArgumentException if the line name is null
+     */
     @Test
     public void testAddSegmentThrow2() {
         MetroMap map = new MetroMap();
@@ -145,6 +184,10 @@ public class MetroMapTest {
                 () -> map.addSegmentMetro(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0, 40000, null));
     }
 
+    /**
+     * Tests the {@link MetroMap#addSegmentWalk(Node, Node, double)} method to add a walking segment between two nodes.
+     * Verifies that the segment is added successfully without throwing any exceptions.
+     */
     @Test
     public void testAddSegmentWalk() {
         MetroMap map = new MetroMap();
@@ -153,6 +196,17 @@ public class MetroMapTest {
         map.addSegmentWalk(new NodeForTest("A", 0, 0), new NodeForTest("B", 0, 0), 10.0);
     }
 
+
+    /**
+     * This test method is used to verify that the MetroMap object is properly initialized
+     * and that the data contained in the map is correct. It uses a CSV source to provide
+     * test parameters, which in this case is a station name and expected number of metro segments
+     * and total segments.
+     *
+     @param stationName The name of the station to check the number of segments for
+     @param nbSegmentsMetro The expected number of metro segments for the station
+     @param nbSegments The expected total number of segments in the map
+     */
     @ParameterizedTest
     @CsvSource({"Argentine, 4, 311"})
     public void testMetroMapDataCreation(String stationName, int nbSegmentsMetro, int nbSegments) {
@@ -179,9 +233,15 @@ public class MetroMapTest {
             metroLines.add(line);
         });
         assertEquals(nbSegmentsMetro, map.getSegmentsMetro(new NodeForTest(stationName, 0.0, 0.0)).size());
-        // assertEquals(nbSegments, map.getSegments(new NodeForTest(stationName, 0.0, 0.0)).size());
     }
 
+
+    /**
+     * Tests the functionality of the {@code getStationByName} method in the {@code MetroMap} class, which retrieves a
+     *
+     * {@code Station} object from the {@code Map} of stations based on its name.
+     * @param stationName the name of the station to retrieve
+     */
     @ParameterizedTest
     @ValueSource(strings = {"Argentine"})
     public void testGetStationByName(String stationName) {
@@ -193,6 +253,11 @@ public class MetroMapTest {
         assertEquals(4, station.getSchedules().size());
     }
 
+    /**
+     * Tests the retrieval of a ScheduleKey object by its name.
+     *
+     * @param name the name of the ScheduleKey object to retrieve
+     */
     @ParameterizedTest
     @ValueSource(strings = {"Gare d'Austerlitz"})
     public void testgetScheduleKeyByName(String name) {
@@ -204,6 +269,17 @@ public class MetroMapTest {
         assertNotNull(station.getMetroLine());
     }
 
+
+    /**
+     * Tests the getSegmentsFromPath method of the MetroMap class.
+     *
+     * @param timeStart the starting time for the path
+     * @param start the starting node or station for the path
+     * @param end the ending node or station for the path
+     * @param metro a boolean indicating whether or not to include metro segments in the path
+     * @param walk a boolean indicating whether or not to include walking segments in the path
+     * @param expected a list of expected node names in the path
+     */
     @ParameterizedTest
     @MethodSource("generateDataSegmentList")
     public void testGetSegmentsFromPath(int timeStart, Object start, Object end, boolean metro, boolean walk,
@@ -231,6 +307,9 @@ public class MetroMapTest {
         }
     }
 
+    /**
+     * This method tests the ability of the MetroMap class to get the best path with a personalized node.
+     */
     @Test
     public void testPathWithPersonalizedNode() {
         MetroMap map = new MetroMap();
@@ -240,6 +319,9 @@ public class MetroMapTest {
         assertNotNull(result);
     }
 
+    /**
+     * Tests the availability of all the necessary information.
+     */
     @Test
     public void testGetTotalTable() {
         MetroMap map = new MetroMap();
@@ -249,6 +331,9 @@ public class MetroMapTest {
         assertNotNull(map.getGraph());
     }
 
+    /**
+     * Tests if an {@link IllegalArgumentException} is thrown when the start node is null.
+     */
     @Test
     public void testStartNodeIsNull() {
         MetroMap map = new MetroMap();
@@ -256,6 +341,9 @@ public class MetroMapTest {
         assertThrows(IllegalArgumentException.class, () -> map.dijkstra(null, null, 10000, true, true));
     }
 
+    /**
+     * Tests if an {@link IllegalArgumentException} is thrown when the time provided is negative.
+     */
     @Test
     public void testTimeIsNegative() {
         MetroMap map = new MetroMap();

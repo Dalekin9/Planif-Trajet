@@ -15,7 +15,7 @@ import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.NodeDTO;
 
 /**
- * {@summary Its static methods are used to parse CSV files}
+ * {Its static methods are used to parse CSV files}
  */
 public class Parser {
 
@@ -25,10 +25,12 @@ public class Parser {
     private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<String, List<Integer>>();
 
     /**
-     * {@summary Parse all CSV file.}
-     * 
-     * @throws FileNotFoundException
-     * @throws IOException
+     * {Parse all CSV file.}
+     *
+     * @param metroFile file representing the metro network.
+     * @param scheduleFile file representing the metro schedules.
+     * @throws FileNotFoundException thrown when provided file not found.
+     * @throws IOException thrown when an error occurred when opening file.
      */
     public static void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
         Parser.calculateStationsAndSegments(metroFile);
@@ -37,17 +39,32 @@ public class Parser {
 
     // private ----------------------------------------------------------------
 
-    /** Tool function to split a String */
+    /**
+     * Tool function to split a String
+     *
+     * @param reg the regular expression to split the String
+     * @param line the line to split
+     * @return the String array after split
+     */
     static String[] splitString(String reg, String line) { return line.split(reg); }
 
-    /** Tool function used to parse time from hh:mm:ss.ms to ms */
-    // TODO rename to make it more different from timeStringToInt
+    /**
+     * Tool function used to parse time from hh:mm:ss.ms to ms
+     *
+     * @param str the String representation of time in format hh:mm:ss.ms
+     * @return the time in milliseconds
+     */
     static int durationStringToInt(String str) {
         double seconds = Double.parseDouble(str.replace(':', '.')) * 10;
         return (int) Math.ceil(seconds);
     }
-    /** Tool function used to parse time from hh:mm to ms */
-    // TODO rename to make it more different from durationStringToInt
+
+    /**
+     * Tool function used to parse time from hh:mm to ms
+     *
+     * @param str the String representation of time in format hh:mm
+     * @return the time in milliseconds
+     */
     static int timeStringToInt(String str) {
         String[] time = splitString(":", str);
         int hours = Integer.parseInt(time[0]);
@@ -60,11 +77,11 @@ public class Parser {
     }
 
     /**
-     * {@summary Parse station &#38; segment data from a CSV file.}
+     * {Parse station &#38; segment data from a CSV file.}
      * 
      * @param filePath the path of the CSV file
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException thrown when file is not found.
+     * @throws IOException thrown when an error occurred when opening file.
      */
     static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
         // try with safe close.
@@ -91,11 +108,11 @@ public class Parser {
     }
 
     /**
-     * {@summary Parse station &#38; segment data from a CSV file.}
+     * {Parse station &#38; segment data from a CSV file.}
      * 
      * @param scheduleFile the path of the CSV file
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException thrown when provided file not found.
+     * @throws IOException thrown when an error occurred when opening file.
      */
     static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
         // try with safe close.
@@ -118,11 +135,34 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns a map of all metro lines, with keys representing the name of the line
+     * and values representing the color of the line.
+     *
+     * @return a map of all metro lines
+     */
     public static Map<String, String> getMetroLines() { return metroLines; }
 
+    /**
+     * Returns a map of all metro line schedules, with keys representing the name of the line
+     * and values representing a list of integer values, each integer value representing the
+     * duration in seconds between each stop along the line.
+     *
+     * @return a map of all metro line schedules
+     */
     public static Map<String, List<Integer>> getMetroLineSchedules() { return metroLineSchedules; }
 
+    /**
+     * Returns a set of all metro segments, with each segment represented as a SegmentMetroDTO object.
+     *
+     * @return a set of all metro segments
+     */
     public static Set<SegmentMetroDTO> getSegmentMetro() { return segmentMetro; }
 
+    /**
+     * Returns a set of all metro stations, with each station represented as a NodeDTO object.
+     *
+     * @return a set of all metro stations
+     */
     public static Set<NodeDTO> getStations() { return stations; }
 }

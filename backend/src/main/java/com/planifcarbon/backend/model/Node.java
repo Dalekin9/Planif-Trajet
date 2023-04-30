@@ -3,16 +3,15 @@ package com.planifcarbon.backend.model;
 import java.util.Objects;
 
 /**
- * {@summary Represents a point on map.}
+ * {Represents a point on map.}
  * It have a name and coordinates.
  */
 public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode {
     private final String name;
     private final Coordinates coordinates;
-    // TODO store current used name for created node to avoid duplicate name
 
     /**
-     * {@summay Main constructor.}
+     * {Main constructor.}
      * 
      * @param name      name of this
      * @param latitude  latitude of coordinates of this
@@ -25,8 +24,26 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
         this.coordinates = new Coordinates(latitude, longitude);
     }
 
+    /**
+     * Returns the name of this node.
+     *
+     * @return the name of this node
+     */
     public String getName() { return name; }
+
+    /**
+     * Returns the coordinates of this node.
+     *
+     * @return the coordinates of this node
+     */
     public Coordinates getCoordinates() { return coordinates; }
+
+    /**
+     * Calculates and returns the Euclidean distance between this node and the given node.
+     *
+     * @param node the node to which the distance is to be calculated
+     * @return the Euclidean distance between this node and the given node
+     */
     public double distanceTo(Node node) { return coordinates.distanceTo(node.coordinates); }
 
     /**
@@ -45,22 +62,53 @@ public abstract sealed class Node permits NodeForTest, Station, PersonalizedNode
         return Objects.equals(name, node.name);
     }
 
+    /**
+     * Returns the hash code value for this Node object. The hash code
+     * is computed using the name field.
+     *
+     * @return the hash code value for this Node object
+     */
     @Override
     public int hashCode() { return Objects.hash(name); }
 
     /**
-     * {@return A simple string representation of this.}
+     * Returns a string representation of this Node, which includes its name and coordinates.
+     *
+     * @return a string representation of this Node
      */
     @Override
     public String toString() { return name + ": " + coordinates; }
-    // public String toString() { return name; } // TODO temporary simplification, to simplify testing
 
+    /**
+     * Returns whether this node is part of the metro network.
+     * This implementation always returns false.
+     *
+     * @return false
+     */
     public abstract boolean isInMetro();
 }
 
 // For test only
+/**
+ * This class extends the Node class and is used for testing purposes only. It represents a node that is not
+ * part of the metro network.
+ */
 final class NodeForTest extends Node {
+    /**
+     * Creates a new NodeForTest object with the given name, latitude and longitude.
+     *
+     * @param name      the name of the node
+     * @param la  the latitude of the node's coordinates
+     * @param lo the longitude of the node's coordinates
+     */
     public NodeForTest(String name, double la, double lo) { super(name, la, lo); }
+
+    /**
+     * Returns whether this node is part of the metro network.
+     * This implementation always returns false.
+     *
+     * @return false
+     */
     @Override
     public boolean isInMetro() { return false; }
 }

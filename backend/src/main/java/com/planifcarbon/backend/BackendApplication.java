@@ -14,6 +14,7 @@ public class BackendApplication {
 
     /**
      * Launch the spring boot application.
+     *
      * @param args a list of provided parameters.
      */
     @ExcludeFromJacocoGeneratedReport

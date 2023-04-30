@@ -15,15 +15,32 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+/**
+ * Test class for {@link PathController}.
+ */
 @AutoConfigureMockMvc
 @WebMvcTest(PathController.class)
 @TestPropertySource(
         locations = "classpath:application-tests.properties")
 class PathControllerTest {
 
+    /**
+     * This class contains unit tests for the MetroController class.
+     */
     @Autowired
     private MockMvc mvc;
 
+    /**
+     * Tests the {@link PathController#getBestTimePath(String, String, Integer, String, String)} method with
+     * valid input parameters.
+     *
+     * @param startNode the starting node of the path
+     * @param endNode the ending node of the path
+     * @param time the time limit for the path search
+     * @param method the path search method to use
+     * @param transportation the mode of transportation to use
+     * @throws Exception if an error occurs during the test
+     */
     @ParameterizedTest
     @CsvSource({"Bercy, Gare du Nord, 53100, TIME, METRO", "Bercy, Gare du Nord, 79200, TIME, METRO_FOOT"})
     void getBestPath(String startNode, String endNode, int time, String method, String transportation) throws Exception {

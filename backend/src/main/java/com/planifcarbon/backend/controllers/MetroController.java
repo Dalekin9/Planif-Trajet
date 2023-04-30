@@ -16,7 +16,7 @@ import com.planifcarbon.backend.services.MetroService;
 
 
 /**
- * @Summary The controller used to get information about the metro network.
+ * The controller used to get information about the metro network.
  */
 @RestController
 @RequestMapping("/api/metro")
@@ -25,6 +25,11 @@ public class MetroController {
     private static final Logger logger = LoggerFactory.getLogger(MetroController.class);
     private final MetroService metroService;
 
+    /**
+     * Constructs a new MetroController object.
+     *
+     * @param metroService The MetroService object that the controller will use for processing Metro-related requests.
+     */
     public MetroController(MetroService metroService) { this.metroService = metroService; }
 
     /**
