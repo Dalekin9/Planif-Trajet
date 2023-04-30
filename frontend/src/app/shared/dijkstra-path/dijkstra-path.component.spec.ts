@@ -78,7 +78,7 @@ describe('DijkstraPathComponent', () => {
               longitude: 2.372519782814122,
               latitude: 48.8442498880687
             },
-            duration: 67458,
+            weight: 67458,
             metroLine: "14",
             terminusStation: "Bercy"
           },
@@ -93,7 +93,7 @@ describe('DijkstraPathComponent', () => {
               longitude: 2.346411849769497,
               latitude: 48.85955653272677
             },
-            duration: 67723,
+            weight: 67723,
             metroLine: "14",
             terminusStation: "Bercy"
           }

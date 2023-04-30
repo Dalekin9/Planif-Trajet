@@ -32,7 +32,7 @@ export interface IMetroStationCorrespondence {
 export interface IDijkstraSearchResult {
   start: INode,
   end: INode,
-  duration: number,
+  weight: number,
   metroLine?: string,
   terminusStation?: string
 }

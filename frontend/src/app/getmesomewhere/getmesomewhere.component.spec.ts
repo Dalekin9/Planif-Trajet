@@ -239,7 +239,7 @@ describe('GetmesomewhereComponent', () => {
           longitude: 2.372519782814122,
           latitude: 48.8442498880687
         },
-        duration: 73038,
+        weight: 73038,
         metroLine: "14",
         terminusStation: "Bercy"
       }
