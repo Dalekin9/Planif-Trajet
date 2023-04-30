@@ -1,7 +1,7 @@
 package com.planifcarbon.backend.model;
 
-import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.parser.Parser;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
@@ -151,6 +151,7 @@ public final class MetroMap {
      * @param weight time/distance for launching the dijkstra.
      * @param metro if (true) include metro segments in the search.
      * @param walk if (true) include walk segments in the search.
+     * @param bestTimePath  if true get the best path using time else using distance.
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized.
      */
     public Map<Node, SearchResultBestWeight> dijkstra(Node startNode, Node endNode, int weight, boolean metro, boolean walk, boolean bestTimePath) {
@@ -283,6 +284,7 @@ public final class MetroMap {
      * @param startWeight the start time / distance
      * @param metro     if metro segments are allowed
      * @param walk      if walk segments are allowed
+     * @param bestTimePath  if true get the best path using time else using distance.
      * @return a list of segments data easy to use
      */
     public List<DataSegment> getSegmentsFromPath(Node startNode, Node endNode, int startWeight, boolean metro, boolean walk, boolean bestTimePath) {
