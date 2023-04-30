@@ -9,7 +9,7 @@
         <h4 *ngIf="!!entry.metroLine">{{ entry.metroLine }} - {{entry.terminusStation}}</h4>
         <mat-icon *ngIf="!entry.metroLine">directions_walk</mat-icon>
         <mat-divider [style.borderColor]="expanded[i] ? 'white': ''"></mat-divider>
-        <div class="time-interval" [style.color]="expanded[i] ? 'white': ''">
+        <div class="time-interval" [style.color]="expanded[i] ? 'white': ''" *ngIf="bestTimePath">
           <div class="time">
             <mat-icon>access_time</mat-icon>
             <p>{{getStartTimeForNode(i)}}</p>

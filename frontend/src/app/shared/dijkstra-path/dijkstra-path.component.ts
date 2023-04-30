@@ -11,6 +11,7 @@ export class DijkstraPathComponent implements OnInit {
   private _path: IDijkstraPathGroup[] = [];
   public expanded: boolean[] = [];
   @Input() startingTime: string = '';
+  @Input() bestTimePath: boolean = true;
 
   constructor() {
   }
@@ -20,7 +21,6 @@ export class DijkstraPathComponent implements OnInit {
 
   @Input('path')
   public set path(path: IDijkstraPathGroup[]) {
-    console.log(path);
     this._path = path;
     this.expanded = new Array(this._path.length).fill(false);
   }
@@ -48,13 +48,13 @@ export class DijkstraPathComponent implements OnInit {
       return this.startingTime;
     }
     const previousNode = this._path[index - 1];
-    const startingTime = previousNode.nodes[previousNode.nodes.length - 1].duration;
+    const startingTime = previousNode.nodes[previousNode.nodes.length - 1].weight;
     return this.getTimeForNode(startingTime);
   }
 
   public getEndTimeForNode(index: number): string {
     const node = this._path[index];
-    const endTime = node.nodes[node.nodes.length - 1].duration;
+    const endTime = node.nodes[node.nodes.length - 1].weight;
     return this.getTimeForNode(endTime);
   }
 

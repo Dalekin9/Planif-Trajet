@@ -24,7 +24,7 @@ public class SearchResultBestDurationTest extends Assertions {
         assertDoesNotThrow(map::initializeFields);
         Station station = map.getStationByName(stationName);
         MetroLine line = map.getLines().get(lineName);
-        assertNotNull(new SearchResultBestDuration(station, time, line));
+        assertNotNull(new SearchResultBestWeight(station, time, line));
     }
 
     /**
@@ -44,11 +44,11 @@ public class SearchResultBestDurationTest extends Assertions {
         Station station = map.getStationByName(stationName);
         MetroLine line = map.getLines().get(lineName);
 
-        assertNotNull(new SearchResultBestDuration(station, time, line));
+        assertNotNull(new SearchResultBestWeight(station, time, line));
     }
 
     /**
-     * Test method for {@link SearchResultBestDuration#getArrivalTime()}.
+     * Test method for {@link SearchResultBestWeight#getWeight()}.
      * Tests that the getArrivalTime method of SearchResultBestDuration returns a non-null value.
      *
      * @param stationName the name of the station to test with
@@ -62,8 +62,8 @@ public class SearchResultBestDurationTest extends Assertions {
         assertDoesNotThrow(map::initializeFields);
         Station station = map.getStationByName(stationName);
         MetroLine line = map.getLines().get(lineName);
-        SearchResultBestDuration rez = new SearchResultBestDuration(station, time, line);
-        assertNotNull(rez.getArrivalTime());
+        SearchResultBestWeight rez = new SearchResultBestWeight(station, time, line);
+        assertNotNull(rez.getWeight());
     }
 
     /**
@@ -83,7 +83,7 @@ public class SearchResultBestDurationTest extends Assertions {
         assertDoesNotThrow(map::initializeFields);
         Station station = map.getStationByName(stationName);
         MetroLine line = map.getLines().get(lineName);
-        SearchResultBestDuration rez = new SearchResultBestDuration(station, time, line);
+        SearchResultBestWeight rez = new SearchResultBestWeight(station, time, line);
         assertNotNull(rez.getMetroLine());
     }
 }

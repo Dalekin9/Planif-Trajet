@@ -14,7 +14,7 @@ import org.springframework.lang.Nullable;
 public class DataSegmentTest extends Assertions {
 
     /**
-     * Test the {@link DataSegment#DataSegment(Node, Node, int, int, MetroLine, double)} constructor and the
+     * Test the {@link DataSegment#DataSegment(Node, Node, double, double, MetroLine, double)} constructor and the
      *
      * {@link DataSegment#equals(Object)} method.
      * @param node1 the start node of the segment
@@ -47,10 +47,9 @@ public class DataSegmentTest extends Assertions {
      */
     @ParameterizedTest
     @MethodSource("generateDataSegment2")
-    public void testDataSegmentToString(Node node1, Node node2, int arrivalTime, int departureTime, @Nullable MetroLine line,
+    public void testDataSegmentToString(Node node1, Node node2, double arrivalTime, double departureTime, @Nullable MetroLine line,
             double distance, String expected) {
         DataSegment dataSegment = new DataSegment(node1, node2, arrivalTime, departureTime, line, distance);
-        System.out.println(dataSegment.toString());
         assertEquals(expected, dataSegment.toString());
     }
 
@@ -84,12 +83,12 @@ public class DataSegmentTest extends Assertions {
     }
 
     /**
-     * Generate a stream of arguments for {@link #testDataSegmentToString(Node, Node, int, int, MetroLine, double, String)}.
+     * Generate a stream of arguments for {@link #testDataSegmentToString(Node, Node, double, double, MetroLine, double, String)}.
      *
      * @return a stream of arguments
      */
     private static Stream<Arguments> generateDataSegment2() {
         return Stream.of(Arguments.of(new PersonalizedNode("A", 0, 0), new PersonalizedNode("B", 1, 2), 0, 1, null, 0.0,
-                "DataSegment{nodeStart=A: 0.0, 0.0, nodeEnd=B: 1.0, 2.0, arrivalTime=0, departureTime=1, line=null, distance=0.0}"));
+                "DataSegment{nodeStart=A: 0.0, 0.0, nodeEnd=B: 1.0, 2.0, arrivalTime=0.0, departureTime=1.0, line=null, distance=0.0}"));
     }
 }

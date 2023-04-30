@@ -302,7 +302,7 @@ public class MetroMapTest {
             endNode = (Node) end;
         }
 
-        List<DataSegment> segments = map.getSegmentsFromPath(startNode, endNode, timeStart, metro, walk);
+        List<DataSegment> segments = map.getSegmentsFromPath(startNode, endNode, timeStart, metro, walk, true);
         assertEquals(expected.size() - 1, segments.size());
         for (int i = 0; i < segments.size(); i++) {
             assertEquals(expected.get(i), segments.get(i).getNodeStart().getName());
@@ -318,7 +318,7 @@ public class MetroMapTest {
         MetroMap map = new MetroMap();
         assertDoesNotThrow(map::initializeFields);
         List<DataSegment> result = map.getSegmentsFromPath(new Station("Bercy", 48.84014763512746, 2.3791909087742877),
-                new PersonalizedNode("CUSTOM", 48.86924811771283, 2.274952380371076), 79200, true, true);
+                new PersonalizedNode("CUSTOM", 48.86924811771283, 2.274952380371076), 79200, true, true, true);
         assertNotNull(result);
     }
 
@@ -341,7 +341,7 @@ public class MetroMapTest {
     public void testStartNodeIsNull() {
         MetroMap map = new MetroMap();
         assertDoesNotThrow(map::initializeFields);
-        assertThrows(IllegalArgumentException.class, () -> map.dijkstra(null, null, 10000, true, true));
+        assertThrows(IllegalArgumentException.class, () -> map.dijkstra(null, null, 10000, true, true, true));
     }
 
     /**
@@ -352,6 +352,6 @@ public class MetroMapTest {
         MetroMap map = new MetroMap();
         assertDoesNotThrow(map::initializeFields);
         assertThrows(IllegalArgumentException.class, () -> map.dijkstra(new NodeForTest("", 1, 1), new NodeForTest(""
-                , 1, 1), -10000, true, true));
+                , 1, 1), -10000, true, true, true));
     }
 }

@@ -5,21 +5,21 @@ package com.planifcarbon.backend.model;
  * when searching for the optimal route in terms of duration:
  * Map(Node nodeTo, SearchResultBestDuration result).}
  */
-public class SearchResultBestDuration {
+public class SearchResultBestWeight {
     private final Node nodeDestination;
-    private final int arrivalTime;
+    private final double weight;
     private final MetroLine line;
 
     /**
      * {Main constructor.}
      * 
-     * @param nodeFrom    node from which movement was made
-     * @param arrivalTime arrival time from nodeFrom to key station
-     * @param line        metro line that was used
+     * @param nodeFrom     node from which movement was made
+     * @param weight       arrival time / distance from nodeFrom to key station
+     * @param line         metro line that was used
      */
-    public SearchResultBestDuration(Node nodeFrom, int arrivalTime, MetroLine line) {
+    public SearchResultBestWeight(Node nodeFrom, double weight, MetroLine line) {
         this.nodeDestination = nodeFrom;
-        this.arrivalTime = arrivalTime;
+        this.weight = weight;
         this.line = line;
     }
 
@@ -31,11 +31,11 @@ public class SearchResultBestDuration {
     public Node getNodeDestination() { return nodeDestination; }
 
     /**
-     * Returns the arrival time at the destination node.
+     * Returns the arrival time / distance at the destination node.
      *
-     * @return The arrival time at the destination node.
+     * @return The arrival time / distance at the destination node.
      */
-    public int getArrivalTime() { return arrivalTime; }
+    public double getWeight() { return weight; }
 
     /**
      * Returns the metro line used to reach the destination node.
@@ -50,6 +50,6 @@ public class SearchResultBestDuration {
      * @return A string representation of the `SearchResultBestDuration` object.
      */
     public String toString() {
-        return "SearchResultBestDuration{" + "nodeDestination=" + nodeDestination + ", arrivalTime=" + arrivalTime + ", line=" + line + '}';
+        return "SearchResultBestDuration{" + "nodeDestination=" + nodeDestination + ", weight=" + weight + ", line=" + line + '}';
     }
 }

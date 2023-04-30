@@ -54,7 +54,8 @@ public class PathService {
             }
             case "FOOT" -> walk = true;
         }
-        List<DataSegment> result = this.metroMap.getSegmentsFromPath(startNode, endNode, time, metro, walk);
+        boolean bestTimePath = method.equalsIgnoreCase("TIME");
+        List<DataSegment> result = this.metroMap.getSegmentsFromPath(startNode, endNode, bestTimePath ? time: 0, metro, walk, bestTimePath);
         List<DataSegment> groupedDataSegments = this.groupWalkingDataSegments(result);
         return this.dataSegmentsToDijkstraPath(groupedDataSegments);
     }

@@ -148,21 +148,21 @@ public final class MetroMap {
      *
      * @param startNode node from which Dikjstra will be launched
      * @param endNode node where we are going.
-     * @param startTime time for launching the dijkstra.
+     * @param weight time/distance for launching the dijkstra.
      * @param metro if (true) include metro segments in the search.
      * @param walk if (true) include walk segments in the search.
      * @return the map of pairs of nodes (Node Child, Node Parent) which represent the path of most optimized.
      */
-    public Map<Node, SearchResultBestDuration> dijkstra(Node startNode, Node endNode, int startTime, boolean metro, boolean walk) {
+    public Map<Node, SearchResultBestWeight> dijkstra(Node startNode, Node endNode, int weight, boolean metro, boolean walk, boolean bestTimePath) {
         if (null == startNode) {
             throw new IllegalArgumentException("input should not be null");
         }
-        if (startTime < 0) {
-            throw new IllegalArgumentException("time has to be positive");
+        if (weight < 0) {
+            throw new IllegalArgumentException("weight has to be positive");
         }
 
         // ============ 0. Create returned structure ===================================================================
-        Map<Node, SearchResultBestDuration> path = new HashMap<Node, SearchResultBestDuration>();
+        Map<Node, SearchResultBestWeight> path = new HashMap<Node, SearchResultBestWeight>();
 
         // ============ 1. Set initial weight for all vertex = ꚙ ======================================================
         Set<Node> allNodes = getNodes();
@@ -178,7 +178,7 @@ public final class MetroMap {
         }
 
         // =========== 2. Create structure of vertex (let’s call it ‘parens’), which size = nb of vertex ===============
-        path.put(startNode, new SearchResultBestDuration(startNode, startTime, null)); // (node, parent)
+        path.put(startNode, new SearchResultBestWeight(startNode, weight, null)); // (node, parent)
 
         // =========== 3. Create and init structure of visited vertex ==================================================
         Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
@@ -186,21 +186,18 @@ public final class MetroMap {
             visited.put(node, false);
         });
 
-        // ================== 4. Prepare all for startStation ==========================================================
-        // Station startStation = getStationByName(startNode.getName());
-
-        // ============= 5. Create priorityQueue where will be stocked pairs (Station, time) ===========================
-        PriorityQueue<DjikstraInfo> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(DjikstraInfo::getWeight));
+        // ============= 4. Create priorityQueue where will be stocked pairs (Station, time) ===========================
+        PriorityQueue<DjikstraInfo> priorityQueue = new PriorityQueue<>(Comparator.comparingDouble(DjikstraInfo::getWeight));
 
         // ----------------- add start station -------------------------------------------------------------------------
-        priorityQueue.add(new DjikstraInfo(startNode, startTime));
+        priorityQueue.add(new DjikstraInfo(startNode, weight));
 
-        // ================= 6. Graph traversal ========================================================================
+        // ================= 5. Graph traversal ========================================================================
 
         while (!priorityQueue.isEmpty()) {
             DjikstraInfo current = priorityQueue.poll();
 
-            int currentTime = current.getWeight();
+            double currentWeight = current.getWeight();
             Node currentNode = current.getNode();
 
             visited.replace(currentNode, true);
@@ -244,13 +241,20 @@ public final class MetroMap {
 
             for (Segment neighbor : neighbors) {
                 // Time to wait for the next train
-                int minimalTime = neighbor instanceof SegmentMetro
-                        ? this.getNearestDepartureTime(currentTime, (Station) neighbor.getStartPoint(), ((SegmentMetro) neighbor).getLine())
-                        : currentTime;
-                if (minimalTime == -1) { // is SegmentMetro and no trains
+                double minimalWeight = 0;
+                if (bestTimePath) {
+                    minimalWeight = neighbor instanceof SegmentMetro
+                            ? this.getNearestDepartureTime((int) currentWeight, (Station) neighbor.getStartPoint(), ((SegmentMetro) neighbor).getLine())
+                            : currentWeight;
+
+                } else {
+                    minimalWeight = neighbor.getDistance();
+                }
+                if (minimalWeight == -1) { // is SegmentMetro and no trains
                     continue;
                 }
-                DjikstraInfo djToTest = new DjikstraInfo(neighbor.getEndPoint(), minimalTime + neighbor.getDuration());
+                double addingValue = bestTimePath ? neighbor.getDuration() : currentWeight;
+                DjikstraInfo djToTest = new DjikstraInfo(neighbor.getEndPoint(), minimalWeight + addingValue);
                 Optional<DjikstraInfo> djikstraInfo = priorityQueue.stream().filter((dj) -> dj.equals(djToTest)).findFirst();
                 if (djikstraInfo.isPresent()) {
                     int compareValue = djikstraInfo.get().compareTo(djToTest);
@@ -259,12 +263,12 @@ public final class MetroMap {
                         priorityQueue.remove(djikstraInfo.get());
                         priorityQueue.add(djikstraInfo.get());
                         path.replace(neighbor.getEndPoint(),
-                                new SearchResultBestDuration(currentNode, djToTest.getWeight(), getLineFromSegment(neighbor)));
+                                new SearchResultBestWeight(currentNode, djToTest.getWeight(), getLineFromSegment(neighbor)));
                     }
                 } else if (!visited.get(neighbor.getEndPoint())) {
                     priorityQueue.add(djToTest);
                     path.put(neighbor.getEndPoint(),
-                            new SearchResultBestDuration(currentNode, djToTest.getWeight(), getLineFromSegment(neighbor)));
+                            new SearchResultBestWeight(currentNode, djToTest.getWeight(), getLineFromSegment(neighbor)));
                 }
             }
         }
@@ -276,21 +280,21 @@ public final class MetroMap {
      *
      * @param startNode the start node
      * @param endNode   the end node
-     * @param startTime the start time
+     * @param startWeight the start time / distance
      * @param metro     if metro segments are allowed
      * @param walk      if walk segments are allowed
      * @return a list of segments data easy to use
      */
-    public List<DataSegment> getSegmentsFromPath(Node startNode, Node endNode, int startTime, boolean metro, boolean walk) {
-        Map<Node, SearchResultBestDuration> map = dijkstra(startNode, endNode, startTime, metro, walk);
+    public List<DataSegment> getSegmentsFromPath(Node startNode, Node endNode, int startWeight, boolean metro, boolean walk, boolean bestTimePath) {
+        Map<Node, SearchResultBestWeight> map = dijkstra(startNode, endNode, startWeight, metro, walk, bestTimePath);
 
         LinkedList<DataSegment> segments = new LinkedList<DataSegment>();
         Node current = endNode;
-        int departureTime = startTime;
+        double departureTime = startWeight;
 
         while (!current.equals(startNode) && map.get(current) != null) {
             Node next = map.get(current).getNodeDestination();
-            int arrivalTime = map.get(current).getArrivalTime();
+            double arrivalTime = map.get(current).getWeight();
             segments.addFirst(new DataSegment(next, current, arrivalTime, departureTime, map.get(current).getMetroLine(), 0));
             departureTime = arrivalTime;
             current = next;
@@ -509,39 +513,39 @@ public final class MetroMap {
     }
 
     /**
-     * @Summary Class which is used to simulate dijkstra nodes.
+     * Class which is used to simulate dijkstra nodes.
      */
-    // Djikstra classes.
+    // Dijkstra classes.
     private static class DjikstraInfo implements Comparable<DjikstraInfo> {
         private final Node node;
-        private int weight;
+        private double weight;
 
         /**
          * Constructs a new `DjikstraInfo` instance with the given node and weight.
          *
          * @param node the node represented by this instance
-         * @param weight the distance from the source node to this node
+         * @param weight the weight from the source node to this node
          */
-        public DjikstraInfo(Node node, int weight) {
+        public DjikstraInfo(Node node, double weight) {
             this.node = node;
             this.weight = weight;
         }
 
         /**
-         * Gets the distance from the source node to this node.
+         * Gets the weight from the source node to this node.
          *
-         * @return the distance from the source node to this node
+         * @return the weight from the source node to this node
          */
-        public int getWeight() {
+        public double getWeight() {
             return weight;
         }
 
         /**
-         * Sets the distance from the source node to this node.
+         * Sets the weight from the source node to this node.
          *
-         * @param weight the new distance from the source node to this node
+         * @param weight the new weight from the source node to this node
          */
-        public void setWeight(int weight) {
+        public void setWeight(double weight) {
             this.weight = weight;
         }
 
@@ -586,7 +590,7 @@ public final class MetroMap {
          */
         @Override
         public int compareTo(DjikstraInfo o) {
-            return Integer.compare(weight, o.weight);
+            return Double.compare(weight, o.weight);
         }
     }
 }
