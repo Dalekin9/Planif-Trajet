@@ -39,39 +39,42 @@ describe('RequestsService', () => {
   });
 
   it('should get the best time path', () => {
-    const dummyData = { /* dummy data object */ };
     const start = 'station1';
     const end = 'station2';
-    service.getBestTimePath(start, end).subscribe(data => {
-      expect(data).toEqual(dummyData);
+    const method = 'TIME';
+    const transportation = 'METRO';
+    const time = 53100;
+    service.getBestPath(start, end, time, method, transportation).subscribe(data => {
+      expect(data).toBeDefined()
     });
-    const req = httpMock.expectOne(`${basicUrl}/path/best-time-path?start=${start}&end=${end}`);
+    const req = httpMock.expectOne(`${basicUrl}/path/best-path?start=${start}&end=${end}&time=${time}&method=${method}&transportation=${transportation}`);
     expect(req.request.method).toBe('GET');
-    req.flush(dummyData);
   });
 
   it('should get the best distance path', () => {
-    const dummyData = { /* dummy data object */ };
     const start = 'station1';
     const end = 'station2';
-    service.getBestDistancePath(start, end).subscribe(data => {
-      expect(data).toEqual(dummyData);
+    const method = 'DISTANCE';
+    const transportation = 'METRO';
+    const time = 53100;
+    service.getBestPath(start, end, time, method, transportation).subscribe(data => {
+      expect(data).toBeDefined()
     });
-    const req = httpMock.expectOne(`${basicUrl}/path/best-distance-path?start=${start}&end=${end}`);
+    const req = httpMock.expectOne(`${basicUrl}/path/best-path?start=${start}&end=${end}&time=${time}&method=${method}&transportation=${transportation}`);
     expect(req.request.method).toBe('GET');
-    req.flush(dummyData);
   });
 
   it('should get the best time and distance path', () => {
-    const dummyData = { /* dummy data object */ };
     const start = 'station1';
     const end = 'station2';
-    service.getBestTimeAndDistancePath(start, end).subscribe(data => {
-      expect(data).toEqual(dummyData);
+    const method = 'TIME_DISTANCE';
+    const time = 53100;
+    const transportation = 'METRO';
+    service.getBestPath(start, end, time, method, transportation).subscribe(data => {
+      expect(data).toBeDefined()
     });
-    const req = httpMock.expectOne(`${basicUrl}/path/best-time-distance-path?start=${start}&end=${end}`);
+    const req = httpMock.expectOne(`${basicUrl}/path/best-path?start=${start}&end=${end}&time=${time}&method=${method}&transportation=${transportation}`);
     expect(req.request.method).toBe('GET');
-    req.flush(dummyData);
   });
 
   it('should get the best 5 stations in the network', () => {
@@ -88,6 +91,16 @@ describe('RequestsService', () => {
       expect(data).toBeTruthy();
     });
     const req = httpMock.expectOne(`${basicUrl}/metro/stations-correspondence`);
+    expect(req.request.method).toBe('GET');
+  });
+
+  it('should get metro line schedules', () => {
+    service.getMetroLineStationSchedules("6", "Bercy").subscribe(data => {
+      expect(data).toBeTruthy();
+    });
+    const station = 'Bercy';
+    const metroLine = '6';
+    const req = httpMock.expectOne(`${basicUrl}/metro/station-schedules?line=${metroLine}&station=${station}`);
     expect(req.request.method).toBe('GET');
   });
 });

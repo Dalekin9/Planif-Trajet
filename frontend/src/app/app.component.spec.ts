@@ -24,6 +24,8 @@ import {GetmesomewhereComponent} from "./getmesomewhere/getmesomewhere.component
 import {InfoComponent} from "./info/info.component";
 import {WiseMapComponent} from "./shared/wise-map/wise-map.component";
 import {CorrespondenceComponent} from "./correspondence/correspondence.component";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {DijkstraPathComponent} from "./shared/dijkstra-path/dijkstra-path.component";
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -47,7 +49,8 @@ describe('AppComponent', () => {
         MatSelectModule,
         MatOptionModule,
         MatButtonModule,
-        GoogleMapsModule
+        GoogleMapsModule,
+        MatAutocompleteModule
       ],
       declarations: [
         AppComponent,
@@ -56,7 +59,8 @@ describe('AppComponent', () => {
         GetmesomewhereComponent,
         InfoComponent,
         WiseMapComponent,
-        CorrespondenceComponent
+        CorrespondenceComponent,
+        DijkstraPathComponent
       ],
     }).compileComponents();
   });

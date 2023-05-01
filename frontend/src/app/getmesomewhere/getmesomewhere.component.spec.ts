@@ -19,6 +19,11 @@ import {MatOptionModule} from "@angular/material/core";
 import {MatButtonModule} from "@angular/material/button";
 import {GoogleMapsModule} from "@angular/google-maps";
 import {WiseMapComponent} from "../shared/wise-map/wise-map.component";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {DijkstraPathComponent} from "../shared/dijkstra-path/dijkstra-path.component";
+import {MatIconModule} from "@angular/material/icon";
+import * as moment from "moment";
+import {Observable, of} from "rxjs";
 
 describe('GetmesomewhereComponent', () => {
   let component: GetmesomewhereComponent;
@@ -45,11 +50,14 @@ describe('GetmesomewhereComponent', () => {
         MatSelectModule,
         MatOptionModule,
         MatButtonModule,
-        GoogleMapsModule
+        GoogleMapsModule,
+        MatAutocompleteModule,
+        MatIconModule
       ],
       declarations: [
         GetmesomewhereComponent,
-        WiseMapComponent
+        WiseMapComponent,
+        DijkstraPathComponent
       ]
     })
     .compileComponents();
@@ -194,6 +202,57 @@ describe('GetmesomewhereComponent', () => {
     expect(component.to).toBeUndefined();
   });
 
+  it ('should set from field using coordinates', () => {
+    component.onComeFrom('Bercy');
+    expect(component.from.value === 'Bercy').toBeTrue();
+  });
 
+  it ('should set to field using coordinates', () => {
+    component.onGoTo('Bercy');
+    expect(component.to.value === 'Bercy').toBeTrue();
+  });
+
+  it ('should set time value on close', () => {
+    component.onClose();
+    expect(component.timeToLeave.value).toBeTruthy();
+    const time = new Date(2023, 10, 19, 18, 15, 20);
+    component.timeToLeave.setValue(time);
+    component.onClose();
+    expect(time.getSeconds()).toBe(0);
+    component.timeToLeave.setValue(null);
+    component.onClose();
+  });
+
+  it ('should submit form', () => {
+    component.from.setValue('Bercy');
+    component.to.setValue('Gare du Nord');
+    expect(component.from.valid).toBeTrue();
+    const result = [
+      {
+        start: {
+          name: "Bercy",
+          longitude: 2.3791909087742877,
+          latitude: 48.84014763512746
+        },
+        end: {
+          name: "Gare de Lyon",
+          longitude: 2.372519782814122,
+          latitude: 48.8442498880687
+        },
+        weight: 73038,
+        metroLine: "14",
+        terminusStation: "Bercy"
+      }
+    ]
+    spyOn(component.requestService, 'getBestPath').and.returnValue(of([...result]));
+    component.onSubmit();
+  });
+
+  it ('should clear form', () => {
+    component.clear(new MouseEvent('click'));
+    expect(component.from.value.length).toBe(0);
+    expect(component.to.value.length).toBe(0);
+    expect(component.dijkstraPath.length).toBe(0);
+  });
 });
 

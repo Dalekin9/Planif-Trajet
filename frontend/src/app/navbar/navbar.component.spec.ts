@@ -18,6 +18,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatOptionModule} from "@angular/material/core";
 import {MatButtonModule} from "@angular/material/button";
 import {GoogleMapsModule} from "@angular/google-maps";
+import {MatIconModule} from "@angular/material/icon";
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -44,7 +45,8 @@ describe('NavbarComponent', () => {
         MatSelectModule,
         MatOptionModule,
         MatButtonModule,
-        GoogleMapsModule
+        GoogleMapsModule,
+        MatIconModule
       ],
       declarations: [ NavbarComponent ]
     })
