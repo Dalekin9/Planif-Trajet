@@ -20,8 +20,6 @@ import com.planifcarbon.backend.dtos.SegmentMetroDTO;
  */
 public class Parser {
 
-    private Parser(){} // hide default constructor
-
     private static final Set<NodeDTO> stations = new HashSet<>();
     private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<>();
     private static final Map<String, String> metroLines = new HashMap<>();
