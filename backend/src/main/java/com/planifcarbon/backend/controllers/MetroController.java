@@ -62,7 +62,7 @@ public class MetroController {
      */
     @GetMapping("/best-stations")
     public ResponseEntity<List<StationCorrespondence>> getBestStations() {
-        logger.info("Request to get best stations in the network ");
+        logger.info("Request to get best stations in the network");
         return ResponseEntity.ok(metroService.getBestStations());
     }
 
@@ -73,7 +73,7 @@ public class MetroController {
      */
     @GetMapping("/stations-correspondence")
     public ResponseEntity<List<StationCorrespondence>> getAllStationsCorrespondences() {
-        logger.info("Request to get best stations in the network ");
+        logger.info("Request to get stations correspondences in the network");
         return ResponseEntity.ok(metroService.getAllStationsCorrespondence());
     }
 

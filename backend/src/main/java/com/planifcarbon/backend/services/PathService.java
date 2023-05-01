@@ -1,13 +1,16 @@
 package com.planifcarbon.backend.services;
 
-import com.planifcarbon.backend.dtos.DjikstraSearchResultDTO;
-import com.planifcarbon.backend.dtos.NodeDTO;
-import com.planifcarbon.backend.model.*;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import com.planifcarbon.backend.dtos.DjikstraSearchResultDTO;
+import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.model.DataSegment;
+import com.planifcarbon.backend.model.MetroMap;
+import com.planifcarbon.backend.model.Node;
+import com.planifcarbon.backend.model.PersonalizedNode;
+import com.planifcarbon.backend.model.Station;
 
 /**
  * {@summary Service used by the controller to communicate with the view.}
@@ -53,6 +56,10 @@ public class PathService {
                 walk = true;
             }
             case "FOOT" -> walk = true;
+            default -> {
+                metro = true;
+                walk = true;
+            }
         }
         boolean bestTimePath = method.equalsIgnoreCase("TIME");
         List<DataSegment> result = this.metroMap.getSegmentsFromPath(startNode, endNode, bestTimePath ? time: 0, metro, walk, bestTimePath);
@@ -67,7 +74,7 @@ public class PathService {
      * @return list of data segments where walking segments are grouped.
      */
     private List<DataSegment> groupWalkingDataSegments(List<DataSegment> dataSegments) {
-        List<DataSegment> result = new ArrayList<DataSegment>();
+        List<DataSegment> result = new ArrayList<>();
         DataSegment previous = null;
         for (DataSegment dataSegment : dataSegments) {
             if (dataSegment.getLine() == null) {

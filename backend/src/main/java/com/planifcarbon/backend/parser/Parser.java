@@ -11,18 +11,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 
 /**
  * {Its static methods are used to parse CSV files}
  */
 public class Parser {
 
-    private static final Set<NodeDTO> stations = new HashSet<NodeDTO>();
-    private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<SegmentMetroDTO>();
-    private static final Map<String, String> metroLines = new HashMap<String, String>();
-    private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<String, List<Integer>>();
+    private Parser(){} // hide default constructor
+
+    private static final Set<NodeDTO> stations = new HashSet<>();
+    private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<>();
+    private static final Map<String, String> metroLines = new HashMap<>();
+    private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<>();
 
     /**
      * {Parse all CSV file.}

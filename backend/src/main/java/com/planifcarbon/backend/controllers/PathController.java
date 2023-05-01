@@ -1,7 +1,6 @@
 package com.planifcarbon.backend.controllers;
 
 import com.planifcarbon.backend.dtos.DjikstraSearchResultDTO;
-import com.planifcarbon.backend.dtos.DummyDTO;
 import com.planifcarbon.backend.services.PathService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * he controller used to calculate the paths using time and/or distance.
+ * The controller used to calculate the paths using time and/or distance.
  */
 @RestController
 @RequestMapping("/api/path")

@@ -1,13 +1,22 @@
 package com.planifcarbon.backend.services;
 
-import com.planifcarbon.backend.dtos.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import com.planifcarbon.backend.dtos.MetroDTO;
+import com.planifcarbon.backend.dtos.MetroLineStationSchedulesDTO;
+import com.planifcarbon.backend.dtos.MetroScheduleDTO;
+import com.planifcarbon.backend.dtos.NodeDTO;
+import com.planifcarbon.backend.dtos.StationCorrespondence;
 import com.planifcarbon.backend.model.MetroLine;
 import com.planifcarbon.backend.model.MetroMap;
 import com.planifcarbon.backend.model.Station;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * {Service used by the controller to communicate with the view.}

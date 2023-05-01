@@ -1,6 +1,9 @@
 package com.planifcarbon.backend.model;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * {@summary Represents a metro line.}
@@ -95,9 +98,5 @@ public final class MetroLine {
      * @return a string representation of this MetroLine object
      */
     @Override
-    public String toString() {
-        return "MetroLine{" +
-                "id='" + name + '\'' +
-                '}';
-    }
+    public String toString() { return "MetroLine{" + "id='" + name + '\'' + '}'; }
 }

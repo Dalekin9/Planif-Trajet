@@ -1,16 +1,25 @@
 package com.planifcarbon.backend.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 import com.planifcarbon.backend.dtos.NodeDTO;
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 import com.planifcarbon.backend.parser.Parser;
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Component;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * {Represents the metro map.}
@@ -105,7 +114,7 @@ public final class MetroMap {
      * @return set of metro segments for the node.
      */
     public Set<Segment> getSegmentsMetro(Node node) {
-        return graph.get(node).stream().filter(segment -> segment instanceof SegmentMetro).collect(Collectors.toSet());
+        return graph.get(node).stream().filter(SegmentMetro.class::isInstance).collect(Collectors.toSet());
     }
 
     /**
@@ -163,13 +172,13 @@ public final class MetroMap {
         }
 
         // ============ 0. Create returned structure ===================================================================
-        Map<Node, SearchResultBestWeight> path = new HashMap<Node, SearchResultBestWeight>();
+        Map<Node, SearchResultBestWeight> path = new HashMap<>();
 
         // ============ 1. Set initial weight for all vertex = ꚙ ======================================================
         Set<Node> allNodes = getNodes();
         // Add start and end nodes if they are personalized
         if (startNode instanceof PersonalizedNode || endNode instanceof PersonalizedNode) {
-            allNodes = new HashSet<Node>(allNodes); // make set mutable
+            allNodes = new HashSet<>(allNodes); // make set mutable
         }
         if (startNode instanceof PersonalizedNode && !allNodes.contains(startNode)) {
             allNodes.add(startNode);
@@ -182,7 +191,7 @@ public final class MetroMap {
         path.put(startNode, new SearchResultBestWeight(startNode, weight, null)); // (node, parent)
 
         // =========== 3. Create and init structure of visited vertex ==================================================
-        Map<Node, Boolean> visited = new HashMap<Node, Boolean>();
+        Map<Node, Boolean> visited = new HashMap<>();
         allNodes.forEach(node -> {
             visited.put(node, false);
         });
@@ -209,21 +218,21 @@ public final class MetroMap {
 
             Set<Segment> neighbors;
             if (startNode.equals(currentNode) && startNode instanceof PersonalizedNode) {
-                neighbors = new HashSet<Segment>();
+                neighbors = new HashSet<>();
                 for (Node node : allNodes) {
                     if (!node.equals(startNode)) {
                         neighbors.add(new SegmentWalk(startNode, node));
                     }
                 }
             } else if (endNode.equals(currentNode) && endNode instanceof PersonalizedNode) {
-                neighbors = new HashSet<Segment>();
+                neighbors = new HashSet<>();
                 for (Node node : allNodes) {
                     if (!node.equals(endNode)) {
                         neighbors.add(new SegmentWalk(endNode, node));
                     }
                 }
             } else {
-                neighbors = new HashSet<Segment>(this.getSegments(currentNode)); // copy of set
+                neighbors = new HashSet<>(this.getSegments(currentNode)); // copy of set
             }
             // Add personalized nodes segments if start and end node is personalized
             if (startNode instanceof PersonalizedNode && !startNode.equals(currentNode)) {
@@ -290,7 +299,7 @@ public final class MetroMap {
     public List<DataSegment> getSegmentsFromPath(Node startNode, Node endNode, int startWeight, boolean metro, boolean walk, boolean bestTimePath) {
         Map<Node, SearchResultBestWeight> map = dijkstra(startNode, endNode, startWeight, metro, walk, bestTimePath);
 
-        LinkedList<DataSegment> segments = new LinkedList<DataSegment>();
+        LinkedList<DataSegment> segments = new LinkedList<>();
         Node current = endNode;
         double departureTime = startWeight;
 
@@ -343,7 +352,7 @@ public final class MetroMap {
         });
         Set<SegmentMetroDTO> segmentMetroDTOS = Parser.getSegmentMetro();
         Map<String, List<Integer>> schedules = Parser.getMetroLineSchedules();
-        Map<String, Set<Station>> metroLines = new HashMap<String, Set<Station>>();
+        Map<String, Set<Station>> metroLines = new HashMap<>();
 
         // use values from parser to build this
         addSegmentMetroToLinesAndGraph(segmentMetroDTOS, metroLines);
@@ -367,7 +376,7 @@ public final class MetroMap {
                 metroLines.get(segment.getLine()).add(start);
                 metroLines.get(segment.getLine()).add(end);
             } else {
-                Set<Station> set = new HashSet<Station>();
+                Set<Station> set = new HashSet<>();
                 set.add(start);
                 set.add(end);
                 metroLines.put(segment.getLine(), set);
@@ -409,7 +418,7 @@ public final class MetroMap {
                 terminusStation.addSchedule(scheduleKey, 0);
                 do {
                     segment = this.getSegments(node).stream()
-                            .filter((sgt) -> sgt.getClass().equals(SegmentMetro.class) && ((SegmentMetro) sgt).getLine().equals(key))
+                            .filter(sgt -> sgt.getClass().equals(SegmentMetro.class) && ((SegmentMetro) sgt).getLine().equals(key))
                             .findFirst().orElse(null);
                     if (segment != null) {
                         terminusStation = (Station) segment.getEndPoint();
@@ -423,7 +432,7 @@ public final class MetroMap {
     }
 
     /**
-     * Calculate graph with walk segments
+     * Create walk segments &#38; add it to the graph.
      *
      * @param stations all metro stations in the given network.
      */
@@ -470,7 +479,7 @@ public final class MetroMap {
         if (graph.containsKey(segment.getStartPoint())) {
             graph.get(segment.getStartPoint()).add(segment);
         } else {
-            Set<Segment> set = new HashSet<Segment>();
+            Set<Segment> set = new HashSet<>();
             set.add(segment);
             graph.put(segment.getStartPoint(), set);
         }

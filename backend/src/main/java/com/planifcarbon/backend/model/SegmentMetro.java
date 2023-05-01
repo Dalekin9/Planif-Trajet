@@ -62,7 +62,7 @@ public final class SegmentMetro extends Segment {
          if (o == null || getClass() != o.getClass()) return false;
          if (!super.equals(o)) return false;
          SegmentMetro that = (SegmentMetro) o;
-         return super.equals(that) && Objects.equals(line, that.line);
+         return Objects.equals(line, that.line);
     }
 
     /**
