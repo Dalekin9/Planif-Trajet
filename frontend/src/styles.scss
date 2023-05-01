@@ -34,11 +34,11 @@ h1, h2, h3, h4, h5, h6, p {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    gap: 16px;
 
     > button {
       width: 128px;
       font-size: 16px;
-      font-weight: bold;
     }
   }
 }

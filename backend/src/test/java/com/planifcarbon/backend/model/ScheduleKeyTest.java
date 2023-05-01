@@ -12,12 +12,22 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This class tests the creation and equality of ScheduleKey objects.
+ */
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.MOCK,
         classes = Parser.class)
 @TestPropertySource(
         locations = "classpath:application-tests.properties")
 class ScheduleKeyTest {
+
+    /**
+     * Tests the creation of a ScheduleKey object.
+     *
+     * @param nameStation the name of the station
+     * @param nameMetro the name of the metro line
+     */
     @ParameterizedTest
     @CsvSource({"nameStation, nameMetro"})
     public void testScheduleKeyCreation(String nameStation, String nameMetro) {
@@ -31,6 +41,14 @@ class ScheduleKeyTest {
         assertNotNull(key.getTerminusStation());
     }
 
+    /**
+     * Tests the equality of two ScheduleKey objects.
+     *
+     * @param n1 the name of the first station
+     * @param m1 the name of the first metro line
+     * @param n2 the name of the second station
+     * @param m2 the name of the second metro line
+     */
     @ParameterizedTest
     @CsvSource({"nameStation, nameMetro, nameStation, nameMetro"})
     public void testScheduleKeyEquity(String n1, String m1, String n2, String m2) {
@@ -47,6 +65,14 @@ class ScheduleKeyTest {
         assertEquals(key1, key2);
     }
 
+    /**
+     * Tests the inequality of two ScheduleKey objects.
+     *
+     * @param n1 the name of the first station
+     * @param m1 the name of the first metro line
+     * @param n2 the name of the second station
+     * @param m2 the name of the second metro line
+     */
     @ParameterizedTest
     @CsvSource({"nameStation, nameMetro1, nameStation, nameMetro2"})
     public void testScheduleKeyNotEquity(String n1, String m1, String n2, String m2) {

@@ -9,10 +9,16 @@
               [position]="stationMarker.marker.getPosition()"
               (mapRightclick)="deleteMarker(marker.marker)"
               (mapClick)="openInfoWindow(marker)"></map-marker>
+  <map-polyline *ngFor="let polyline of polyLines" [path]="polyline.vertices" [options]="{strokeColor: polyline.color, strokeWeight: 5}"></map-polyline>
   <map-info-window class="marker-info">
     <h4>{{selectedMarker?.marker.getTitle()}}</h4>
     <div class="metro-lines" *ngIf="!!selectedMarker?.station">
       <img [src]="'assets/images/metro/' + line + '.png'" *ngFor="let line of selectedMarker.station.metroLines" alt="Metro Image"/>
     </div>
+    <div>
+      <button mat-stroked-button class="button" (click)="comeFrom()">Come from</button>
+      <button mat-stroked-button class="button" (click)="goTo()">Go to</button>
+    </div>
+
   </map-info-window>
 </google-map>

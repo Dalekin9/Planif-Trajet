@@ -1,47 +1,60 @@
-<form class="form" [formGroup]="metroForm" (ngSubmit)="onSubmit()">
-  <div class="field-wrapper">
-    <mat-form-field appearance="fill">
-      <mat-label>From</mat-label>
-      <input matInput [formControl]="from" required>
-    </mat-form-field>
-  </div>
-  <div class="field-wrapper">
-    <mat-form-field appearance="fill">
-      <mat-label>To</mat-label>
-      <input matInput [formControl]="to" required>
-    </mat-form-field>
-  </div>
-  <div class="row-fields">
-    <mat-form-field class="datetime">
-      <input matInput [ngxMatDatetimePicker]="$any(picker)" placeholder="Choose a date" [formControl]="timeToLeave" required>
-      <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
-      <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false"
-                               [stepHour]="1" [stepMinute]="1" [stepSecond]="1"
-                               [enableMeridian]="false">
-      </ngx-mat-datetime-picker>
-    </mat-form-field>
-    <mat-form-field class="options">
-      <mat-label>Method</mat-label>
-      <mat-select [formControl]="options" required>
-        <mat-option value="time">Best time path</mat-option>
-        <mat-option value="distance">Best distance path</mat-option>
-        <mat-option value="time-and-distance">Best time and distance path</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div class="field-wrapper">
-    <mat-form-field>
-      <mat-label>Transportation</mat-label>
-      <mat-select [formControl]="transportation" required>
-        <mat-option value="metro">By metro</mat-option>
-        <mat-option value="metro-foot">By metro and foot</mat-option>
-        <mat-option value="walk">By foot</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div class="form-actions">
-    <button mat-flat-button color="primary" type="submit">GO</button>
-  </div>
-</form>
-<app-wise-map>
-</app-wise-map>
+<div class="header-section">
+  <form class="form" [formGroup]="metroForm" (ngSubmit)="onSubmit()">
+    <div class="field-wrapper">
+      <mat-form-field appearance="fill">
+        <mat-label>From</mat-label>
+        <input matInput [formControl]="from" required [matAutocomplete]="autoFrom">
+      </mat-form-field>
+    </div>
+    <div class="field-wrapper">
+      <mat-form-field appearance="fill">
+        <mat-label>To</mat-label>
+        <input matInput [formControl]="to" required [matAutocomplete]="autoTo">
+      </mat-form-field>
+    </div>
+    <mat-autocomplete #autoFrom="matAutocomplete">
+      <mat-option *ngFor="let station of filteredStationsFrom" [value]="station.name">
+        {{station.name}}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-autocomplete #autoTo="matAutocomplete">
+      <mat-option *ngFor="let station of filteredStationsTo" [value]="station.name">
+        {{station.name}}
+      </mat-option>
+    </mat-autocomplete>
+    <div class="row-fields">
+      <mat-form-field class="datetime">
+        <input matInput [ngxMatDatetimePicker]="$any(picker)" placeholder="Choose a date" [formControl]="timeToLeave" required>
+        <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" (closed)="onClose()"
+                                 [stepHour]="1" [stepMinute]="1" [stepSecond]="0"
+                                 [enableMeridian]="true">
+        </ngx-mat-datetime-picker>
+      </mat-form-field>
+      <mat-form-field class="options">
+        <mat-label>Method</mat-label>
+        <mat-select [formControl]="options" required>
+          <mat-option value="TIME">Best time path</mat-option>
+          <mat-option value="DISTANCE">Best distance path</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="field-wrapper">
+      <mat-form-field>
+        <mat-label>Transportation</mat-label>
+        <mat-select [formControl]="transportation" required>
+          <mat-option value="METRO">By metro</mat-option>
+          <mat-option value="METRO_FOOT">By metro and foot</mat-option>
+          <mat-option value="FOOT">By foot</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit">GO</button>
+      <button mat-stroked-button color="primary" type="button" (click)="clear($event)">Clear</button>
+    </div>
+  </form>
+  <app-wise-map (onComeFrom)="onComeFrom($event)" (onGoTo)="onGoTo($event)" [path]="dijkstraPath">
+  </app-wise-map>
+</div>
+<app-dijkstra-path [path]="dijkstraPath" [startingTime]="timeToLeave.value.toLocaleTimeString()" [bestTimePath]="options.value === 'TIME'"></app-dijkstra-path>

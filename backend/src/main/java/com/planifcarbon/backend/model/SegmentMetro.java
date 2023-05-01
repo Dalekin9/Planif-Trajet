@@ -11,7 +11,7 @@ public final class SegmentMetro extends Segment {
     private final String line;
 
     /**
-     * {@summay Main constructor.}
+     * {Main constructor.}
      *
      * @param node1    first point of segment
      * @param node2    second point of segment
@@ -27,7 +27,7 @@ public final class SegmentMetro extends Segment {
     }
 
     /**
-     * {@summary Gets name of metro line.}
+     * {Gets name of metro line.}
      * 
      * @return the line
      */
@@ -35,7 +35,9 @@ public final class SegmentMetro extends Segment {
 
 
     /**
-     * {@return A string representation of SegmentMetro.}
+     * Returns a string representation of the SegmentMetro object.
+     *
+     * @return a string representation of the SegmentMetro object
      */
     @Override
     public String toString() {
@@ -48,17 +50,26 @@ public final class SegmentMetro extends Segment {
                 '}';
     }
 
-
+    /**
+     * Checks whether this SegmentMetro object is equal to another object.
+     *
+     * @param o the object to compare this SegmentMetro object against
+     * @return true if the objects are equal, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
-        // if (this == o) return true;
-        // if (o == null || getClass() != o.getClass()) return false;
-        // if (!super.equals(o)) return false;
-        // SegmentMetro that = (SegmentMetro) o;
-        // return super.equals(that) && Objects.equals(line, that.line);
-        return super.equals(o) && Objects.equals(line, ((SegmentMetro) o).line);
+         if (this == o) return true;
+         if (o == null || getClass() != o.getClass()) return false;
+         if (!super.equals(o)) return false;
+         SegmentMetro that = (SegmentMetro) o;
+         return Objects.equals(line, that.line);
     }
 
+    /**
+     * Returns the hash code value for this SegmentMetro object.
+     *
+     * @return the hash code value for this SegmentMetro object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), line);

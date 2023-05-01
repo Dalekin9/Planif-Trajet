@@ -1,9 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {IMetro} from "../types/dtos";
+import {IMetro, IMetroLineStationSchedules, INode} from "../types/dtos";
 import {RequestsService} from "../requests.service";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
+import * as moment from "moment";
 
 @Component({
   selector: 'app-info',
@@ -15,6 +16,7 @@ export class InfoComponent implements OnInit, OnDestroy {
   private _metro: IMetro;
   public metroForm: FormGroup;
   public metros: IMetro[];
+  public selectedStationSchedules: IMetroLineStationSchedules;
 
   constructor(
     public service: RequestsService
@@ -51,6 +53,7 @@ export class InfoComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.unsubscribe))
         .subscribe((metro: IMetro) => {
           this._metro = metro;
+          this.selectedStationSchedules = null;
         });
     }
   }
@@ -63,5 +66,26 @@ export class InfoComponent implements OnInit, OnDestroy {
 
   public get metro(): IMetro {
     return this._metro;
+  }
+
+  public set metro(metro: IMetro) {
+    this._metro = metro;
+  }
+
+  public getSchedules(station: INode): void {
+    this.service.getMetroLineStationSchedules(this._metro.name, station.name)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((result) => {
+        this.selectedStationSchedules = result;
+      });
+  }
+
+  public getTimeForNode(seconds: number): string {
+    const midnight = moment()
+    midnight.seconds(0);
+    midnight.hour(0);
+    midnight.minutes(0);
+    midnight.add(seconds, 'seconds');
+    return midnight.format('hh:mm:ss A');
   }
 }

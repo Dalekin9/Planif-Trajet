@@ -29,8 +29,8 @@
       </div>
       <div class="info-row" *ngFor="let schedule of metro.schedules">
         <h4 class="title">{{schedule.terminus}}</h4>
-        <h4 class="title">{{numberToSchedule(schedule.schedules[0])}}</h4>
-        <h4 class="title">{{numberToSchedule(schedule.schedules[schedule.schedules.length - 1])}}</h4>
+        <h4 class="title">{{!!schedule.schedules?.length ? numberToSchedule(schedule.schedules[0]) : 'Out of Service'}}</h4>
+        <h4 class="title">{{!!schedule.schedules?.length ? numberToSchedule(schedule.schedules[schedule.schedules.length - 1]): 'Out of Service'}}</h4>
       </div>
     </div>
   </div>
@@ -39,7 +39,17 @@
   <div class="metro-stations-section">
     <h1>Stations</h1>
     <ul class="stations">
-      <li *ngFor="let station of metro.stations">{{station.name}}</li>
+      <li *ngFor="let station of metro.stations" (click)="getSchedules(station)">{{station.name}}</li>
     </ul>
+  </div>
+</div>
+<div *ngIf="!!selectedStationSchedules" class="station-schedules">
+  <h4>{{selectedStationSchedules.station}}</h4>
+  <ul class="schedules" *ngIf="!!selectedStationSchedules.schedules?.length">
+    <li *ngFor="let schedule of selectedStationSchedules.schedules">{{getTimeForNode(schedule)}}</li>
+  </ul>
+  <div *ngIf="!selectedStationSchedules.schedules?.length" class="empty-schedules">
+    <mat-icon>cloud_off</mat-icon>
+    <p>No schedule for given station in this line</p>
   </div>
 </div>

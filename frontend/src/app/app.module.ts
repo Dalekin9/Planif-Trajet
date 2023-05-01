@@ -24,6 +24,10 @@ import { InfoComponent } from './info/info.component';
 import {GoogleMapsModule} from "@angular/google-maps";
 import { WiseMapComponent } from './shared/wise-map/wise-map.component';
 import { CorrespondenceComponent } from './correspondence/correspondence.component';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import { DijkstraPathComponent } from './shared/dijkstra-path/dijkstra-path.component';
+import {MglTimelineModule} from "angular-mgl-timeline";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -33,29 +37,33 @@ import { CorrespondenceComponent } from './correspondence/correspondence.compone
     GetmesomewhereComponent,
     InfoComponent,
     WiseMapComponent,
-    CorrespondenceComponent
+    CorrespondenceComponent,
+    DijkstraPathComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatDividerModule,
-    MatTabsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    NgxMatDatetimePickerModule,
-    NgxMatTimepickerModule,
-    MatDatepickerModule,
-    NgxMatNativeDateModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatButtonModule,
-    GoogleMapsModule
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatDividerModule,
+        MatTabsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        MatDatepickerModule,
+        NgxMatNativeDateModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatButtonModule,
+        GoogleMapsModule,
+        MatAutocompleteModule,
+        MglTimelineModule,
+        MatIconModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,5 @@
 package com.planifcarbon.backend.parser;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,54 +11,65 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import org.springframework.util.ResourceUtils;
+import com.planifcarbon.backend.dtos.NodeDTO;
 import com.planifcarbon.backend.dtos.SegmentMetroDTO;
-import com.planifcarbon.backend.dtos.StationDTO;
 
 /**
- * {@summary Its static methods are used to parse CSV files}
+ * {Its static methods are used to parse CSV files}
+ * It is respecting singleton pattern.
  */
 public class Parser {
 
-    private static final Set<StationDTO> stations = new HashSet<StationDTO>();
-    private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<SegmentMetroDTO>();
-    private static final Map<String, String> metroLines = new HashMap<String, String>();
-    private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<String, List<Integer>>();
+    private static final Set<NodeDTO> stations = new HashSet<>();
+    private static final Set<SegmentMetroDTO> segmentMetro = new HashSet<>();
+    private static final Map<String, String> metroLines = new HashMap<>();
+    private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<>();
+
+    public static final Parser instance = new Parser();
+
+    private Parser() {}
 
     /**
-     * {@summary Parse all CSV file.}
-     * 
-     * @throws FileNotFoundException
-     * @throws IOException
+     * {Parse all CSV file.}
+     *
+     * @param metroFile file representing the metro network.
+     * @param scheduleFile file representing the metro schedules.
+     * @throws FileNotFoundException thrown when provided file not found.
+     * @throws IOException thrown when an error occurred when opening file.
      */
-    public static void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
+    public void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
         Parser.calculateStationsAndSegments(metroFile);
         Parser.calculateSchedules(scheduleFile);
     }
 
     // private ----------------------------------------------------------------
 
-    /** Tool function to split a String */
+    /**
+     * Tool function to split a String
+     *
+     * @param reg the regular expression to split the String
+     * @param line the line to split
+     * @return the String array after split
+     */
     static String[] splitString(String reg, String line) { return line.split(reg); }
 
-    /** Tool function used to parse time from hh:mm:ss.ms to ms */
-    // TODO rename to make it more different from timeStringToInt
+    /**
+     * Tool function used to parse time from hh:mm:ss.ms to ms
+     *
+     * @param str the String representation of time in format hh:mm:ss.ms
+     * @return the time in milliseconds
+     */
     static int durationStringToInt(String str) {
-        String[] duration = splitString(":", str);
-        int hours, minutes, seconds;
-        if (duration.length == 3) {
-            hours = Integer.parseInt(duration[0]);
-            minutes = Integer.parseInt(duration[1]);
-            seconds = Integer.parseInt(duration[2]);
-        } else {
-            hours = 0;
-            minutes = Integer.parseInt(duration[0]);
-            seconds = Integer.parseInt(duration[1]);
-        }
-        return hours * 60 * 60 + minutes * 60 + seconds; // TODO s -> ms ?
+        double seconds = Double.parseDouble(str.replace(':', '.')) * 10;
+        return (int) Math.ceil(seconds);
     }
-    /** Tool function used to parse time from hh:mm to ms */
-    // TODO rename to make it more different from durationStringToInt
+
+    /**
+     * Tool function used to parse time from hh:mm to ms
+     *
+     * @param str the String representation of time in format hh:mm
+     * @return the time in milliseconds
+     */
     static int timeStringToInt(String str) {
         String[] time = splitString(":", str);
         int hours = Integer.parseInt(time[0]);
@@ -68,34 +78,34 @@ public class Parser {
         hours = hours * 60 * 60; // hours to seconds
         minutes = minutes * 60;
 
-        return hours + minutes; // TODO s -> ms ?
+        return hours + minutes;
     }
 
     /**
-     * {@summary Parse station &#38; segment data from a CSV file.}
+     * {Parse station &#38; segment data from a CSV file.}
      * 
      * @param filePath the path of the CSV file
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException thrown when file is not found.
+     * @throws IOException thrown when an error occurred when opening file.
      */
     static void calculateStationsAndSegments(String filePath) throws FileNotFoundException, IOException {
         // try with safe close.
-        try (InputStream ins = new FileInputStream(ResourceUtils.getFile(filePath));
+        try (InputStream ins = Parser.class.getClassLoader().getResourceAsStream(filePath);
                 Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             String[] coords;
-            StationDTO start;
-            StationDTO end;
+            NodeDTO start;
+            NodeDTO end;
             while (scan.hasNextLine()) {
                 currentLine = splitString(";", scan.nextLine());
                 // Each line contains 7 elements : name1, coords1, name2, coords2, line, time, dist
                 coords = splitString(",", currentLine[1]);
-                start = new StationDTO(currentLine[0], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                start = new NodeDTO(currentLine[0], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 coords = splitString(",", currentLine[3]);
-                end = new StationDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                end = new NodeDTO(currentLine[2], Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 stations.add(start);
                 stations.add(end);
-                segmentMetro.add(new SegmentMetroDTO(start, end, durationStringToInt(currentLine[5]), Double.parseDouble(currentLine[6]),
+                segmentMetro.add(new SegmentMetroDTO(start, end, durationStringToInt(currentLine[5]), Double.parseDouble(currentLine[6]) / 10,
                         currentLine[4]));
                 metroLines.putIfAbsent(currentLine[4], currentLine[0]);
             }
@@ -103,15 +113,15 @@ public class Parser {
     }
 
     /**
-     * {@summary Parse station &#38; segment data from a CSV file.}
+     * {Parse station &#38; segment data from a CSV file.}
      * 
      * @param scheduleFile the path of the CSV file
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException thrown when provided file not found.
+     * @throws IOException thrown when an error occurred when opening file.
      */
     static void calculateSchedules(String scheduleFile) throws FileNotFoundException, IOException {
         // try with safe close.
-        try (InputStream ins = new FileInputStream(ResourceUtils.getFile(scheduleFile));
+        try (InputStream ins = Parser.class.getClassLoader().getResourceAsStream(scheduleFile);
                 Scanner scan = new Scanner(ins, StandardCharsets.UTF_8)) {
             String[] currentLine;
             String variantKey;
@@ -130,11 +140,34 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns a map of all metro lines, with keys representing the name of the line
+     * and values representing the color of the line.
+     *
+     * @return a map of all metro lines
+     */
     public static Map<String, String> getMetroLines() { return metroLines; }
 
+    /**
+     * Returns a map of all metro line schedules, with keys representing the name of the line
+     * and values representing a list of integer values, each integer value representing the
+     * duration in seconds between each stop along the line.
+     *
+     * @return a map of all metro line schedules
+     */
     public static Map<String, List<Integer>> getMetroLineSchedules() { return metroLineSchedules; }
 
+    /**
+     * Returns a set of all metro segments, with each segment represented as a SegmentMetroDTO object.
+     *
+     * @return a set of all metro segments
+     */
     public static Set<SegmentMetroDTO> getSegmentMetro() { return segmentMetro; }
 
-    public static Set<StationDTO> getStations() { return stations; }
+    /**
+     * Returns a set of all metro stations, with each station represented as a NodeDTO object.
+     *
+     * @return a set of all metro stations
+     */
+    public static Set<NodeDTO> getStations() { return stations; }
 }
