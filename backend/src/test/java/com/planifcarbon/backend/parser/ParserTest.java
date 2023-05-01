@@ -72,7 +72,7 @@ public class ParserTest extends Assertions {
      */
     @Test
     public void testParseException() {
-        assertThrows(NullPointerException.class, () -> Parser.parse("notAFile1", "notAFile2"));
+        assertThrows(NullPointerException.class, () -> Parser.instance.parse("notAFile1", "notAFile2"));
     }
 
     /**

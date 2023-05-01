@@ -257,23 +257,6 @@ public class MetroMapTest {
     }
 
     /**
-     * Tests the retrieval of a ScheduleKey object by its name.
-     *
-     * @param name the name of the ScheduleKey object to retrieve
-     */
-    @ParameterizedTest
-    @ValueSource(strings = {"Gare d'Austerlitz"})
-    public void testgetScheduleKeyByName(String name) {
-        MetroMap map = new MetroMap();
-        assertDoesNotThrow(map::initializeFields);
-        assertNotNull(map.getScheduleKeyByName(name));
-        ScheduleKey station = map.getScheduleKeyByName(name);
-        assertNotNull(station.getTerminusStation());
-        assertNotNull(station.getMetroLine());
-    }
-
-
-    /**
      * Tests the getSegmentsFromPath method of the MetroMap class.
      *
      * @param timeStart the starting time for the path
