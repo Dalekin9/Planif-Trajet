@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to exclude classes and methods from code coverage with jacoco.
+ * Used to exclude classes and methods from code coverage with Jacoco.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD,ElementType.TYPE})

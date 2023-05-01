@@ -3,7 +3,7 @@ package com.planifcarbon.backend.model;
 import java.util.Objects;
 
 /**
- * Tuple of station and metro line.
+ * Tuple of station and metro line that uniquely identifies a schedule.
  */
 public class ScheduleKey {
     private final Station terminusStation;

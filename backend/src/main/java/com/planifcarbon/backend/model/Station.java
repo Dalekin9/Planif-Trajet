@@ -2,8 +2,6 @@ package com.planifcarbon.backend.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.LinkedList;
 
 /**
  * {Represents a metro station.}
@@ -21,7 +19,7 @@ public final class Station extends Node {
      */
     public Station(final String name, final double latitude, final double longitude) {
         super(name, latitude, longitude);
-        this.schedules = new HashMap<ScheduleKey, Integer>();
+        this.schedules = new HashMap<>();
     }
 
     /**

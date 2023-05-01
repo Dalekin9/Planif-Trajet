@@ -7,17 +7,16 @@ public final class SegmentWalk extends Segment {
 
     /*
      * Reference Information: Average walking speed by age:
-     * 20-29 years: 3.00 mph (4.83 km/h)
-     * 30-39 years: 2.82 mph (4.54 km/h)
-     * 40-49 years: 2.82 mph (4.54 km/h)
-     * 50-59 years: 2.75 mph (4.43 km/h)
-     * > 60 years: 2.71 mph (4.36 km/h)
+     * 20-29 years: 4.83 km/h
+     * 30-39 years: 4.54 km/h
+     * 40-49 years: 4.54 km/h
+     * 50-59 years: 4.43 km/h
+     * > 60 years: 4.36 km/h
      * Sourse: https://blog.mypacer.com/what-your-walking-speed-says-about-your-health-and-how-long-youll-live/
      */
 
     /** Average walking speed (km/h) **/
     private static final double SPEED = 4.4;
-    private static final int HTOMS = 3600000; // 60 * 60 * 1000
     private static final int HTOS = 3600; // 60 * 60
 
     /**
