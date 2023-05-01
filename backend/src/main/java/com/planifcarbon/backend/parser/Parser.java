@@ -16,6 +16,7 @@ import com.planifcarbon.backend.dtos.SegmentMetroDTO;
 
 /**
  * {Its static methods are used to parse CSV files}
+ * It is respecting singleton pattern.
  */
 public class Parser {
 
@@ -26,6 +27,10 @@ public class Parser {
     private static final Map<String, String> metroLines = new HashMap<>();
     private static final Map<String, List<Integer>> metroLineSchedules = new HashMap<>();
 
+    public static final Parser instance = new Parser();
+
+    private Parser() {}
+
     /**
      * {Parse all CSV file.}
      *
@@ -34,7 +39,7 @@ public class Parser {
      * @throws FileNotFoundException thrown when provided file not found.
      * @throws IOException thrown when an error occurred when opening file.
      */
-    public static void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
+    public void parse(String metroFile, String scheduleFile) throws FileNotFoundException, IOException {
         Parser.calculateStationsAndSegments(metroFile);
         Parser.calculateSchedules(scheduleFile);
     }

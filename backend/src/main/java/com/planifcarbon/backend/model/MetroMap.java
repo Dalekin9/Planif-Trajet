@@ -29,8 +29,6 @@ public final class MetroMap {
     private final Map<Node, Set<Segment>> graph;
     private final Map<String, MetroLine> lines;
     private final Map<String, Station> stations;
-    /** Set of all final stations stations (mostly used in tests). */
-    private Set<ScheduleKey> scheduleKeys;
 
     /**
      * {Main constructor.}
@@ -39,7 +37,6 @@ public final class MetroMap {
         graph = new HashMap<Node, Set<Segment>>();
         lines = new HashMap<String, MetroLine>();
         stations = new HashMap<String, Station>();
-        scheduleKeys = new HashSet<ScheduleKey>();
     }
 
     /**
@@ -115,19 +112,6 @@ public final class MetroMap {
      */
     public Set<Segment> getSegmentsMetro(Node node) {
         return graph.get(node).stream().filter(SegmentMetro.class::isInstance).collect(Collectors.toSet());
-    }
-
-    /**
-     * {Find scheduleKey (final station of matro line) by name.}
-     *
-     * @param name name of terminus station to get schedule.
-     * @return the scheduleKey (final station of matro line)
-     */
-    public ScheduleKey getScheduleKeyByName(String name) {
-        List<ScheduleKey> ret = this.scheduleKeys.stream()
-                .filter(sh -> (sh.getTerminusStation().getName()).equals(name))
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        return ret.get(0);
     }
 
     /**
@@ -336,7 +320,7 @@ public final class MetroMap {
         String metroFile = "data/map_data.csv";
         String scheduleFile = "data/timetables.csv";
         try {
-            Parser.parse(metroFile, scheduleFile);
+            Parser.instance.parse(metroFile, scheduleFile);
         } catch (FileNotFoundException e) {
             System.out.println("File not found when parsing files " + e);
             return;
@@ -414,7 +398,6 @@ public final class MetroMap {
             MetroLine metroLine = this.lines.get(key);
             if (terminusStation != null && metroLine != null) {
                 ScheduleKey scheduleKey = new ScheduleKey(terminusStation, metroLine);
-                this.scheduleKeys.add(scheduleKey);
                 terminusStation.addSchedule(scheduleKey, 0);
                 do {
                     segment = this.getSegments(node).stream()
