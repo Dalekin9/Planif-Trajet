@@ -120,7 +120,7 @@ public class PathService {
             return station;
         }
         String[] parts = start.substring(1, start.length() - 1).split(", ");
-        return new PersonalizedNode("start", Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
+        return new PersonalizedNode(start, Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
     }
 
     /**
