@@ -134,12 +134,10 @@ export class GetmesomewhereComponent implements OnInit {
 
   private groupPaths(search: IDijkstraSearchResult[]): IDijkstraPathGroup[] {
     const result: IDijkstraPathGroup[] = [];
-    let obj: IDijkstraPathGroup;
     for (let entry of search) {
       if (!!entry.metroLine) {
-        obj = result.find((singlePath) => singlePath.metroLine === entry.metroLine);
-        if (!!obj) {
-          obj.nodes.push(entry);
+        if (!!result.length && result[result.length -1].metroLine === entry.metroLine) {
+          result[result.length -1].nodes.push(entry);
         } else {
           result.push({metroLine: entry.metroLine, terminusStation: entry.terminusStation, nodes: [entry]});
         }

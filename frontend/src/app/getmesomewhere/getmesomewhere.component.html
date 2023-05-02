@@ -57,4 +57,4 @@
   <app-wise-map (onComeFrom)="onComeFrom($event)" (onGoTo)="onGoTo($event)" [path]="dijkstraPath">
   </app-wise-map>
 </div>
-<app-dijkstra-path [path]="dijkstraPath" [startingTime]="timeToLeave.value.toLocaleTimeString()" [bestTimePath]="options.value === 'TIME'"></app-dijkstra-path>
+<app-dijkstra-path [path]="dijkstraPath" [startTime]="timeToLeave.value.toLocaleTimeString()" [bestTimePath]="options.value === 'TIME'"></app-dijkstra-path>

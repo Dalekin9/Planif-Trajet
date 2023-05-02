@@ -107,9 +107,13 @@ public class PathService {
      */
     private List<DjikstraSearchResultDTO> dataSegmentsToDijkstraPath(List<DataSegment> dataSegments) {
         return dataSegments.stream().map((segment) -> {
-            String lineName = segment.getLine() != null ? segment.getLine().getNonVariantName() : null;
-            String terminusStation = segment.getLine() != null ? segment.getLine().getTerminusStation().getName() :
-                    null;
+            String lineName = null;
+            String terminusStation = null;
+            if (segment.getLine() != null) {
+                lineName = segment.getLine().getNonVariantName();
+                List<Station> stations = new ArrayList<>(segment.getLine().getStations());
+                terminusStation = stations.get(stations.size() - 1).getName();
+            }
             return new DjikstraSearchResultDTO(nodeToNodeDto(segment.getNodeStart()),
                     nodeToNodeDto(segment.getNodeEnd()), segment.getArrivalTime(), lineName, terminusStation);
         }).collect(Collectors.toList());

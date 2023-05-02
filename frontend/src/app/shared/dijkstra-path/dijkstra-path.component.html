@@ -1,3 +1,7 @@
+<div class="path-duration" *ngIf="!!path?.length && bestTimePath">
+  <mat-icon>access_time</mat-icon>
+  <h4>{{getDuration()}}</h4>
+</div>
 <mgl-timeline *ngIf="!!path?.length" [toggle]="false" [alternate]="true" [side]="'center'">
   <mgl-timeline-entry
     *ngFor="let entry of path; let i = index"
