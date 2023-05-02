@@ -1,4 +1,23 @@
 :host {
+
+  .path-duration {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    color: wheat;
+    background-color: #0074D9;
+    padding: 8px 16px;
+    border-radius: 24px;
+    width: 64px;
+    margin: 0 auto 16px;
+
+    > .mat-icon {
+      size: 16px;
+    }
+  }
+
   mgl-timeline-entry-header {
     font-size: 18px;
     font-weight: bold;
