@@ -2,6 +2,9 @@
 
 Projet de génie logiciel du groupe Carbon (M1 2023)
 
+# Project's promoting video 
+https://www.veed.io/view/c15b3009-2689-43bd-aabd-d9d7359473bd?panel=share
+
 # Configure project
 ```sh
 # Java
